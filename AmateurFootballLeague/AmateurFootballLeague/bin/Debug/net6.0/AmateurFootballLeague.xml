@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AmateurFootballLeague</name>
+    </assembly>
+    <members>
+        <member name="M:AmateurFootballLeague.Controllers.AuthController.LoginWithEmailAndPassword(AmateurFootballLeague.ViewModels.Requests.UserLM)">
+            <summary>Login with email and password</summary>
+            <returns>Token JWT</returns>
+            <response code="200">Returns token jwt</response>
+            <response code="404">Not found users</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.RoleController.GetListRole(System.String,AmateurFootballLeague.ViewModels.Requests.RoleFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list roles</summary>
+            <returns>List roles</returns>
+            <response code="200">Returns list roles</response>
+            <response code="404">Not found roles</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.RoleController.GetRoleById(System.Int32)">
+            <summary>Get role by id</summary>
+            <returns>Return the role with the corresponding id</returns>
+            <response code="200">Returns the role type with the specified id</response>
+            <response code="404">No role found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.RoleController.CreateRole(AmateurFootballLeague.ViewModels.Requests.RoleCM)">
+            <summary>Create a new role</summary>
+            <response code="201">Created new role successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.RoleController.UpdateRole(System.Int32,System.String)">
+            <summary>Update a role</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.RoleController.DeleteById(System.Int32)">
+            <summary>Delete role By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.GetListUser(AmateurFootballLeague.ViewModels.Requests.UserFieldEnum,System.Int32,System.Int32)">
+            <summary>Get list users</summary>
+            <returns>List users</returns>
+            <response code="200">Returns list roles</response>
+            <response code="404">Not found users</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.GetUserByIDOrEmail(System.String,AmateurFootballLeague.ViewModels.Requests.UserSearchType)">
+            <summary>Get user by id or email</summary>
+            <returns>Return the user with the corresponding id</returns>
+            <response code="200">Returns the user type with the specified id</response>
+            <response code="404">No user found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.CreateUser(AmateurFootballLeague.ViewModels.Requests.UserCM)">
+            <summary>Create a new user</summary>
+            <response code="201">Created new user successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.UpdateUser(AmateurFootballLeague.ViewModels.Requests.UserUM)">
+            <summary>Update a new user</summary>
+            <response code="201">Update user successfull</response>
+            <response code="404">User is not found</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.ChangeStatus(System.Int32)">
+            <summary>Change status user</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.DeleteUser(System.Int32)">
+            <summary>Delete user by ID</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Failed to save request</response>
+        </member>
+    </members>
+</doc>
