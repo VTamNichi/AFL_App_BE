@@ -1,6 +1,7 @@
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AmateurFootballLeague.exe
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\appsettings.Development.json
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\appsettings.json
+E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\Keys\firebase_admin_sdk.json
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AmateurFootballLeague.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AmateurFootballLeague.runtimeconfig.json
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AmateurFootballLeague.pdb

@@ -15,7 +15,8 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
-
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,13 @@ builder.Services.AddDbContext<AmateurFootballLeagueContext>(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+
+var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
+FirebaseApp.Create(new AppOptions
+{
+    Credential = GoogleCredential.FromFile(pathToKey)
+});
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddSingleton<IJWTProvider, JWTProvider>();

@@ -138,7 +138,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 match.TournamentId = tournamentID;
                 match.MatchDate = matchDate;
-                match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Processing" : "Finished";
+                match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Process" : "Finished";
 
                 Match matchCreated = await _matchService.AddAsync(match);
                 if (matchCreated != null)

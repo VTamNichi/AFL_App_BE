@@ -155,12 +155,15 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.PasswordHash = listPassword[0];
                 convertUser.PasswordSalt = listPassword[1];
 
-                if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                try
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
-                    convertUser.Avatar = fileUrl;
+                    if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
+                        convertUser.Avatar = fileUrl;
+                    }
                 }
-                else
+                catch (Exception)
                 {
                     convertUser.Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYa4gZ_4QVCSGB7xflomDhrD1-9FzKNa5NDQ&usqp=CAU";
                 }
@@ -245,11 +248,16 @@ namespace AmateurFootballLeague.Controllers
                     user.PasswordHash = listPassword[0];
                     user.PasswordSalt = listPassword[1];
                 }
-                if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                try
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
-                    user.Avatar = fileUrl;
+                    if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
+                        user.Avatar = fileUrl;
+                    }
                 }
+                catch (Exception) { }
+                
 
                 user.Username = String.IsNullOrEmpty(model.Username) ? user.Username : model.Username;
                 user.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : model.Gender == UserGenderEnum.Other ? "Other" : user.Gender;

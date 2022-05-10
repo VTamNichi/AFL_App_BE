@@ -39,6 +39,8 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
+                Console.WriteLine("jjjjL " + pathToKey);
                 IQueryable<Role> roleList = _roleService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
@@ -66,7 +68,7 @@ namespace AmateurFootballLeague.Controllers
 
                 var roleListResponse = new RoleListVM
                 {
-                    Roles = _mapper.Map<List<Role>, List<RoleVM>>(roleListFilter),
+                    Roles = _mapper.Map<List<RoleVM>>(roleListFilter),
                     CurrentPage = pageIndex,
                     Size = limit
                 };

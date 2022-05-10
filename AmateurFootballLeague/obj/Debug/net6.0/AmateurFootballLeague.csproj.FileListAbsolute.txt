@@ -150,3 +150,4 @@ E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Debug\net6.0\Google.Apis.Core.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Debug\net6.0\Mailjet.Client.dll
+E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Debug\net6.0\Keys\firebase_admin_sdk.json

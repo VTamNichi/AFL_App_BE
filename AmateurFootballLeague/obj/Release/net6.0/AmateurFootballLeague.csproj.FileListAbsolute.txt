@@ -84,3 +84,4 @@ E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Release\net6.0\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Release\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Release\net6.0\Mailjet.Client.dll
+E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\bin\Release\net6.0\Keys\firebase_admin_sdk.json

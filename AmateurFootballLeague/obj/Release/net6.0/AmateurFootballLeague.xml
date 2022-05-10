@@ -24,6 +24,9 @@
         <member name="M:AmateurFootballLeague.Controllers.AuthController.uploadFileImage(AmateurFootballLeague.ViewModels.Requests.ImageCM)">
             <summary>Upload image to firebase</summary>
         </member>
+        <member name="M:AmateurFootballLeague.Controllers.AuthController.SendEmail(AmateurFootballLeague.ViewModels.Requests.EmailForm)">
+            <summary>Send mail from system</summary>
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.FootballFieldTypeController.GetListTournamentType(System.String,AmateurFootballLeague.ViewModels.Requests.FootballFieldTypeEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list football field types</summary>
             <returns>List football field types</returns>
@@ -58,6 +61,163 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.GetListFootballPlayer(System.String,AmateurFootballLeague.ViewModels.Requests.FootballPlayerFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list football player</summary>
+            <returns>List football player</returns>
+            <response code="200">Returns list football player</response>
+            <response code="404">Not found football player</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.GetFootballPlayerById(System.Int32)">
+            <summary>Get football player by id</summary>
+            <returns>Return the football player with the corresponding id</returns>
+            <response code="200">Returns the football player with the specified id</response>
+            <response code="404">No football player found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.CreateFootballPlayer(AmateurFootballLeague.ViewModels.Requests.FootballPlayerCM)">
+            <summary>Create a new football player</summary>
+            <response code="201">Created new football player successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.UpdateFootballPlayer(AmateurFootballLeague.ViewModels.Requests.FootballPlayerUM)">
+            <summary>Update a football player</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.ChangeStatusFootballPlayer(System.Int32)">
+            <summary>Change status football player By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.FootballPlayerController.DeleteById(System.Int32)">
+            <summary>Delete football player By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.GetListImage(AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list image</summary>
+            <returns>List image</returns>
+            <response code="200">Returns list image</response>
+            <response code="404">Not found image</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.GetImageById(System.Int32)">
+            <summary>Get image by id</summary>
+            <returns>Return the image with the corresponding id</returns>
+            <response code="200">Returns the image with the specified id</response>
+            <response code="404">No image found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.CreateImage(AmateurFootballLeague.ViewModels.Requests.ImageCM)">
+            <summary>Create a new image</summary>
+            <response code="201">Created new image successfull</response>
+            <response code="400">Field is not imageed or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.UpdateImage(AmateurFootballLeague.ViewModels.Requests.ImageUM)">
+            <summary>Update a image</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not imageed</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.ChangeStatusImage(System.Int32)">
+            <summary>Change status image By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.ImageController.DeleteById(System.Int32)">
+            <summary>Delete image By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.GetListMatch(System.String,AmateurFootballLeague.ViewModels.Requests.MatchFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list match</summary>
+            <returns>List match</returns>
+            <response code="200">Returns list match</response>
+            <response code="404">Not found match</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.GetMatchById(System.Int32)">
+            <summary>Get match by id</summary>
+            <returns>Return the match with the corresponding id</returns>
+            <response code="200">Returns the match with the specified id</response>
+            <response code="404">No match found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.CreateMatch(System.DateTime,AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum,System.Int32)">
+            <summary>Create a new match</summary>
+            <response code="201">Created new match successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.UpdateMatch(System.Nullable{System.DateTime},System.Nullable{AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum},System.Nullable{System.Int32})">
+            <summary>Update a match</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.DeleteById(System.Int32)">
+            <summary>Delete match By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.GetListNews(System.String,AmateurFootballLeague.ViewModels.Requests.NewsFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list news</summary>
+            <returns>List news</returns>
+            <response code="200">Returns list news</response>
+            <response code="404">Not found news</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.GetNewsById(System.Int32)">
+            <summary>Get news by id</summary>
+            <returns>Return the news with the corresponding id</returns>
+            <response code="200">Returns the news with the specified id</response>
+            <response code="404">No news found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.CreateNews(System.String,System.Int32)">
+            <summary>Create a new news</summary>
+            <response code="201">Created new news successfull</response>
+            <response code="400">Field is not newsed or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.UpdateNews(System.String,System.Nullable{System.Int32})">
+            <summary>Update a news</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not newsed</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.ChangeStatusNews(System.Int32)">
+            <summary>Change status news By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.NewsController.DeleteById(System.Int32)">
+            <summary>Delete news By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.RoleController.GetListRole(System.String,AmateurFootballLeague.ViewModels.Requests.RoleFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list roles</summary>
             <returns>List roles</returns>
@@ -87,6 +247,81 @@
         </member>
         <member name="M:AmateurFootballLeague.Controllers.RoleController.DeleteById(System.Int32)">
             <summary>Delete role By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetListTeam(System.String,AmateurFootballLeague.ViewModels.Requests.TeamFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list team</summary>
+            <returns>List team</returns>
+            <response code="200">Returns list team</response>
+            <response code="404">Not found team</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetTeamById(System.Int32)">
+            <summary>Get team by id</summary>
+            <returns>Return the team with the corresponding id</returns>
+            <response code="200">Returns the team with the specified id</response>
+            <response code="404">No team found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.CreateTeam(AmateurFootballLeague.ViewModels.Requests.TeamCM)">
+            <summary>Create a new team</summary>
+            <response code="201">Created new team successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.UpdateTeam(AmateurFootballLeague.ViewModels.Requests.TeamUM)">
+            <summary>Update a team</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.ChangeStatusTeam(System.Int32)">
+            <summary>Change status team By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.DeleteById(System.Int32)">
+            <summary>Delete team By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetListTeamInTournament(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AmateurFootballLeague.ViewModels.Requests.TeamInTournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list team in tournament</summary>
+            <returns>List team in tournament</returns>
+            <response code="200">Returns list team in tournament</response>
+            <response code="404">Not found team in tournament</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetTeamInTournamentById(System.Int32)">
+            <summary>Get team in tournament by id</summary>
+            <returns>Return the team in tournament with the corresponding id</returns>
+            <response code="200">Returns the team in tournament with the specified id</response>
+            <response code="404">No team in tournament found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.CreateTeamInTournament(AmateurFootballLeague.ViewModels.Requests.TeamInTournamentCM)">
+            <summary>Create a new team in tournament</summary>
+            <response code="201">Created new team in tournament successfull</response>
+            <response code="400">Field is not team in tournament or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.UpdateTeamInTournament(AmateurFootballLeague.ViewModels.Requests.TeamInTournamentUM)">
+            <summary>Update a team in tournament</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not team in tournament</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.DeleteById(System.Int32)">
+            <summary>Delete team in tournament By Id</summary>
             <response code="200">Success</response>
             <response code="404">Not Found</response>
             <response code="400">Bad Request</response>

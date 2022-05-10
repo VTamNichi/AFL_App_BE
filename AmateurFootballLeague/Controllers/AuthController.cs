@@ -54,7 +54,7 @@ namespace AmateurFootballLeague.Controllers
                 UserLVM userLEPVM = new UserLVM
                 {
                     UserVM = userVM,
-                    Token = await _jwtProvider.GenerationToken(user)
+                    AccessToken = await _jwtProvider.GenerationToken(user)
                 };
 
                 return Ok(userLEPVM);
@@ -70,14 +70,10 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="200">Returns user and token</response>
         /// <response code="404">Not found users</response>
         /// <response code="500">Internal server error</response>
-        [HttpPost("login-google")]
+        [HttpPost("login-with-google")]
         [Produces("application/json")]
         public async Task<ActionResult<UserLVM>> Login([FromBody] UserLM model)
         {
-            if (model.RoleId < 1 || model.RoleId > 4)
-            {
-                return BadRequest();
-            }
             var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
             string email;
             try
@@ -92,9 +88,7 @@ namespace AmateurFootballLeague.Controllers
 
             try
             {
-                int referencesId = 0;
                 User user = _userService.GetUserByEmail(email);
-
                 if (user == null)
                 {
                     return NotFound("User is not exist");
@@ -109,7 +103,7 @@ namespace AmateurFootballLeague.Controllers
                 UserLVM userLEPVM = new UserLVM
                 {
                     UserVM = userVM,
-                    Token = await _jwtProvider.GenerationToken(user)
+                    AccessToken = await _jwtProvider.GenerationToken(user)
                 };
 
                 return Ok(userLEPVM);

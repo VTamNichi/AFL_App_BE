@@ -81,7 +81,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
     public class UserLM
     {
         public string TokenId { get; set; }
-        public int RoleId { get; set; }
     }
     public class UserLOM
     {

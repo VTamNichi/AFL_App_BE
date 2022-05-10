@@ -3,7 +3,7 @@
     public class MatchVM
     {
         public int Id { get; set; }
-        public string MatchDate { get; set; }
+        public DateTime MatchDate { get; set; }
         public string Status { get; set; }
     }
     public class MatchListVM
