@@ -75,6 +75,20 @@ builder.Services.AddTransient<IFootballPlayerService, FootballPlayerService>();
 builder.Services.AddTransient<ITeamInTournamentRepository, TeamInTournamentRepository>();
 builder.Services.AddTransient<ITeamInTournamentService, TeamInTournamentService>();
 
+builder.Services.AddTransient<IPlayerInTeamRepository, PlayerInTeamRepository>();
+builder.Services.AddTransient<IPlayerInTeamService, PlayerInTeamService>();
+
+builder.Services.AddTransient<IplayerInTournament, PlayerInTournamentRepository>();
+builder.Services.AddTransient<IPlayerInTournamentService, PlayerInTournamentService>();
+
+builder.Services.AddTransient<ITeamInMatchRepository, TeamInMatchRepository>();
+builder.Services.AddTransient<ITeamInMatchService, TeamInMatchService>();
+
+builder.Services.AddTransient<IMatchDetailRepository, MatchDetailRepository>();
+builder.Services.AddTransient<IMatchDetailService, MatchDetailService>();
+
+builder.Services.AddTransient<IScorePredictionRepository, ScorePredictionRepository>();
+builder.Services.AddTransient<IScorePredictionService, ScorePredictionService>();
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.Converters.Add(new StringEnumConverter());
