@@ -16,10 +16,21 @@ using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          //                          policy.WithOrigins("http://example.com",
+                          //                                             "http://www.contoso.com");
+                          policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                      });
+});
 
 builder.Services.AddDbContext<AmateurFootballLeagueContext>(options =>
 {

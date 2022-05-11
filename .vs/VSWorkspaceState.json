@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\AmateurFootballLeague",
-    "\\AmateurFootballLeague\\Controllers"
+    "\\AmateurFootballLeague"
   ],
-  "SelectedNode": "\\AmateurFootballLeague\\Controllers\\TeamController.cs",
+  "SelectedNode": "\\AmateurFootballLeague.sln",
   "PreviewInSolutionExplorer": false
 }
