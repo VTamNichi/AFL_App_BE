@@ -26,9 +26,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          //                          policy.WithOrigins("http://example.com",
-                          //                                             "http://www.contoso.com");
-                          policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                          policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+                          //policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                       });
 });
 // Add services to the container.
@@ -152,7 +151,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
-
 
 app.UseAuthentication();
 
