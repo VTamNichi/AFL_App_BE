@@ -4,5 +4,6 @@ namespace AmateurFootballLeague.IServices
 {
     public interface ITournamentService : IService<Tournament, int>
     {
+        int CountAllTournament();
     }
 }

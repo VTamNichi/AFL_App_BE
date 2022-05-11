@@ -159,13 +159,13 @@ namespace AmateurFootballLeague.Controllers
                 {
                     if (!String.IsNullOrEmpty(model.Avatar.ToString()))
                     {
-                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
+                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "images", "image-url");
                         convertUser.Avatar = fileUrl;
                     }
                 }
                 catch (Exception)
                 {
-                    convertUser.Avatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYa4gZ_4QVCSGB7xflomDhrD1-9FzKNa5NDQ&usqp=CAU";
+                    convertUser.Avatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
 
                 convertUser.Username = model.Username.Trim();
@@ -203,7 +203,7 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Update a new user</summary>
+        /// <summary>Update a user</summary>
         /// <response code="201">Update user successfull</response>
         /// <response code="404">User is not found</response>
         /// <response code="500">Failed to save request</response>
@@ -252,7 +252,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     if (!String.IsNullOrEmpty(model.Avatar.ToString()))
                     {
-                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "service", "service-detail");
+                        string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "images", "image-url");
                         user.Avatar = fileUrl;
                     }
                 }

@@ -252,7 +252,7 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetListTeam(System.String,AmateurFootballLeague.ViewModels.Requests.TeamFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetListTeam(System.String,System.String,System.Nullable{AmateurFootballLeague.ViewModels.Requests.TeamGenderEnum},AmateurFootballLeague.ViewModels.Requests.TeamFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list team</summary>
             <returns>List team</returns>
             <response code="200">Returns list team</response>
@@ -293,6 +293,12 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetCountAllTeam">
+            <summary>Get count all team</summary>
+            <returns>Return the count of team with the corresponding id</returns>
+            <response code="200">Returns the count of team with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetListTeamInTournament(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AmateurFootballLeague.ViewModels.Requests.TeamInTournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list team in tournament</summary>
             <returns>List team in tournament</returns>
@@ -327,7 +333,7 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.TournamentController.GetListTournamentType(System.String,AmateurFootballLeague.ViewModels.Requests.TournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.TournamentController.GetListTournament(System.String,System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentModeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentTypeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentGenderEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentFootballFieldTypeEnum},AmateurFootballLeague.ViewModels.Requests.TournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list tournament</summary>
             <returns>List tournament</returns>
             <response code="200">Returns list tournament</response>
@@ -363,6 +369,46 @@
         </member>
         <member name="M:AmateurFootballLeague.Controllers.TournamentController.DeleteById(System.Int32)">
             <summary>Delete tournament By Id</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Bad Request</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentController.GetCountAllTournament">
+            <summary>Get count all tournament</summary>
+            <returns>Return the count of tournament with the corresponding id</returns>
+            <response code="200">Returns the count of tournament with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentResultController.GetListTournamentResult(System.String,AmateurFootballLeague.ViewModels.Requests.TournamentResultFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list tournament result</summary>
+            <returns>List tournamentResult</returns>
+            <response code="200">Returns list tournamentResult</response>
+            <response code="404">Not found tournamentResult</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentResultController.GetTournamentResultById(System.Int32)">
+            <summary>Get tournament result by id</summary>
+            <returns>Return the tournament result with the corresponding id</returns>
+            <response code="200">Returns the tournament result with the specified id</response>
+            <response code="404">No tournament result found with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentResultController.CreateTournamentResult(AmateurFootballLeague.ViewModels.Requests.TournamentResultCM)">
+            <summary>Create a new tournament result</summary>
+            <response code="201">Created new tournament result successfull</response>
+            <response code="400">Field is not matched or duplicated</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentResultController.UpdateTournamentResult(AmateurFootballLeague.ViewModels.Requests.TournamentResultUM)">
+            <summary>Update a tournament result</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TournamentResultController.DeleteById(System.Int32)">
+            <summary>Delete tournament result By Id</summary>
             <response code="200">Success</response>
             <response code="404">Not Found</response>
             <response code="400">Bad Request</response>
@@ -423,7 +469,7 @@
             <response code="500">Failed to save request</response>
         </member>
         <member name="M:AmateurFootballLeague.Controllers.UserController.UpdateUser(AmateurFootballLeague.ViewModels.Requests.UserUM)">
-            <summary>Update a new user</summary>
+            <summary>Update a user</summary>
             <response code="201">Update user successfull</response>
             <response code="404">User is not found</response>
             <response code="500">Failed to save request</response>

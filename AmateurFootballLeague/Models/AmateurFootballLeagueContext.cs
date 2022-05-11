@@ -30,6 +30,7 @@ namespace AmateurFootballLeague.Models
         public virtual DbSet<TeamInMatch> TeamInMatchs { get; set; } = null!;
         public virtual DbSet<TeamInTournament> TeamInTournaments { get; set; } = null!;
         public virtual DbSet<Tournament> Tournaments { get; set; } = null!;
+        public virtual DbSet<TournamentResult> TournamentResults { get; set; } = null!;
         public virtual DbSet<TournamentType> TournamentTypes { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
 
@@ -92,10 +93,17 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.NewsId).HasColumnName("NewsID");
 
+                entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
                 entity.HasOne(d => d.News)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.NewsId)
                     .HasConstraintName("FK__Images__NewsID__4D94879B");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK__Images__Tourname__4E88ABD4");
             });
 
             modelBuilder.Entity<Match>(entity =>
@@ -104,7 +112,7 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.MatchDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Status).HasMaxLength(8);
+                entity.Property(e => e.Status).HasMaxLength(16);
 
                 entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
 
@@ -125,12 +133,12 @@ namespace AmateurFootballLeague.Models
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.MatchDetails)
                     .HasForeignKey(d => d.MatchId)
-                    .HasConstraintName("FK__MatchDeta__Match__619B8048");
+                    .HasConstraintName("FK__MatchDeta__Match__628FA481");
 
                 entity.HasOne(d => d.PlayerInTeam)
                     .WithMany(p => p.MatchDetails)
                     .HasForeignKey(d => d.PlayerInTeamId)
-                    .HasConstraintName("FK__MatchDeta__Playe__628FA481");
+                    .HasConstraintName("FK__MatchDeta__Playe__6383C8BA");
             });
 
             modelBuilder.Entity<News>(entity =>
@@ -159,19 +167,19 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.FootballPlayerId).HasColumnName("FootballPlayerID");
 
-                entity.Property(e => e.Status).HasMaxLength(8);
+                entity.Property(e => e.Status).HasMaxLength(16);
 
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
                 entity.HasOne(d => d.FootballPlayer)
                     .WithMany(p => p.PlayerInTeams)
                     .HasForeignKey(d => d.FootballPlayerId)
-                    .HasConstraintName("FK__PlayerInT__Footb__571DF1D5");
+                    .HasConstraintName("FK__PlayerInT__Footb__5812160E");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.PlayerInTeams)
                     .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__PlayerInT__TeamI__5629CD9C");
+                    .HasConstraintName("FK__PlayerInT__TeamI__571DF1D5");
             });
 
             modelBuilder.Entity<PlayerInTournament>(entity =>
@@ -185,12 +193,12 @@ namespace AmateurFootballLeague.Models
                 entity.HasOne(d => d.PlayerInTeam)
                     .WithMany(p => p.PlayerInTournaments)
                     .HasForeignKey(d => d.PlayerInTeamId)
-                    .HasConstraintName("FK__PlayerInT__Playe__5AEE82B9");
+                    .HasConstraintName("FK__PlayerInT__Playe__5BE2A6F2");
 
                 entity.HasOne(d => d.TeamInTournament)
                     .WithMany(p => p.PlayerInTournaments)
                     .HasForeignKey(d => d.TeamInTournamentId)
-                    .HasConstraintName("FK__PlayerInT__TeamI__59FA5E80");
+                    .HasConstraintName("FK__PlayerInT__TeamI__5AEE82B9");
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -206,7 +214,7 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
 
-                entity.Property(e => e.Status).HasMaxLength(8);
+                entity.Property(e => e.Status).HasMaxLength(16);
 
                 entity.Property(e => e.TeamAscore).HasColumnName("TeamAScore");
 
@@ -221,22 +229,22 @@ namespace AmateurFootballLeague.Models
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.ScorePredictions)
                     .HasForeignKey(d => d.MatchId)
-                    .HasConstraintName("FK__ScorePred__Match__68487DD7");
+                    .HasConstraintName("FK__ScorePred__Match__693CA210");
 
                 entity.HasOne(d => d.TeamInMatchA)
                     .WithMany(p => p.ScorePredictionTeamInMatchAs)
                     .HasForeignKey(d => d.TeamInMatchAid)
-                    .HasConstraintName("FK__ScorePred__TeamI__656C112C");
+                    .HasConstraintName("FK__ScorePred__TeamI__66603565");
 
                 entity.HasOne(d => d.TeamInMatchB)
                     .WithMany(p => p.ScorePredictionTeamInMatchBs)
                     .HasForeignKey(d => d.TeamInMatchBid)
-                    .HasConstraintName("FK__ScorePred__TeamI__66603565");
+                    .HasConstraintName("FK__ScorePred__TeamI__6754599E");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.ScorePredictions)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__ScorePred__UserI__6754599E");
+                    .HasConstraintName("FK__ScorePred__UserI__68487DD7");
             });
 
             modelBuilder.Entity<Team>(entity =>
@@ -255,7 +263,13 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.TeamAvatar).IsUnicode(false);
 
+                entity.Property(e => e.TeamGender).HasMaxLength(8);
+
                 entity.Property(e => e.TeamName).HasMaxLength(128);
+
+                entity.Property(e => e.TeamPhone)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Team)
@@ -275,19 +289,19 @@ namespace AmateurFootballLeague.Models
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.TeamInMatches)
                     .HasForeignKey(d => d.MatchId)
-                    .HasConstraintName("FK__TeamInMat__Match__5EBF139D");
+                    .HasConstraintName("FK__TeamInMat__Match__5FB337D6");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.TeamInMatches)
                     .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__TeamInMat__TeamI__5DCAEF64");
+                    .HasConstraintName("FK__TeamInMat__TeamI__5EBF139D");
             });
 
             modelBuilder.Entity<TeamInTournament>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.Status).HasMaxLength(8);
+                entity.Property(e => e.Status).HasMaxLength(16);
 
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
@@ -296,12 +310,12 @@ namespace AmateurFootballLeague.Models
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.TeamInTournaments)
                     .HasForeignKey(d => d.TeamId)
-                    .HasConstraintName("FK__TeamInTou__TeamI__534D60F1");
+                    .HasConstraintName("FK__TeamInTou__TeamI__5441852A");
 
                 entity.HasOne(d => d.Tournament)
                     .WithMany(p => p.TeamInTournaments)
                     .HasForeignKey(d => d.TournamentId)
-                    .HasConstraintName("FK__TeamInTou__Tourn__52593CB8");
+                    .HasConstraintName("FK__TeamInTou__Tourn__534D60F1");
             });
 
             modelBuilder.Entity<Tournament>(entity =>
@@ -330,7 +344,13 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.TournamentEndDate).HasColumnType("datetime");
 
+                entity.Property(e => e.TournamentGender).HasMaxLength(8);
+
                 entity.Property(e => e.TournamentName).HasMaxLength(128);
+
+                entity.Property(e => e.TournamentPhone)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.TournamentStartDate).HasColumnType("datetime");
 
@@ -354,6 +374,29 @@ namespace AmateurFootballLeague.Models
                     .HasConstraintName("FK__Tournamen__UserI__4316F928");
             });
 
+            modelBuilder.Entity<TournamentResult>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Description).HasMaxLength(256);
+
+                entity.Property(e => e.Prize).HasMaxLength(256);
+
+                entity.Property(e => e.TeamInTournamentId).HasColumnName("TeamInTournamentID");
+
+                entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
+                entity.HasOne(d => d.TeamInTournament)
+                    .WithMany(p => p.TournamentResults)
+                    .HasForeignKey(d => d.TeamInTournamentId)
+                    .HasConstraintName("FK__Tournamen__TeamI__6C190EBB");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.TournamentResults)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK__Tournamen__Tourn__6D0D32F4");
+            });
+
             modelBuilder.Entity<TournamentType>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -365,7 +408,7 @@ namespace AmateurFootballLeague.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ__Users__A9D105346A8083F3")
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534C4543E26")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");

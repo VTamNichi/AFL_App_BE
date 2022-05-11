@@ -166,11 +166,11 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                if ( !await _sendEmailService.SendEmail(model))
+                if (!await _sendEmailService.SendEmail(model))
                 {
                     return BadRequest();
                 }
-                
+
                 return Ok("Success");
             }
             catch (Exception e)

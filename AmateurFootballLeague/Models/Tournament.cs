@@ -7,14 +7,18 @@ namespace AmateurFootballLeague.Models
     {
         public Tournament()
         {
+            Images = new HashSet<Image>();
             Matches = new HashSet<Match>();
             News = new HashSet<News>();
             TeamInTournaments = new HashSet<TeamInTournament>();
+            TournamentResults = new HashSet<TournamentResult>();
         }
 
         public int Id { get; set; }
         public string? TournamentName { get; set; }
         public string? Mode { get; set; }
+        public string? TournamentPhone { get; set; }
+        public string? TournamentGender { get; set; }
         public DateTime? RegisterEndDate { get; set; }
         public DateTime? TournamentStartDate { get; set; }
         public DateTime? TournamentEndDate { get; set; }
@@ -36,8 +40,10 @@ namespace AmateurFootballLeague.Models
         public virtual FootballFieldType? FootballFieldType { get; set; }
         public virtual TournamentType? TournamentType { get; set; }
         public virtual User? User { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
         public virtual ICollection<News> News { get; set; }
         public virtual ICollection<TeamInTournament> TeamInTournaments { get; set; }
+        public virtual ICollection<TournamentResult> TournamentResults { get; set; }
     }
 }

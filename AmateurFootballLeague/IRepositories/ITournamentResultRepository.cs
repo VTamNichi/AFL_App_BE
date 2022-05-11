@@ -2,8 +2,7 @@
 
 namespace AmateurFootballLeague.IRepositories
 {
-    public interface ITeamRepository : IRepository<Team, int>
+    public interface ITournamentResultRepository : IRepository<TournamentResult, int>
     {
-        int CountAllTeam();
     }
 }
