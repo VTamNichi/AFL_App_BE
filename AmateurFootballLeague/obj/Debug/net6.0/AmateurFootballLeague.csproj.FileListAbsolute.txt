@@ -240,3 +240,4 @@ E:\Doan\NewVer2\AFL_App_BE\AmateurFootballLeague\obj\Debug\net6.0\refint\Amateur
 E:\Doan\NewVer2\AFL_App_BE\AmateurFootballLeague\obj\Debug\net6.0\AmateurFootballLeague.genruntimeconfig.cache
 E:\Doan\NewVer2\AFL_App_BE\AmateurFootballLeague\obj\Debug\net6.0\ref\AmateurFootballLeague.dll
 >>>>>>> d0abb11002596b98fe11e36b0aaedfd9bac9d428
+E:\Doan\NewVer2\AFL_App_BE\AmateurFootballLeague\bin\Debug\net6.0\Keys\firebase_admin_sdk.json
