@@ -18,8 +18,19 @@ using Newtonsoft.Json.Converters;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          //                          policy.WithOrigins("http://example.com",
+                          //                                             "http://www.contoso.com");
+                          policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                      });
+});
 // Add services to the container.
 
 builder.Services.AddDbContext<AmateurFootballLeagueContext>(options =>
@@ -140,6 +151,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
+
 
 app.UseAuthentication();
 
