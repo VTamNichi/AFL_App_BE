@@ -5,7 +5,6 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -111,7 +110,7 @@ namespace AmateurFootballLeague.Controllers
                     return BadRequest("News not exist");
                 }
 
-                string fileUrl = await _uploadFileService.UploadFile(model.File, "service", "service-detail");
+                string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
                 image.ImageUrl = fileUrl;
                 image.Status = true;
                 image.DateCreate = DateTime.Now;
@@ -155,7 +154,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.File.ToString()))
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.File, "service", "service-detail");
+                    string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
                     image.ImageUrl = fileUrl;
                 }
                 image.DateUpdate = DateTime.Now;

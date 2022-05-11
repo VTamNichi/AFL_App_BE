@@ -24,11 +24,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
-                          //policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-                      });
+        policy =>
+        {
+            policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+        });
 });
 // Add services to the container.
 
@@ -99,6 +98,10 @@ builder.Services.AddTransient<IMatchDetailService, MatchDetailService>();
 
 builder.Services.AddTransient<IScorePredictionRepository, ScorePredictionRepository>();
 builder.Services.AddTransient<IScorePredictionService, ScorePredictionService>();
+
+builder.Services.AddTransient<ITournamentResultRepository, TournamentResultRepository>();
+builder.Services.AddTransient<ITournamentResultService, TournamentResultService>();
+
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.Converters.Add(new StringEnumConverter());
@@ -150,6 +153,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();

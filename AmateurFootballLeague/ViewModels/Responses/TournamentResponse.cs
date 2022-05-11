@@ -7,6 +7,8 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int Id { get; set; }
         public string TournamentName { get; set; }
         public string Mode { get; set; }
+        public string TournamentPhone { get; set; }
+        public string TournamentGender { get; set; }
         public DateTime RegisterEndDate { get; set; }
         public DateTime TournamentStartDate { get; set; }
         public DateTime TournamentEndDate { get; set; }

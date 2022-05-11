@@ -22,9 +22,15 @@ namespace AmateurFootballLeague.ViewModels.Requests
     }
     public enum TournamentFieldEnum
     {
-        Id,
         TournamentName,
         Mode,
+    }
+
+    public enum TournamentGenderEnum
+    {
+        Male,
+        Female,
+        Other,
     }
     public class TournamentCM
     {
@@ -34,6 +40,10 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         [Required(AllowEmptyStrings = false)]
         public TournamentModeEnum Mode { get; set; } = TournamentModeEnum.PUBLIC;
+
+        public string? TournamentPhone { get; set; }
+        public TournamentGenderEnum? TournamentGender { get; set; }
+
 
         [Required(AllowEmptyStrings = false)]
         public DateTime RegisterEndDate { get; set; }
@@ -76,6 +86,9 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? TournamentName { get; set; }
 
         public TournamentModeEnum? Mode { get; set; }
+
+        public string? TournamentPhone { get; set; }
+        public TournamentGenderEnum? TournamentGender { get; set; }
 
         public DateTime? RegisterEndDate { get; set; }
 

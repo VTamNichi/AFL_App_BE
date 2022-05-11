@@ -7,6 +7,12 @@ namespace AmateurFootballLeague.ViewModels.Requests
         Id,
         TeamName,
     }
+    public enum TeamGenderEnum
+    {
+        Male,
+        Female,
+        Other,
+    }
     public class TeamCM
     {
         [Required(AllowEmptyStrings = false)]
@@ -18,9 +24,14 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         public IFormFile? TeamAvatar { get; set; }
 
+        public string? TeamArea { get; set; }
+
+        public string? TeamPhone { get; set; }
+        
+        public TeamGenderEnum? TeamGender { get; set; }
+
         public string? Description { get; set; }
     }
-
     public class TeamUM
     {
         [Required(AllowEmptyStrings = false)]
@@ -29,6 +40,12 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? TeamName { get; set; }
 
         public IFormFile? TeamAvatar { get; set; }
+
+        public string? TeamArea { get; set; }
+
+        public string? TeamPhone { get; set; }
+
+        public TeamGenderEnum? TeamGender { get; set; }
 
         public string? Description { get; set; }
     }

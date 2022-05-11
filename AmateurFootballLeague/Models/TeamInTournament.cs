@@ -8,6 +8,7 @@ namespace AmateurFootballLeague.Models
         public TeamInTournament()
         {
             PlayerInTournaments = new HashSet<PlayerInTournament>();
+            TournamentResults = new HashSet<TournamentResult>();
         }
 
         public int Id { get; set; }
@@ -20,5 +21,6 @@ namespace AmateurFootballLeague.Models
         public virtual Team? Team { get; set; }
         public virtual Tournament? Tournament { get; set; }
         public virtual ICollection<PlayerInTournament> PlayerInTournaments { get; set; }
+        public virtual ICollection<TournamentResult> TournamentResults { get; set; }
     }
 }

@@ -2,8 +2,7 @@
 
 namespace AmateurFootballLeague.IServices
 {
-    public interface ITeamService : IService<Team, int>
+    public interface ITournamentResultService : IService<TournamentResult, int>
     {
-        int CountAllTeam();
     }
 }

@@ -5,7 +5,6 @@
         ASC,
         DESC
     }
-
     public class FireBaseAppSetting
     {
         public const string FirebaseBucket = "amateurfoooballleague.appspot.com";
