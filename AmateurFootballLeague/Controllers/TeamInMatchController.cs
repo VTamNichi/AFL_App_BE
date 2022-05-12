@@ -59,7 +59,7 @@ namespace AmateurFootballLeague.Controllers
 
                 }
 
-                return NotFound();
+                return NotFound("Không tìm thấy đội bóng trong trận đấu");
 
             }
             catch(Exception ex)
@@ -70,7 +70,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        [Route("/api/TeamInMatch/Id")]
+        [Route("{id}")]
         public async Task<ActionResult<TeamInMatchVM>> GetById(int id)
         {
             try
@@ -81,7 +81,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<TeamInMatchVM>(team));
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy đội bóng trong trận đấu vơi id là " + id);
 
             }
             catch
@@ -101,7 +101,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Team alreay in this match "
+                        message = "Đội bóng đã tồn tại trong trận đấu"
                     });
 
                 }
@@ -110,7 +110,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Already have 2 team in this match"
+                        message = "Đã tồn tại 2 đội bóng trong trận đấu này"
                     });
                 }
                 team.TeamScore = teamInMatch.TeamScore;
@@ -123,7 +123,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetById", new { id = created.Id }, _mapper.Map<TeamInMatchVM>(created));
                 }
-                return BadRequest();
+                return BadRequest("Thêm đội bóng vào trận đấu thất bại");
             }
             catch
             {
@@ -147,12 +147,12 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message ="Update success"
+                            message = "Cập nhật đội bóng trong trận đấu thành công"
                         });
                     }
-                    return BadRequest();
+                    return BadRequest("Cập nhật đội bóng trong trận đấu thất bại");
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy đội bóng trong trận đấu vơi id là " + teamInMatch.Id);
             }
             catch
             {

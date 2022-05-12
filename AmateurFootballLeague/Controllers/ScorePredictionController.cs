@@ -22,7 +22,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        [Route("api/v1/ScorePrediction/Id")]
+        [Route("{Id}")]
         public async Task<ActionResult<ScorePredictionVM>> GetById(int id)
         {
             try
@@ -30,7 +30,7 @@ namespace AmateurFootballLeague.Controllers
                 ScorePrediction sp = await _scorePrediction.GetByIdAsync (id);
                 if(sp == null)
                 {
-                    return NotFound();
+                    return NotFound("Không tìm thấy dự đoán tỷ số với id là " + id);
                 }
                 return Ok(_mapper.Map<ScorePredictionVM>(sp));
             }
@@ -66,11 +66,11 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return CreatedAtAction("GetById", new { id = created.Id }, _mapper.Map<ScorePrediction>(created));
                     }
-                    return BadRequest();
+                    return BadRequest("Tạo dự đoán tỷ số thất bại");
                 }
                 return BadRequest(new
                 {
-                    message = "User Alreay Predict this match"
+                    message = "Người dùng đã dự đoán trận đấu này"
                 });
             }
             catch
@@ -95,12 +95,12 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message = "Update success"
+                            message = "Cập nhật dự đoán tỷ số thành công"
                         });
                     }
-                    return BadRequest();
+                    return BadRequest("Cập nhật dự đoán tỷ số thất bại");
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy dự đoán tỷ số với id là " + model.Id);
             }
             catch
             {
@@ -109,7 +109,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
-        [Route("api/v1/ScorePrediction/Status")]
+        [Route("Status")]
         public async Task<ActionResult> ChangeStatusScorePrediction(int id , string status)
         {
             try
@@ -123,12 +123,12 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message = "Update success"
+                            message = "Thay đổi trạng thái dự đoán tỷ số thành công"
                         });
                     }
-                    return BadRequest();
+                    return BadRequest("Thay đổi trạng thái dự đoán tỷ số thất bại");
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy dự đoán tỷ số với id là " + id);
             }
             catch
             {

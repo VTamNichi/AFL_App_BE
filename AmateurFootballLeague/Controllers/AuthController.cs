@@ -16,14 +16,12 @@ namespace AmateurFootballLeague.Controllers
         private readonly IUserService _userService;
         private readonly IJWTProvider _jwtProvider;
         private readonly ISendEmailService _sendEmailService;
-        private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
-        public AuthController(IUserService userService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IUploadFileService uploadFileService, IMapper mapper)
+        public AuthController(IUserService userService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
         {
             _userService = userService;
             _jwtProvider = jwtProvider;
             _sendEmailService = sendEmailService;
-            _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
 
@@ -40,15 +38,15 @@ namespace AmateurFootballLeague.Controllers
                 User user = _userService.GetUserByEmail(model.Email);
                 if (user == null)
                 {
-                    return NotFound("User is not exist");
+                    return NotFound("Tài khoản không tồn tại");
                 }
                 if (!_userService.CheckPassword(model.Password, user.PasswordHash, user.PasswordSalt))
                 {
-                    return BadRequest("Wrong password");
+                    return BadRequest("Sai mật khẩu");
                 }
                 if (!user.Status.HasValue)
                 {
-                    return BadRequest("User is ban");
+                    return BadRequest("Tài khoản đã bị khóa");
                 }
                 UserVM userVM = _mapper.Map<UserVM>(user);
                 UserLVM userLEPVM = new UserLVM
@@ -91,12 +89,12 @@ namespace AmateurFootballLeague.Controllers
                 User user = _userService.GetUserByEmail(email);
                 if (user == null)
                 {
-                    return NotFound("User is not exist");
+                    return NotFound("Tài khoản không tồn tại");
                 }
 
                 if (!user.Status.HasValue)
                 {
-                    return BadRequest("User is ban");
+                    return BadRequest("Tài khoản đã bị khóa");
                 }
 
                 UserVM userVM = _mapper.Map<UserVM>(user);
@@ -122,14 +120,14 @@ namespace AmateurFootballLeague.Controllers
             User user = _userService.GetUserByEmail(model.Email);
             if (user == null)
             {
-                return BadRequest("User is not exist.");
+                return BadRequest("Tài khoản không tồn tại");
             }
             try
             {
                 var response = await FirebaseAdmin.Messaging.FirebaseMessaging.DefaultInstance.UnsubscribeFromTopicAsync(new List<string>() { model.Token }, "/topics/" + user.Id);
                 if (response.SuccessCount > 0)
                 {
-                    return Ok(new { Message = "Logout success!" });
+                    return Ok(new { Message = "Đăng xuất thành công" });
                 }
                 return BadRequest();
             }
@@ -151,7 +149,7 @@ namespace AmateurFootballLeague.Controllers
                     return BadRequest();
                 }
 
-                return Ok("Success");
+                return Ok("Gửi thành công");
             }
             catch (Exception e)
             {

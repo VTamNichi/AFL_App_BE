@@ -96,7 +96,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<FootballFieldTypeVM>(currentFootballFieldType));
                 }
-                return NotFound("Can not found football field type by id: " + id);
+                return NotFound("Không tìm thấy loại sân với id là " + id);
             }
             catch (Exception)
             {
@@ -120,7 +120,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Tournament Type Name is duplicated"
+                        message = "Tên loại sân đã tồn tại"
                     });
                 }
 
@@ -149,7 +149,7 @@ namespace AmateurFootballLeague.Controllers
             FootballFieldType currentFootballFieldType = await _footballFieldTypeService.GetByIdAsync(id);
             if (currentFootballFieldType == null)
             {
-                return NotFound("Can not found football field type");
+                return NotFound("Không tìm thấy loại sân với id là " + id);
             }
             if (!String.IsNullOrEmpty(footballFieldTypeName))
             {
@@ -157,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Football Field Type Name is duplicated!"
+                        message = "Loại sân bóng đã tồn tại"
                     });
                 }
             }
@@ -195,7 +195,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found football field type by id: " + id
+                    message = "Không tìm thấy loại sân với id là " + id
                 });
             }
             try
@@ -205,10 +205,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa loại sân thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa loại sân thất bại");
             }
             catch (Exception)
             {

@@ -96,7 +96,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<TournamentTypeVM>(currentTournamentType));
                 }
-                return NotFound("Can not found tournament type by id: " + id);
+                return NotFound("Không tìm thấy loại giải đấu với id là " + id);
             }
             catch (Exception)
             {
@@ -120,7 +120,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Tournament Type Name is duplicated"
+                        message = "Tên loại giải đấu đã tồn tại"
                     });
                 }
 
@@ -129,7 +129,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetTournamentTypeById", new { id = tournamentTypeCreated.Id }, _mapper.Map<TournamentTypeVM>(tournamentTypeCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo loại giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -149,7 +149,7 @@ namespace AmateurFootballLeague.Controllers
             TournamentType currentTournamentType = await _tournamentTypeService.GetByIdAsync(id);
             if (currentTournamentType == null)
             {
-                return NotFound("Can not found tournament type");
+                return NotFound("Không tìm thấy loại giải đấu với id là " + id);
             }
             if (!String.IsNullOrEmpty(tournamentTypeName))
             {
@@ -157,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Tournament Type Name is duplicated!"
+                        message = "Tên loại giải đấu đã tồn tại"
                     });
                 }
             }
@@ -172,7 +172,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<TournamentTypeVM>(currentTournamentType));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật loại giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -195,7 +195,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found tournament type by id: " + id
+                    message = "Không tìm thấy loại giải đấu với id là " + id
                 });
             }
             try
@@ -205,10 +205,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa loại giải đấu thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa loại giải đấu thất bạ");
             }
             catch (Exception)
             {

@@ -98,7 +98,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<NewsVM>(currentNews));
                 }
-                return NotFound("Can not found news by id: " + id);
+                return NotFound("Không thể tìm thấy bản tin với id là " + id);
             }
             catch (Exception)
             {
@@ -123,7 +123,7 @@ namespace AmateurFootballLeague.Controllers
                 Tournament tournament = await _tournamentService.GetByIdAsync(tournamentID);
                 if (tournament == null)
                 {
-                    return BadRequest("Tournament not exist");
+                    return BadRequest("Giải đấu không tồn tại");
                 }
                 news.Content = content;
                 news.Status = true;
@@ -134,7 +134,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetNewsById", new { id = newsCreated.Id }, _mapper.Map<NewsVM>(newsCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo bản tin thất bại");
             }
             catch (Exception)
             {
@@ -162,7 +162,7 @@ namespace AmateurFootballLeague.Controllers
                     Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
                     if (tournament == null)
                     {
-                        return BadRequest("Tournament not exist");
+                        return BadRequest("Giải đấu không tồn tại");
                     }
                     else
                     {
@@ -177,7 +177,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<NewsVM>(news));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật bản tin thất bại");
             }
             catch (Exception)
             {
@@ -198,7 +198,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found news by id: " + id
+                    message = "Không thể tìm thấy bản tin với id là " + id
                 });
             }
             try
@@ -209,10 +209,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Thay đổi trạng thái bản tin thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái bản tin thất bại");
             }
             catch (Exception)
             {
@@ -235,7 +235,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found news by id: " + id
+                    message = "Không thể tìm thấy bản tin với id là " + id
                 });
             }
             try
@@ -248,10 +248,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa bản tin thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa bản tin thất bại");
             }
             catch (Exception)
             {

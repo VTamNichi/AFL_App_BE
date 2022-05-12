@@ -32,5 +32,9 @@ namespace AmateurFootballLeague.Services
         {
             return await _teamInTournamentRepository.DeleteAsync(entity);
         }
+        public int CountTeamInATournament(int tournamentId)
+        {
+            return _teamInTournamentRepository.CountTeamInATournament(tournamentId);
+        }
     }
 }

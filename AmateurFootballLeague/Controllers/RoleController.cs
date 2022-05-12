@@ -40,7 +40,6 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
-                Console.WriteLine("jjjjL " + pathToKey);
                 IQueryable<Role> roleList = _roleService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
@@ -98,7 +97,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<RoleVM>(currentRole));
                 }
-                return NotFound("Can not found role by id: " + id);
+                return NotFound("Không thể tìm thấy vai trò với id là " + id);
             }
             catch (Exception)
             {
@@ -122,7 +121,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Role Name is duplicated"
+                        message = "Tên vai trò đã tồn tại"
                     });
                 }
                 role.RoleName = role.RoleName.ToUpper();
@@ -131,7 +130,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetRoleById", new { id = roleCreated.Id }, _mapper.Map<RoleVM>(roleCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo vai trò mới thất bại");
             }
             catch (Exception)
             {
@@ -159,7 +158,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Role Name is duplicated!"
+                        message = "Tên vai trò đã tồn tại"
                     });
                 }
             }
@@ -171,7 +170,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<RoleVM>(currentRole));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật vai trò thất bại");
             }
             catch (Exception)
             {
@@ -194,7 +193,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found role by id: " + id
+                    message = "Không thể tìm thấy vai trò với id là " + id
                 });
             }
             try
@@ -204,10 +203,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa vai trò thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa vai trò thất bại");
             }
             catch (Exception)
             {

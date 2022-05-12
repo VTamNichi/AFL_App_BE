@@ -17,15 +17,17 @@ namespace AmateurFootballLeague.Controllers
         private readonly IUserService _userService;
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly ITournamentResultService _tournamentResultService;
+        private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public TeamController(ITeamService teamService, IUserService userService, ITeamInTournamentService teamInTournamentService, ITournamentResultService tournamentResultService, IUploadFileService uploadFileService, IMapper mapper)
+        public TeamController(ITeamService teamService, IUserService userService, ITeamInTournamentService teamInTournamentService, ITournamentResultService tournamentResultService, IPlayerInTeamService playerInTeamService, IUploadFileService uploadFileService, IMapper mapper)
         {
             _teamService = teamService;
             _userService = userService;
             _teamInTournamentService = teamInTournamentService;
             _tournamentResultService = tournamentResultService;
+            _playerInTeamService = playerInTeamService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
@@ -81,10 +83,16 @@ namespace AmateurFootballLeague.Controllers
                         teamListOrder = teamListPaging.OrderByDescending(tnm => tnm.TeamName).ToList();
                     }
                 }
+                List<TeamVM> listTeamVM = new List<TeamVM>();
+                listTeamVM = _mapper.Map<List<TeamVM>>(teamListOrder);
+                foreach (var teamVM in listTeamVM)
+                {
+                    teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(teamVM.Id);
+                }
 
                 var teamListResponse = new TeamListVM
                 {
-                    Teams = _mapper.Map<List<TeamVM>>(teamListOrder),
+                    Teams = listTeamVM,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -110,11 +118,13 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Team currentTeam = await _teamService.GetByIdAsync(id);
+                TeamVM teamVM = _mapper.Map<TeamVM>(currentTeam);
+                teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(id);
                 if (currentTeam != null)
                 {
-                    return Ok(_mapper.Map<TeamVM>(currentTeam));
+                    return Ok(teamVM);
                 }
-                return NotFound("Can not found team by id: " + id);
+                return NotFound("Không tìm thấy đội bóng với id là " + id);
             }
             catch (Exception)
             {
@@ -138,7 +148,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "User has a team"
+                        message = "Người dùng đã có đội bóng"
                     });
                 }
                 User user = await _userService.GetByIdAsync(model.Id);
@@ -146,14 +156,14 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound(new
                     {
-                        message = "User is not exist"
+                        message = "Người dùng không tồn tại"
                     });
                 }
                 if (user.RoleId != 3)
                 {
                     return BadRequest(new
                     {
-                        message = "User is not team manager role"
+                        message = "Người dùng không phải là vai trò quản lý đội bóng"
                     });
                 }
 
@@ -162,7 +172,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Team Name is duplicated"
+                        message = "Tên đội đã tồn tại"
                     });
                 }
                 try
@@ -180,7 +190,7 @@ namespace AmateurFootballLeague.Controllers
                 team.TeamName = model.TeamName;
                 team.TeamArea = String.IsNullOrEmpty(model.TeamArea) ? "" : model.TeamArea.Trim();
                 team.TeamPhone = String.IsNullOrEmpty(model.TeamPhone) ? "" : model.TeamPhone.Trim();
-                team.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : model.TeamGender == TeamGenderEnum.Female ? "Female" : "Other";
+                team.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : "Female";
                 team.Description = String.IsNullOrEmpty(model.Description) ? "" : model.Description.Trim();
                 team.DateCreate = DateTime.Now;
                 team.Status = true;
@@ -191,7 +201,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetTeamById", new { id = teamCreated.Id }, _mapper.Map<TeamVM>(teamCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo đội bóng thất bại");
             }
             catch (Exception)
             {
@@ -211,7 +221,7 @@ namespace AmateurFootballLeague.Controllers
             Team currentTeam = await _teamService.GetByIdAsync(model.Id);
             if (currentTeam == null)
             {
-                return NotFound("Can not found team");
+                return NotFound("Không tìm thấy đội bóng với id là " + model.Id);
             }
             if (!String.IsNullOrEmpty(model.TeamName))
             {
@@ -219,7 +229,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Team Name is duplicated!"
+                        message = "Tên đội đã tồn tại"
                     });
                 }
             }
@@ -238,16 +248,16 @@ namespace AmateurFootballLeague.Controllers
                 currentTeam.TeamName = String.IsNullOrEmpty(model.TeamName) ? currentTeam.TeamName : model.TeamName.Trim();
                 currentTeam.TeamArea = String.IsNullOrEmpty(model.TeamArea) ? currentTeam.TeamArea : model.TeamArea.Trim();
                 currentTeam.TeamPhone = String.IsNullOrEmpty(model.TeamPhone) ? currentTeam.TeamPhone : model.TeamPhone.Trim();
-                currentTeam.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : model.TeamGender == TeamGenderEnum.Female ? "Female" : model.TeamGender == TeamGenderEnum.Other ? "Other" : currentTeam.TeamGender;
+                currentTeam.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : model.TeamGender == TeamGenderEnum.Female ? "Female" : currentTeam.TeamGender;
                 currentTeam.Description = String.IsNullOrEmpty(model.Description) ? currentTeam.Description : model.Description.Trim();
                 currentTeam.DateUpdate = DateTime.Now;
 
                 bool isUpdated = await _teamService.UpdateAsync(currentTeam);
                 if (isUpdated)
                 {
-                    return Ok(_mapper.Map<TeamVM>(currentTeam));
+                    return CreatedAtAction("GetTeamById", new { id = currentTeam.Id }, _mapper.Map<TeamVM>(currentTeam));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật đội bóng thất bại");
             }
             catch (Exception)
             {
@@ -268,7 +278,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found team by id: " + id
+                    message = "Không tìm thấy đội bóng với id là " + id
                 });
             }
             try
@@ -279,10 +289,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Thay đổi trạng thái đội bóng thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái đội bóng thất bại");
             }
             catch (Exception)
             {
@@ -305,7 +315,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found team by id: " + id
+                    message = "Không tìm thấy đội bóng với id là " + id
                 });
             }
             try
@@ -317,10 +327,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa đội bóng thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa đội bóng thất bại");
             }
             catch (Exception)
             {
@@ -362,6 +372,7 @@ namespace AmateurFootballLeague.Controllers
                 foreach (var tid in top4ID)
                 {
                     TeamVM teamVM = _mapper.Map<TeamVM>(await _teamService.GetByIdAsync((int) tid.teamId));
+                    teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam((int)tid.teamId);
                     listTeamVM.Add(teamVM);
                 }
 
