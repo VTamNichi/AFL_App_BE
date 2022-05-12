@@ -88,6 +88,14 @@ namespace AmateurFootballLeague.Controllers
                         tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.Mode).ToList();
                     }
                 }
+                if (orderBy == TournamentFieldEnum.DateCreate)
+                {
+                    tournamentListOrder = tournamentListPaging.OrderBy(tnm => tnm.DateCreate).ToList();
+                    if (orderType == SortTypeEnum.DESC)
+                    {
+                        tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.DateCreate).ToList();
+                    }
+                }
 
                 var tournamentListResponse = new TournamentListVM
                 {

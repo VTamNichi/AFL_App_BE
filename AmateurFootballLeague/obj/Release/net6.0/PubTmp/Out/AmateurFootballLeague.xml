@@ -21,9 +21,6 @@
         <member name="M:AmateurFootballLeague.Controllers.AuthController.Logout(AmateurFootballLeague.ViewModels.Requests.UserLOM)">
             <summary>Logout the system</summary>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.AuthController.uploadFileImage(AmateurFootballLeague.ViewModels.Requests.ImageCM)">
-            <summary>Upload image to firebase</summary>
-        </member>
         <member name="M:AmateurFootballLeague.Controllers.AuthController.SendEmail(AmateurFootballLeague.ViewModels.Requests.EmailForm)">
             <summary>Send mail from system</summary>
         </member>
@@ -297,6 +294,12 @@
             <summary>Get count all team</summary>
             <returns>Return the count of team with the corresponding id</returns>
             <response code="200">Returns the count of team with the specified id</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.TeamController.GetTop4Team">
+            <summary>Get top 4 teams by achievement</summary>
+            <returns>Return top 4 teams by achievement</returns>
+            <response code="200">Returns top 4 teams by achievement</response>
             <response code="500">Internal server error</response>
         </member>
         <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetListTeamInTournament(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AmateurFootballLeague.ViewModels.Requests.TeamInTournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">

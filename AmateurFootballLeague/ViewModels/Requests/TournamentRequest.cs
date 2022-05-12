@@ -24,6 +24,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         TournamentName,
         Mode,
+        DateCreate,
     }
 
     public enum TournamentGenderEnum
