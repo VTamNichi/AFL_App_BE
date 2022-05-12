@@ -15,13 +15,17 @@ namespace AmateurFootballLeague.Controllers
     {
         private readonly ITeamService _teamService;
         private readonly IUserService _userService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
+        private readonly ITournamentResultService _tournamentResultService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public TeamController(ITeamService teamService, IUserService userService, IUploadFileService uploadFileService, IMapper mapper)
+        public TeamController(ITeamService teamService, IUserService userService, ITeamInTournamentService teamInTournamentService, ITournamentResultService tournamentResultService, IUploadFileService uploadFileService, IMapper mapper)
         {
             _teamService = teamService;
             _userService = userService;
+            _teamInTournamentService = teamInTournamentService;
+            _tournamentResultService = tournamentResultService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
@@ -80,7 +84,7 @@ namespace AmateurFootballLeague.Controllers
 
                 var teamListResponse = new TeamListVM
                 {
-                    Teams = _mapper.Map<List<Team>, List<TeamVM>>(teamListOrder),
+                    Teams = _mapper.Map<List<TeamVM>>(teamListOrder),
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -335,6 +339,33 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 return Ok(_teamService.CountAllTeam());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Get top 4 teams by achievement</summary>
+        /// <returns>Return top 4 teams by achievement</returns>
+        /// <response code="200">Returns top 4 teams by achievement</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("top4")]
+        [Produces("application/json")]
+        public async Task<ActionResult<List<TeamVM>>> GetTop4Team()
+        {
+            try
+            {
+                var top4ID = _teamInTournamentService.GetList().Join(_tournamentResultService.GetList(), tit => tit.Id, ts => ts.TeamInTournamentId, (tit, ts) => new { tit.TeamId })
+                          .GroupBy(t => t.TeamId).Select(g => new { teamId = g.Key, count = g.Count()}).OrderByDescending(t => t.count).Take(4).ToList();
+                List<TeamVM> listTeamVM = new List<TeamVM>();
+                foreach (var tid in top4ID)
+                {
+                    TeamVM teamVM = _mapper.Map<TeamVM>(await _teamService.GetByIdAsync((int) tid.teamId));
+                    listTeamVM.Add(teamVM);
+                }
+
+                return Ok(listTeamVM);
             }
             catch (Exception)
             {

@@ -139,26 +139,6 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Upload image to firebase</summary>
-        [HttpPost("upload-image")]
-        [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> uploadFileImage([FromForm] ImageCM model)
-        {
-            try
-            {
-                string fileUrl = await _uploadFileService.UploadFile(model.File, "service", "service-detail");
-                return Ok(new
-                {
-                    url = fileUrl
-                });
-            }
-            catch (Exception e)
-            {
-                return Ok(e.Message);
-            }
-        }
-
         /// <summary>Send mail from system</summary>
         [HttpPost("send-mail")]
         [Produces("application/json")]
