@@ -17,6 +17,7 @@ namespace AmateurFootballLeague.Utils
             #region AutoMapper UserViewModel
             CreateMap<User, UserVM>();
             CreateMap<UserCM, User>();
+            CreateMap<UserGGCM, User>();
             #endregion
 
             #region AutoMapper TournamentTypeViewModel

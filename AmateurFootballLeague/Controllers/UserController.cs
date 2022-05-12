@@ -203,6 +203,63 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
+        [HttpPost("CreateWithGoogle")]
+        [Produces("application/json")]
+        public async Task<ActionResult<UserVM>> CreateUserGG([FromForm] UserGGCM model)
+        {
+            try
+            {
+                User currentUser = _userService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
+                if (currentUser != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Email này đã tồn tại trông hệ thống"
+                    });
+                }
+                Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
+                if (currenRole == null)
+                {
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy vai trò này"
+                    });
+                }
+
+                User convertUser = _mapper.Map<User>(model);
+                convertUser.Email = model.Email.Trim().ToLower();
+                Guid pass = new Guid();
+                List<byte[]> listPassword = _userService.EncriptPassword(pass.ToString());
+                convertUser.PasswordHash = listPassword[0];
+                convertUser.PasswordSalt = listPassword[1];
+
+                convertUser.Username = model.Username.Trim();
+                convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
+                convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
+                convertUser.StatusBan = "NO BANNED";
+                convertUser.FlagReportComment = 0;
+                convertUser.FlagReportTeam = 0;
+                convertUser.FlagReportTournament = 0;
+                convertUser.Status = true;
+                convertUser.DateCreate = DateTime.Now;
+                convertUser.RoleId = model.RoleId;
+
+                User userCreated = await _userService.AddAsync(convertUser);
+                if (userCreated != null)
+                {
+                    return CreatedAtAction("GetUserByIdOrEmail", new { search = userCreated.Id }, _mapper.Map<UserVM>(userCreated));
+                }
+                return BadRequest(new
+                {
+                    message = "Tạo tài khoản thất bại"
+                });
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         /// <summary>Update a user</summary>
         /// <response code="201">Update user successfull</response>
         /// <response code="404">User is not found</response>

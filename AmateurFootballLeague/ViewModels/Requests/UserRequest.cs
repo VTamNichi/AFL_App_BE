@@ -52,6 +52,20 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int RoleId { get; set; }
     }
 
+    public class UserGGCM
+    {
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(64)]
+        public string Email { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(128)]
+        public string Username { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        public UserGenderEnum Gender { get; set; }
+        public string? Phone { get; set; }
+        public int RoleId { get; set; }
+    }
     public class UserUM
     {
         [Required(AllowEmptyStrings = false)]
