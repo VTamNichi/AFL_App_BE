@@ -12,8 +12,8 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string TeamGender { get; set; }
         public string Description { get; set; }
         public bool Status { get; set; }
+        public int NumberPlayerInTeam { get; set; }
     }
-
     public class TeamFVM
     {
         public int Id { get; set; }

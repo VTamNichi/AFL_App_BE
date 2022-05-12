@@ -31,7 +31,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         Male,
         Female,
-        Other,
     }
     public class TournamentCM
     {

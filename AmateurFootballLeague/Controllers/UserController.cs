@@ -113,7 +113,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<UserVM>(user));
                 }
-                return NotFound("User is not found");
+                return NotFound("Không tìm thấy người dùng");
             }
             catch (Exception)
             {
@@ -136,15 +136,15 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Email have been registered!"
+                        message = "Email này đã tồn tại trông hệ thống"
                     });
                 }
                 Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
                 if (currenRole == null)
                 {
-                    return BadRequest(new
+                    return NotFound(new
                     {
-                        message = "Can not found role by id!"
+                        message = "Không tìm thấy vai trò này"
                     });
                 }
 
@@ -169,7 +169,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 convertUser.Username = model.Username.Trim();
-                convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : "Other";
+                convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
                 convertUser.DateOfBirth = model.DateOfBirth;
                 convertUser.Address = String.IsNullOrEmpty(model.Address) ? "" : model.Address.Trim();
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
@@ -194,7 +194,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 return BadRequest(new
                 {
-                    message = "Create account failed!"
+                    message = "Tạo tài khoản thất bại"
                 });
             }
             catch (Exception)
@@ -216,7 +216,7 @@ namespace AmateurFootballLeague.Controllers
                 User user = await _userService.GetByIdAsync(model.Id);
                 if (user == null)
                 {
-                    return NotFound("User is not found");
+                    return NotFound("Không tìm thấy người dùng");
                 }
                 if (!String.IsNullOrEmpty(model.Email))
                 {
@@ -225,7 +225,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return BadRequest(new
                         {
-                            message = "Email have been registered!"
+                            message = "Email này đã tồn tại trông hệ thống"
                         });
                     }
                     user.Email = model.Email.Trim().ToLower();
@@ -235,9 +235,9 @@ namespace AmateurFootballLeague.Controllers
                     Role currenRole = await _roleService.GetByIdAsync(model.Id);
                     if (currenRole == null)
                     {
-                        return BadRequest(new
+                        return NotFound(new
                         {
-                            message = "Can not found role by id!"
+                            message = "Không tìm thấy vai trò này"
                         });
                     }
                     user.RoleId = (int)model.RoleId;
@@ -260,7 +260,7 @@ namespace AmateurFootballLeague.Controllers
                 
 
                 user.Username = String.IsNullOrEmpty(model.Username) ? user.Username : model.Username;
-                user.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : model.Gender == UserGenderEnum.Other ? "Other" : user.Gender;
+                user.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : user.Gender;
                 user.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? user.DateOfBirth : model.DateOfBirth;
                 user.Address = String.IsNullOrEmpty(model.Address) ? user.Address : model.Address;
                 user.Phone = String.IsNullOrEmpty(model.Phone) ? user.Phone : model.Phone;
@@ -278,7 +278,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 return BadRequest(new
                 {
-                    message = "Update account failed!"
+                    message = "Cập nhật tài khoản thất bại"
                 });
             }
             catch (Exception)
@@ -300,7 +300,7 @@ namespace AmateurFootballLeague.Controllers
                 User user = await _userService.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return NotFound("User is not found");
+                    return NotFound("Không tìm thấy người dùng");
                 }
 
                 user.Status = !user.Status;
@@ -332,7 +332,7 @@ namespace AmateurFootballLeague.Controllers
                 User user = await _userService.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return NotFound("User is not found");
+                    return NotFound("Không tìm thấy người dùng");
                 }
 
                 user.Status = false;
@@ -340,7 +340,7 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
                 {
-                    return Ok("Delete user success");
+                    return Ok("Xóa tài khoản thành công");
                 }
                 return BadRequest();
             }

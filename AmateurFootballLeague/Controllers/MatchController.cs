@@ -106,7 +106,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<MatchVM>(currentMatch));
                 }
-                return NotFound("Can not found match by id: " + id);
+                return NotFound("Không thể tìm thấy trận đấu với id là " + id);
             }
             catch (Exception)
             {
@@ -132,7 +132,7 @@ namespace AmateurFootballLeague.Controllers
                 Tournament tournament = await _tournamentService.GetByIdAsync(tournamentID);
                 if(tournament == null)
                 {
-                    return BadRequest("Tournament not exist");
+                    return BadRequest("Giải đấu không tồn tại");
                 }
                 match.TournamentId = tournamentID;
                 match.MatchDate = matchDate;
@@ -143,7 +143,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetMatchById", new { id = matchCreated.Id }, _mapper.Map<MatchVM>(matchCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo trận đấu thất bại");
             }
             catch (Exception)
             {
@@ -172,7 +172,7 @@ namespace AmateurFootballLeague.Controllers
                     Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
                     if (tournament == null)
                     {
-                        return BadRequest("Tournament not exist");
+                        return BadRequest("Giải đấu không tồn tại");
                     } else
                     {
                         match.TournamentId = (int)tournamentID;
@@ -186,7 +186,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<MatchVM>(match));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật trận đấu thất bại");
             }
             catch (Exception)
             {
@@ -209,7 +209,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found match by id: " + id
+                    message = "Không thể tìm thấy trận đấu với id là " + id
                 });
             }
             try
@@ -219,10 +219,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa trận đấu thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa trận đấu thất bại");
             }
             catch (Exception)
             {

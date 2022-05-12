@@ -13,14 +13,10 @@ namespace AmateurFootballLeague.Controllers
     public class PlayerInTeamController : ControllerBase
     {
         private readonly IPlayerInTeamService _playerInTeam;
-        private readonly IFootballPlayerService _footballPlayerService;
-        private readonly ITeamService _teamService;
         private readonly IMapper _mapper;
-        public PlayerInTeamController(IPlayerInTeamService playerInTeamService , IFootballPlayerService footballPlayerService, ITeamService teamService , IMapper mapper)
+        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper)
         {
             _playerInTeam = playerInTeamService;
-            _footballPlayerService = footballPlayerService;
-            _teamService = teamService;
             _mapper = mapper;
         }
 
@@ -64,7 +60,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Player Already In Team"
+                        message = "Cầu thủ đã có đội bóng"
                     });
                 }
                 pInTeam.Status = "";
@@ -75,7 +71,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetPlayerInTeamById", new { id = playerInTeamCreated.Id }, _mapper.Map<PlayerInTeamVM>(playerInTeamCreated));
                 }
-                return BadRequest();
+                return BadRequest("Thêm cầu thủ trông đội bóng thất bại");
             }
             catch
             {
@@ -84,7 +80,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-       [Route("api/v1/[controller]/id")]
+        [Route("{id}")]
         public async Task<ActionResult<PlayerInTeamVM>> GetPlayerInTeamById(int id)
         {
             try
@@ -94,7 +90,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<PlayerInTeamVM>(player));
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy cầu thủ trong đội bóng với id là " + id);
             }
             catch
             {
@@ -116,11 +112,11 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message = success
+                            message = "Thay đổi trạng thái cầu thủ trong đội bóng thành công"
                         });
                     }
                 }
-                return BadRequest();
+                return NotFound("Không tìm thấy cầu thủ trong đội bóng với id là " + Id);
             }
             catch
             {

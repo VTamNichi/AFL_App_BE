@@ -22,6 +22,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int UserId { get; set; }
         public int TournamentTypeId { get; set; }
         public int FootballFieldTypeId { get; set; }
+        public int NumberTeamInTournament { get; set; }
     }
     public class TournamentListVM
     {

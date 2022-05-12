@@ -25,7 +25,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        [Route("api/v1/MatchDetail/MatchId")]
+        [Route("MatchId")]
         public ActionResult<MatchDetailFVM> GetMatchDetailByMatch(int matchId)
         {
             try
@@ -58,7 +58,7 @@ namespace AmateurFootballLeague.Controllers
 
                 }
 
-                return NotFound();
+                return NotFound("Không tìm thấy chi tiết trận đấu");
 
             }
             catch (Exception ex)
@@ -69,14 +69,14 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        [Route("api/v1/MatchDetail/Id")]
+        [Route("Id")]
         public async Task<ActionResult<MatchDetailVM>> FindById(int id)
         {
             try {
                 MatchDetail match = await _matchDetail.GetByIdAsync(id);
                 if(match == null)
                 {
-                    return NotFound();
+                    return NotFound("Không tìm thấy chi tiết trận đấu");
                 }
                 return Ok(_mapper.Map<MatchDetailVM>(match));
             }
@@ -103,7 +103,7 @@ namespace AmateurFootballLeague.Controllers
                         return CreatedAtAction("GetById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
                     }
                 
-                return BadRequest();
+                return BadRequest("Tạo chi tiết trận đấu thất bại");
             }
             catch
             {
@@ -127,12 +127,12 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message = "Update success"
+                            message = "Cập nhập chi tiết trận đấu thành công"
                         });
                     }
-                    return BadRequest();
+                    return BadRequest("Cập nhật chi tiết trận đấu thất bại");
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy chi tiết trận đấu");
             }
             catch
             {
@@ -152,12 +152,12 @@ namespace AmateurFootballLeague.Controllers
                     if (isDeleted)
                     {
                         return Ok( new {
-                            message = "Delete Success"
+                            message = "Xóa chi tiết trận đấu thành công"
                         });
                     }
-                    return BadRequest();
+                    return BadRequest("Xóa chi tiết trận đấu thất bại");
                 }
-                return BadRequest();
+                return NotFound("Không tìm thấy chi tiết trận đấu");
             }
             catch
             {

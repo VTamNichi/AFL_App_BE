@@ -125,7 +125,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<TeamInTournamentVM>(currentTeamInTournament));
                 }
-                return NotFound("Can not found team in tournament by id: " + id);
+                return NotFound("Không tìm thấy đội bóng trong giả đấu với id là " + id);
             }
             catch (Exception)
             {
@@ -147,12 +147,12 @@ namespace AmateurFootballLeague.Controllers
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
                 if (tournament == null)
                 {
-                    return BadRequest("Tournament not exist");
+                    return BadRequest("Giải đấu không tồn tại");
                 }
                 Team team = await _teamService.GetByIdAsync(model.TeamId);
                 if (team == null)
                 {
-                    return BadRequest("Team not exist");
+                    return BadRequest("Đội bóng không tồn tại");
                 }
                 teamInTournament.TournamentId = model.TournamentId;
                 teamInTournament.TeamId = model.TeamId;
@@ -165,7 +165,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetTeamInTournamentById", new { id = teamInTournamentCreated.Id }, _mapper.Map<TeamInTournamentVM>(teamInTournamentCreated));
                 }
-                return BadRequest();
+                return BadRequest("Thêm đội bóng vào giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -187,14 +187,14 @@ namespace AmateurFootballLeague.Controllers
                 TeamInTournament teamInTournament = await _teamInTournamentService.GetByIdAsync(model.Id);
                 if (teamInTournament == null)
                 {
-                    return NotFound("Can not found team in tournament");
+                    return NotFound("Không tìm thấy đội bóng trong giải đấu với id là " + model.Id);
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
                 {
                     Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
                     if (tournament == null)
                     {
-                        return BadRequest("Tournament not exist");
+                        return BadRequest("Giải đấu không tồn tại");
                     } 
                     else
                     {
@@ -206,7 +206,7 @@ namespace AmateurFootballLeague.Controllers
                     Team team = await _teamService.GetByIdAsync((int)model.TeamId);
                     if (team == null)
                     {
-                        return BadRequest("Team not exist");
+                        return BadRequest("Đội bóng không tồn tại");
                     }
                     else
                     {
@@ -223,7 +223,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetTeamInTournamentById", new { id = teamInTournamentCreated.Id }, _mapper.Map<TeamInTournamentVM>(teamInTournamentCreated));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật đội bóng trong giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -246,7 +246,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found teamInTournament by id: " + id
+                    message = "Không tìm thấy đội bóng trong giải đấu với id là " + id
                 });
             }
             try
@@ -256,10 +256,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa đội bóng trong giải đấu thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa đội bóng trong giải đấu thất bại");
             }
             catch (Exception)
             {

@@ -123,7 +123,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<FootballPlayerVM>(currentFootballPlayer));
                 }
-                return NotFound("Can not found football player by id: " + id);
+                return NotFound("Không thể tìm thấy cầu thủ với id là " + id);
             }
             catch (Exception)
             {
@@ -157,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     footballPlayer.DateOfBirth = model.DateOfBirth;
                 }
-                footballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : "Other";
+                footballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : "Female";
                 footballPlayer.DateCreate = DateTime.Now;
                 footballPlayer.Status = true;
 
@@ -166,7 +166,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetFootballPlayerById", new { id = footballPlayerCreated.Id }, _mapper.Map<FootballPlayerVM>(footballPlayerCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo cầu thủ thất bại");
             }
             catch (Exception)
             {
@@ -186,7 +186,7 @@ namespace AmateurFootballLeague.Controllers
             FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(model.Id);
             if (currentFootballPlayer == null)
             {
-                return NotFound("Can not found football player");
+                return NotFound("Không thể tìm thấy cầu thủ với id là " + model.Id);
             }
             try
             {
@@ -197,7 +197,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 currentFootballPlayer.Email = String.IsNullOrEmpty(model.Email) ? currentFootballPlayer.Email : model.Email.Trim();
                 currentFootballPlayer.PlayerName = String.IsNullOrEmpty(model.PlayerName) ? currentFootballPlayer.PlayerName : model.PlayerName.Trim();
-                currentFootballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : model.Gender == FootballPlayerGenderEnum.Other ? "Other" : currentFootballPlayer.Gender;
+                currentFootballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : currentFootballPlayer.Gender;
                 currentFootballPlayer.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? currentFootballPlayer.DateOfBirth : model.DateOfBirth;
                 currentFootballPlayer.DateUpdate = DateTime.Now;
 
@@ -206,7 +206,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<FootballPlayerVM>(currentFootballPlayer));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật cầu thủ thất bại");
             }
             catch (Exception)
             {
@@ -227,7 +227,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found football player by id: " + id
+                    message = "Không thể tìm thấy cầu thủ với id là " + id
                 });
             }
             try
@@ -238,10 +238,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Thay đổi trạng thái cầu thủ thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái cầu thủ thất bại");
             }
             catch (Exception)
             {
@@ -264,7 +264,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found football player by id: " + id
+                    message = "Không thể tìm thấy cầu thủ với id là " + id
                 });
             }
             try
@@ -276,10 +276,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa  cầu thủ thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa  cầu thủ thất bại");
             }
             catch (Exception)
             {

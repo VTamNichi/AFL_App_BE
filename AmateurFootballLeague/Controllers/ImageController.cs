@@ -85,7 +85,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<ImageVM>(currentImage));
                 }
-                return NotFound("Can not found image by id: " + id);
+                return NotFound("Không thể tìm thấy hình ảnh với id là " + id);
             }
             catch (Exception)
             {
@@ -107,7 +107,7 @@ namespace AmateurFootballLeague.Controllers
                 News news = await _newsService.GetByIdAsync(model.NewsID);
                 if (news == null)
                 {
-                    return BadRequest("News not exist");
+                    return BadRequest("Bản tin không tồn tại");
                 }
 
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
@@ -120,7 +120,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetImageById", new { id = imageCreated.Id }, _mapper.Map<ImageVM>(imageCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo hình ảnh thất bại");
             }
             catch (Exception)
             {
@@ -145,7 +145,7 @@ namespace AmateurFootballLeague.Controllers
                     News news = await _newsService.GetByIdAsync((int)model.NewsID);
                     if (news == null)
                     {
-                        return BadRequest("News not exist");
+                        return BadRequest("Bản tin không tồn tại");
                     }
                     else
                     {
@@ -164,7 +164,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<ImageVM>(image));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật bản tin thất bại");
             }
             catch (Exception)
             {
@@ -185,7 +185,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found image by id: " + id
+                    message = "Không thể tìm thấy hình ảnh với id là " + id
                 });
             }
             try
@@ -196,10 +196,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Thay đổi trạng thái hình ảnh thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái hình ảnh thất bại");
             }
             catch (Exception)
             {
@@ -222,7 +222,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found image by id: " + id
+                    message = "Không thể tìm thấy hình ảnh với id là " + id
                 });
             }
             try
@@ -235,10 +235,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa trạng thái hình ảnh thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa trạng thái hình ảnh thất bại");
             }
             catch (Exception)
             {

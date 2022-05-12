@@ -16,13 +16,15 @@ namespace AmateurFootballLeague.Controllers
     {
         private readonly ITournamentService _tournamentService;
         private readonly IUserService _userService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public TournamentController(ITournamentService tournamentService, IUserService userService, IUploadFileService uploadFileService, IMapper mapper)
+        public TournamentController(ITournamentService tournamentService, IUserService userService, ITeamInTournamentService teamInTournamentService, IUploadFileService uploadFileService, IMapper mapper)
         {
             _tournamentService = tournamentService;
             _userService = userService;
+            _teamInTournamentService = teamInTournamentService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
@@ -96,10 +98,16 @@ namespace AmateurFootballLeague.Controllers
                         tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.DateCreate).ToList();
                     }
                 }
+                List<TournamentVM> listTournamentVM = new List<TournamentVM>();
+                listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListOrder);
+                foreach (var tournamentVM in listTournamentVM)
+                {
+                    tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(tournamentVM.Id);
+                }
 
                 var tournamentListResponse = new TournamentListVM
                 {
-                    Tournaments = _mapper.Map<List<Tournament>, List<TournamentVM>>(tournamentListOrder),
+                    Tournaments = listTournamentVM,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -125,11 +133,13 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Tournament currentTournament = await _tournamentService.GetByIdAsync(id);
+                TournamentVM tournamentVM = _mapper.Map<TournamentVM>(currentTournament);
+                tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(id);
                 if (currentTournament != null)
                 {
-                    return Ok(_mapper.Map<TournamentVM>(currentTournament));
+                    return Ok(tournamentVM);
                 }
-                return NotFound("Can not found tournament by id: " + id);
+                return NotFound("Không tìm thấy giải đấu với id là " + id);
             }
             catch (Exception)
             {
@@ -154,7 +164,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "User is not host role"
+                        message = "Người dùng không có vai trò chủ giải đấu"
                     });
                 }
 
@@ -163,7 +173,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Tournament Name is duplicated"
+                        message = "Tên giải đấu đã tồn tại"
                     });
                 }
                 tournament.TournamentName = model.TournamentName;
@@ -185,7 +195,7 @@ namespace AmateurFootballLeague.Controllers
                     tournament.TournamentAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
-                tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
+                tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : "Female";
                 tournament.RegisterEndDate = model.RegisterEndDate;
                 tournament.TournamentStartDate = model.TournamentStartDate;
                 tournament.TournamentEndDate = model.TournamentEndDate;
@@ -206,7 +216,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetTournamentById", new { id = tournamentCreated.Id }, _mapper.Map<TournamentVM>(tournamentCreated));
                 }
-                return BadRequest();
+                return BadRequest("Tạo giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -226,7 +236,7 @@ namespace AmateurFootballLeague.Controllers
             Tournament currentTournament = await _tournamentService.GetByIdAsync(model.Id);
             if (currentTournament == null)
             {
-                return NotFound("Can not found tournament");
+                return NotFound("Không tìm thấy giải đấu với id là " + model.Id);
             }
             if (!String.IsNullOrEmpty(model.TournamentName))
             {
@@ -234,7 +244,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Tournament Name is duplicated!"
+                        message = "Tên giải đấu đã tồn tại"
                     });
                 }
             }
@@ -251,7 +261,7 @@ namespace AmateurFootballLeague.Controllers
                 catch (Exception) { }
 
                 currentTournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? currentTournament.TournamentPhone : model.TournamentPhone.Trim();
-                currentTournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : model.TournamentGender == TournamentGenderEnum.Other ? "Other" : currentTournament.TournamentGender;
+                currentTournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : currentTournament.TournamentGender;
                 currentTournament.TournamentName = String.IsNullOrEmpty(model.TournamentName) ? currentTournament.TournamentName : model.TournamentName.Trim();
                 currentTournament.Mode = model.Mode == TournamentModeEnum.PUBLIC ? "PUBLIC" : model.Mode == TournamentModeEnum.PRIVATE ? "PRIVATE" : currentTournament.Mode;
                 currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
@@ -269,9 +279,9 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _tournamentService.UpdateAsync(currentTournament);
                 if (isUpdated)
                 {
-                    return Ok(_mapper.Map<TournamentVM>(currentTournament));
+                    return CreatedAtAction("GetTournamentById", new { id = currentTournament.Id }, _mapper.Map<TournamentVM>(currentTournament));
                 }
-                return BadRequest();
+                return BadRequest("Cập nhật giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -292,7 +302,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found tournament by id: " + id
+                    message = "Không tìm thấy giải đấu với id là " + id
                 });
             }
             try
@@ -303,10 +313,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Thay đổi trạng thái giải đấu thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái giải đấu thất bại");
             }
             catch (Exception)
             {
@@ -329,7 +339,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 return NotFound(new
                 {
-                    message = "Can not found tournament by id: " + id
+                    message = "Không tìm thấy giải đấu với id là " + id
                 });
             }
             try
@@ -341,10 +351,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(new
                     {
-                        message = "Success"
+                        message = "Xóa giải đấu thành công"
                     });
                 }
-                return BadRequest();
+                return BadRequest("Xóa giải đấu thất bại");
             }
             catch (Exception)
             {

@@ -59,7 +59,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Player exist in this team"
+                        message = "Cầu thủ đã tồn tại trong giải đấu"
                     });
 
                 }
@@ -68,7 +68,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Player in another team"
+                        message = "Cầu thủ đang trong một đội bóng khác"
                     });
                 }
                 playerCreate.TeamInTournamentId = player.TeamInTournamentId;
@@ -78,7 +78,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return CreatedAtAction("GetById", new { id = playerCreatedSuccess.Id }, _mapper.Map<PlayerInTournamentVM>(playerCreatedSuccess));
                 }
-                return BadRequest();
+                return BadRequest("Tạo cầu thủ trong giải đấu thất bại");
             }
             catch
             {
@@ -87,7 +87,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet] 
-        [Route("api/v1/[controller]/id")]
+        [Route("id")]
         public async Task<ActionResult<PlayerInTournamentVM>> GetById(int id)
         {
             try
@@ -97,7 +97,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<PlayerInTournamentVM>(player));
                 }
-                return NotFound();
+                return NotFound("Không tìm thấy cầu thủ trong giải đấu với id là " + id);
             }
             catch
             {
@@ -118,15 +118,15 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return Ok(new
                         {
-                            message = "Delete Success"
+                            message = "Xóa cầu thủ trong giải đấu thành công"
                         });
                     }
                     else
                     {
-                        return BadRequest();
+                        return BadRequest("Xóa cầu thủ trong giải đấu thất bại");
                     }
                 }
-                return BadRequest();
+                return NotFound("Không tìm thấy cầu thủ trong giải đấu với id là " + id);
             }
             catch
             {

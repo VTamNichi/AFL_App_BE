@@ -7,5 +7,10 @@ namespace AmateurFootballLeague.Repositories
     public class TeamInTournamentRepository : Repository<TeamInTournament, int>, ITeamInTournamentRepository
     {
         public TeamInTournamentRepository(AmateurFootballLeagueContext dbContext) : base(dbContext) { }
+
+        public int CountTeamInATournament(int tournamentId)
+        {
+            return GetList().Where(tit => tit.TournamentId == tournamentId).Count();
+        }
     }
 }

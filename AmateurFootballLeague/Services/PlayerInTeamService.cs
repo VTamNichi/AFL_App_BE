@@ -36,5 +36,9 @@ namespace AmateurFootballLeague.Services
         {
             return await _playerInTeam.UpdateAsync(entity);
         }
+        public int CountPlayerInATeam(int teamId)
+        {
+            return _playerInTeam.CountPlayerInATeam(teamId);
+        }
     }
 }
