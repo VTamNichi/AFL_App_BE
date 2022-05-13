@@ -28,16 +28,10 @@ namespace AmateurFootballLeague.ViewModels.Requests
         [StringLength(64)]
         public string Email { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [StringLength(32)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [StringLength(128)]
-        public string Username { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        public UserGenderEnum Gender { get; set; }
+        public string? Username { get; set; }
+        public UserGenderEnum? Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public string? Address { get; set; }
         public string? Phone { get; set; }
