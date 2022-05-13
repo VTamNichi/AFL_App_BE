@@ -42,17 +42,15 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public TournamentModeEnum Mode { get; set; } = TournamentModeEnum.PUBLIC;
 
         public string? TournamentPhone { get; set; }
+        
         public TournamentGenderEnum? TournamentGender { get; set; }
 
 
-        [Required(AllowEmptyStrings = false)]
-        public DateTime RegisterEndDate { get; set; }
+        public DateTime? RegisterEndDate { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public DateTime TournamentStartDate { get; set; }
+        public DateTime? TournamentStartDate { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public DateTime TournamentEndDate { get; set; }
+        public DateTime? TournamentEndDate { get; set; }
 
         public string? FootballFieldAddress { get; set; }
         

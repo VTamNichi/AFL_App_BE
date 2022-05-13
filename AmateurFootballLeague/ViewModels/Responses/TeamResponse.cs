@@ -10,6 +10,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string TeamArea { get; set; }
         public string TeamPhone { get; set; }
         public string TeamGender { get; set; }
+        public DateTime DateCreate { get; set; }
         public string Description { get; set; }
         public bool Status { get; set; }
         public int NumberPlayerInTeam { get; set; }

@@ -18,6 +18,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int MatchMinutes { get; set; }
         public int FootballTeamNumber { get; set; }
         public int FootballPlayerMaxNumber { get; set; }
+        public DateTime DateCreate { get; set; }
         public bool Status { get; set; }
         public int UserId { get; set; }
         public int TournamentTypeId { get; set; }

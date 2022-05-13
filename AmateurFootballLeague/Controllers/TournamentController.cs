@@ -195,11 +195,11 @@ namespace AmateurFootballLeague.Controllers
                     tournament.TournamentAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
-                tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : "Female";
-                tournament.RegisterEndDate = model.RegisterEndDate;
-                tournament.TournamentStartDate = model.TournamentStartDate;
-                tournament.TournamentEndDate = model.TournamentEndDate;
-                tournament.FootballFieldAddress = model.FootballFieldAddress;
+                tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
+                tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now : model.RegisterEndDate;
+                tournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? DateTime.Now : model.TournamentStartDate;
+                tournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? DateTime.Now : model.TournamentEndDate;
+                tournament.FootballFieldAddress = String.IsNullOrEmpty(model.FootballFieldAddress) ? "" : model.FootballFieldAddress;
                 tournament.Description = String.IsNullOrEmpty(model.Description) ? "" : model.Description.Trim();
                 tournament.MatchMinutes = model.MatchMinutes;
                 tournament.FootballTeamNumber = model.FootballTeamNumber;

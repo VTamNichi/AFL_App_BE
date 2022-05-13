@@ -136,7 +136,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Email này đã tồn tại trông hệ thống"
+                        message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
                 Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
@@ -151,9 +151,19 @@ namespace AmateurFootballLeague.Controllers
                 User convertUser = _mapper.Map<User>(model);
                 convertUser.Email = model.Email.Trim().ToLower();
 
-                List<byte[]> listPassword = _userService.EncriptPassword(model.Password);
-                convertUser.PasswordHash = listPassword[0];
-                convertUser.PasswordSalt = listPassword[1];
+                if (!String.IsNullOrEmpty(model.Password))
+                {
+                    List<byte[]> listPassword = _userService.EncriptPassword(model.Password);
+                    convertUser.PasswordHash = listPassword[0];
+                    convertUser.PasswordSalt = listPassword[1];
+                }
+                else 
+                {
+                    Guid pass = new Guid();
+                    List<byte[]> listPassword = _userService.EncriptPassword(pass.ToString());
+                    convertUser.PasswordHash = listPassword[0];
+                    convertUser.PasswordSalt = listPassword[1];
+                }
 
                 try
                 {
@@ -168,8 +178,8 @@ namespace AmateurFootballLeague.Controllers
                     convertUser.Avatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
 
-                convertUser.Username = model.Username.Trim();
-                convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
+                convertUser.Username = String.IsNullOrEmpty(model.Username) ? "" : model.Username.Trim();
+                convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : "All";
                 convertUser.DateOfBirth = model.DateOfBirth;
                 convertUser.Address = String.IsNullOrEmpty(model.Address) ? "" : model.Address.Trim();
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
@@ -214,7 +224,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest(new
                     {
-                        message = "Email này đã tồn tại trông hệ thống"
+                        message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
                 Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
@@ -282,7 +292,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return BadRequest(new
                         {
-                            message = "Email này đã tồn tại trông hệ thống"
+                            message = "Email này đã tồn tại trong hệ thống"
                         });
                     }
                     user.Email = model.Email.Trim().ToLower();
