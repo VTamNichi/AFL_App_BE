@@ -13,7 +13,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
         Email,
         PlayerName,
         DateOfBirth,
-        ClothersNumber,
     }
     public class FootballPlayerCM
     {
@@ -32,7 +31,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         public IFormFile? PlayerAvatar { get; set; }
 
-        public int? ClothersNumber { get; set; }
+        public string? Phone { get; set; }
     }
     public class FootballPlayerUM
     {
@@ -49,6 +48,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         public IFormFile? PlayerAvatar { get; set; }
 
-        public int? ClothersNumber { get; set; }
+        public string? Phone { get; set; }
     }
 }

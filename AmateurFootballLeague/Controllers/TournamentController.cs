@@ -36,7 +36,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpGet]
         [Produces("application/json")]
-        public ActionResult<TournamentTypeListVM> GetListTournament(
+        public ActionResult<TournamentListVM> GetListTournament(
             [FromQuery(Name = "tournament-name")] string? name,
             [FromQuery(Name = "tournament-mode")] TournamentModeEnum? mode,
             [FromQuery(Name = "tournament-type")] TournamentTypeEnum? type,
@@ -57,7 +57,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(mode.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.Mode.ToUpper().Contains(mode.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.Mode.ToUpper().Equals(mode.ToString().Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(type.ToString()))
                 {
@@ -65,12 +65,15 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(gender.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.TournamentGender.ToUpper().Contains(gender.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.TournamentGender.ToUpper().Equals(gender.ToString().Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(footballType.ToString()))
                 {
                     tournamentList = tournamentList.Where(s => s.FootballFieldType.FootballFieldTypeName.ToUpper().Contains(footballType.ToString().Trim().ToUpper()));
                 }
+
+                int countList = tournamentList.Count();
+
                 var tournamentListPaging = tournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var tournamentListOrder = new List<Tournament>();
@@ -109,6 +112,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     Tournaments = listTournamentVM,
                     CurrentPage = pageIndex,
+                    CountList = countList,
                     Size = limit
                 };
 

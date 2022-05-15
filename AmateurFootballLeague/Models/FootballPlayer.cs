@@ -20,7 +20,7 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateCreate { get; set; }
         public DateTime? DateUpdate { get; set; }
         public DateTime? DateDelete { get; set; }
-        public int? ClothersNumber { get; set; }
+        public string? Phone { get; set; }
 
         public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
     }

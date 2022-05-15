@@ -72,6 +72,10 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.Gender).HasMaxLength(8);
 
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.PlayerAvatar).IsUnicode(false);
 
                 entity.Property(e => e.PlayerName).HasMaxLength(128);
@@ -408,7 +412,7 @@ namespace AmateurFootballLeague.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534C4543E26")
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D105343C66ED2E")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");

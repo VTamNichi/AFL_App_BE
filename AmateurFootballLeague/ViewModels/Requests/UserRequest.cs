@@ -54,6 +54,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
         public string Username { get; set; }
+        public string? Avatar { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public UserGenderEnum Gender { get; set; }

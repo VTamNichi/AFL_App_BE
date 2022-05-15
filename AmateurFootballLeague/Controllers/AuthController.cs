@@ -137,23 +137,49 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Send mail from system</summary>
-        [HttpPost("send-mail")]
+        /// <summary>Send verify code from system</summary>
+        /// <returns>Return verify code</returns>
+        /// <response code="200">Returns verify code</response>
+        /// <response code="400">Send mail fail</response>
+        /// <response code="500">Internal Server</response>
+        [HttpPost("send-verify-code")]
         [Produces("application/json")]
-        public async Task<ActionResult> SendEmail([FromBody] EmailForm model)
+        public async Task<ActionResult<String>> SendVerifyCode(String email, int toDo)
         {
             try
             {
+                User user = _userService.GetUserByEmail(email);
+                if(toDo == 1)
+                {
+                    if (user != null)
+                    {
+                        return BadRequest("Tài khoản đã tồn tại");
+                    }
+                } else
+                {
+                    if (user == null)
+                    {
+                        return NotFound("Tài khoản không tồn tại");
+                    }
+                }
+                Random rd = new Random();
+                int code = rd.Next(100000, 999999);
+
+                EmailForm model = new EmailForm();
+                model.ToEmail = email;
+                model.Subject = "Mã xác nhận tài khoản A-Football-League";
+                model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào <a href='mailto:" + email + "'>" + email + "</a>,</p><p style='font-size: 18px'>Chúng tôi đã nhận yêu cầu gửi mã xác thực cho tài khoản A-Football-League của bạn.</p><p style='font-size: 18px'>Mã xác thực của bạn là: " + code.ToString() + "</p><p style='font-size: 18px'>Nếu không yêu cầu mã này thì bạn có thể bỏ qua email này một cách an toàn. Có thể ai đó khác đã nhập địa chỉ email của bạn do nhầm lẫn.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+
                 if (!await _sendEmailService.SendEmail(model))
                 {
-                    return BadRequest();
+                    return BadRequest("Gửi thất bại");
                 }
 
-                return Ok("Gửi thành công");
+                return Ok(code.ToString());
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return Ok(e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }
