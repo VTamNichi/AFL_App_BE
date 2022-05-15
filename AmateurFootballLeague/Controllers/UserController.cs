@@ -243,6 +243,8 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.PasswordHash = listPassword[0];
                 convertUser.PasswordSalt = listPassword[1];
 
+                convertUser.Avatar = String.IsNullOrEmpty(model.Avatar) ? "" : model.Avatar;
+
                 convertUser.Username = model.Username.Trim();
                 convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
@@ -285,21 +287,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-                if (!String.IsNullOrEmpty(model.Email))
-                {
-                    User currentUser = _userService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
-                    if (currentUser != null)
-                    {
-                        return BadRequest(new
-                        {
-                            message = "Email này đã tồn tại trong hệ thống"
-                        });
-                    }
-                    user.Email = model.Email.Trim().ToLower();
-                }
+                
                 if (!String.IsNullOrEmpty(model.RoleId.ToString()))
                 {
-                    Role currenRole = await _roleService.GetByIdAsync(model.Id);
+                    Role currenRole = await _roleService.GetByIdAsync((int)model.RoleId);
                     if (currenRole == null)
                     {
                         return NotFound(new
@@ -377,7 +368,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok(_mapper.Map<UserVM>(user));
                 }
-                return BadRequest();
+                return BadRequest("Thay đổi trạng thái người dùng thất bại");
             }
             catch (Exception)
             {
@@ -409,7 +400,78 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return Ok("Xóa tài khoản thành công");
                 }
-                return BadRequest();
+                return BadRequest("Xóa tài khoản thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Change password</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Wrong password</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPatch("change-password")]
+        [Produces("application/json")]
+        public async Task<ActionResult> ChangePassword([FromQuery(Name = "id")] int id, [FromQuery(Name = "current-password")] string currentPassword, [FromQuery(Name = "new-password")] string newPassword)
+        {
+            try
+            {
+                User user = await _userService.GetByIdAsync(id);
+                if (user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng");
+                }
+                if (!_userService.CheckPassword(currentPassword, user.PasswordHash, user.PasswordSalt))
+                {
+                    return BadRequest("Sai mật khẩu");
+                }
+                List<byte[]> listPassword = _userService.EncriptPassword(newPassword);
+                user.PasswordHash = listPassword[0];
+                user.PasswordSalt = listPassword[1];
+                user.DateUpdate = DateTime.Now;
+                bool isUpdated = await _userService.UpdateAsync(user);
+                if (isUpdated)
+                {
+                    return Ok("Đổi mật khẩu thành công thành công");
+                }
+                return BadRequest("Đổi mật khẩu thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Reset password</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Wrong password</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPatch("reset-password")]
+        [Produces("application/json")]
+        public async Task<ActionResult> ResetPassword([FromQuery(Name = "email")] String email, [FromQuery(Name = "new-password")] string newPassword)
+        {
+            try
+            {
+                User user = _userService.GetUserByEmail(email);
+                if (user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng");
+                }
+
+                List<byte[]> listPassword = _userService.EncriptPassword(newPassword);
+                user.PasswordHash = listPassword[0];
+                user.PasswordSalt = listPassword[1];
+                user.DateUpdate = DateTime.Now;
+                bool isUpdated = await _userService.UpdateAsync(user);
+                if (isUpdated)
+                {
+                    return Ok("Đổi mật khẩu thành công thành công");
+                }
+                return BadRequest("Đổi mật khẩu thất bại");
             }
             catch (Exception)
             {

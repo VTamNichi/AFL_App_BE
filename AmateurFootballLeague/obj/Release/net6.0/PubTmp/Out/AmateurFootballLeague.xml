@@ -21,8 +21,12 @@
         <member name="M:AmateurFootballLeague.Controllers.AuthController.Logout(AmateurFootballLeague.ViewModels.Requests.UserLOM)">
             <summary>Logout the system</summary>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.AuthController.SendEmail(AmateurFootballLeague.ViewModels.Requests.EmailForm)">
-            <summary>Send mail from system</summary>
+        <member name="M:AmateurFootballLeague.Controllers.AuthController.SendVerifyCode(System.String,System.Int32)">
+            <summary>Send verify code from system</summary>
+            <returns>Return verify code</returns>
+            <response code="200">Returns verify code</response>
+            <response code="400">Send mail fail</response>
+            <response code="500">Internal Server</response>
         </member>
         <member name="M:AmateurFootballLeague.Controllers.FootballFieldTypeController.GetListTournamentType(System.String,AmateurFootballLeague.ViewModels.Requests.FootballFieldTypeEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list football field types</summary>
@@ -489,6 +493,20 @@
             <response code="200">Success</response>
             <response code="404">Not Found</response>
             <response code="400">Bad Request</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.ChangePassword(System.Int32,System.String,System.String)">
+            <summary>Change password</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Wrong password</response>
+            <response code="500">Failed to save request</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.UserController.ResetPassword(System.String,System.String)">
+            <summary>Reset password</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Wrong password</response>
             <response code="500">Failed to save request</response>
         </member>
     </members>

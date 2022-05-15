@@ -62,8 +62,11 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(gender.ToString()))
                 {
-                    teamList = teamList.Where(s => s.TeamGender.ToUpper().Contains(gender.ToString().Trim().ToUpper()));
+                    teamList = teamList.Where(s => s.TeamGender.ToUpper().Equals(gender.ToString().Trim().ToUpper()));
                 }
+
+                int countList = teamList.Count();
+                
                 var teamListPaging = teamList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var teamListOrder = new List<Team>();
@@ -93,6 +96,7 @@ namespace AmateurFootballLeague.Controllers
                 var teamListResponse = new TeamListVM
                 {
                     Teams = listTeamVM,
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };

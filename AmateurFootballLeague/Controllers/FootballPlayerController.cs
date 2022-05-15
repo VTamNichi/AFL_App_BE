@@ -47,6 +47,8 @@ namespace AmateurFootballLeague.Controllers
                     footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(name.Trim().ToUpper()));
                 }
 
+                int countList = footballPlayerList.Count();
+
                 var footballPlayerListPaging = footballPlayerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var footballPlayerListOrder = new List<FootballPlayer>();
@@ -82,18 +84,11 @@ namespace AmateurFootballLeague.Controllers
                         footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.DateOfBirth).ToList();
                     }
                 }
-                if (orderBy == FootballPlayerFieldEnum.ClothersNumber)
-                {
-                    footballPlayerListOrder = footballPlayerListPaging.OrderBy(tnm => tnm.ClothersNumber).ToList();
-                    if (orderType == SortTypeEnum.DESC)
-                    {
-                        footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.ClothersNumber).ToList();
-                    }
-                }
 
                 var footballPlayerListResponse = new FootballPlayerListVM
                 {
                     FootballPlayers = _mapper.Map<List<FootballPlayer>, List<FootballPlayerVM>>(footballPlayerListOrder),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -158,6 +153,7 @@ namespace AmateurFootballLeague.Controllers
                     footballPlayer.DateOfBirth = model.DateOfBirth;
                 }
                 footballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : "Female";
+                footballPlayer.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone;
                 footballPlayer.DateCreate = DateTime.Now;
                 footballPlayer.Status = true;
 
@@ -199,6 +195,7 @@ namespace AmateurFootballLeague.Controllers
                 currentFootballPlayer.PlayerName = String.IsNullOrEmpty(model.PlayerName) ? currentFootballPlayer.PlayerName : model.PlayerName.Trim();
                 currentFootballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : currentFootballPlayer.Gender;
                 currentFootballPlayer.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? currentFootballPlayer.DateOfBirth : model.DateOfBirth;
+                currentFootballPlayer.Phone = String.IsNullOrEmpty(model.Phone) ? currentFootballPlayer.Phone : model.Phone;
                 currentFootballPlayer.DateUpdate = DateTime.Now;
 
                 bool isUpdated = await _footballPlayerService.UpdateAsync(currentFootballPlayer);

@@ -34,6 +34,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class TeamListVM
     {
         public List<TeamVM> Teams { get; set; } = new List<TeamVM>();
+        public int CountList { get; set; }
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }

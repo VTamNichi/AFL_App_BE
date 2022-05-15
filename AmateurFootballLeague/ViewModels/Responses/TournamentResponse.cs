@@ -28,6 +28,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class TournamentListVM
     {
         public List<TournamentVM> Tournaments { get; set; } = new List<TournamentVM>();
+        public int CountList { get; set; }
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
