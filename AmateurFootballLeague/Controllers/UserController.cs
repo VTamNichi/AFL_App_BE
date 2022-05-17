@@ -1,6 +1,7 @@
 ﻿using AmateurFootballLeague.ExternalService;
 using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
+using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
@@ -17,12 +18,14 @@ namespace AmateurFootballLeague.Controllers
         private readonly IRoleService _roleService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
-        public UserController(IUserService userService, IRoleService roleService, IUploadFileService uploadFileService, IMapper mapper)
+        private readonly IJWTProvider _jwtProvider;
+        public UserController(IUserService userService, IRoleService roleService, IUploadFileService uploadFileService, IJWTProvider jwtProvider, IMapper mapper)
         {
             _userService = userService;
             _roleService = roleService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
+            _jwtProvider = jwtProvider;
         }
 
         /// <summary>Get list users</summary>
@@ -139,6 +142,14 @@ namespace AmateurFootballLeague.Controllers
                         message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
+                User userCheckPhone = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                if (currentUser != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Số điện thoại này đã tồn tại trong hệ thống"
+                    });
+                }
                 Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
                 if (currenRole == null)
                 {
@@ -215,7 +226,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpPost("CreateWithGoogle")]
         [Produces("application/json")]
-        public async Task<ActionResult<UserVM>> CreateUserGG([FromForm] UserGGCM model)
+        public async Task<ActionResult<UserLVM>> CreateUserGG([FromForm] UserGGCM model)
         {
             try
             {
@@ -259,7 +270,15 @@ namespace AmateurFootballLeague.Controllers
                 User userCreated = await _userService.AddAsync(convertUser);
                 if (userCreated != null)
                 {
-                    return CreatedAtAction("GetUserByIdOrEmail", new { search = userCreated.Id }, _mapper.Map<UserVM>(userCreated));
+       
+                    User user = _userService.GetUserByEmail(userCreated.Email);
+                    UserVM userVM = _mapper.Map<UserVM>(user);
+                    UserLVM userLEPVM = new UserLVM
+                    {
+                        UserVM = userVM,
+                        AccessToken = await _jwtProvider.GenerationToken(user)
+                    };
+                    return Ok(userLEPVM);
                 }
                 return BadRequest(new
                 {
