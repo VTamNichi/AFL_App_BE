@@ -65,29 +65,31 @@ namespace AmateurFootballLeague.Controllers
                     teamList = teamList.Where(s => s.TeamGender.ToUpper().Equals(gender.ToString().Trim().ToUpper()));
                 }
 
-                int countList = teamList.Count();
-                
-                var teamListPaging = teamList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                teamList = teamList.Where(s => s.Status == true);
 
-                var teamListOrder = new List<Team>();
+                int countList = teamList.Count();
+
                 if (orderBy == TeamFieldEnum.Id)
                 {
-                    teamListOrder = teamListPaging.OrderBy(tnm => tnm.Id).ToList();
+                    teamList = teamList.OrderBy(tnm => tnm.Id);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        teamListOrder = teamListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                        teamList = teamList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
                 if (orderBy == TeamFieldEnum.TeamName)
                 {
-                    teamListOrder = teamListPaging.OrderBy(tnm => tnm.TeamName).ToList();
+                    teamList = teamList.OrderBy(tnm => tnm.TeamName);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        teamListOrder = teamListPaging.OrderByDescending(tnm => tnm.TeamName).ToList();
+                        teamList = teamList.OrderByDescending(tnm => tnm.TeamName);
                     }
                 }
+
+                var teamListVM = teamList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 List<TeamVM> listTeamVM = new List<TeamVM>();
-                listTeamVM = _mapper.Map<List<TeamVM>>(teamListOrder);
+                listTeamVM = _mapper.Map<List<TeamVM>>(teamListVM);
                 foreach (var teamVM in listTeamVM)
                 {
                     teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(teamVM.Id);

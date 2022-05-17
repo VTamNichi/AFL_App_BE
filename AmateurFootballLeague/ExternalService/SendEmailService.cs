@@ -46,12 +46,12 @@ namespace AmateurFootballLeague.ExternalService
             client.Port = 587;
 
             NetworkCredential credentials =
-                new NetworkCredential("d3ae24fcfcc63ebdc159b7827d80af2a", "c75f2b06fa4522d4da6cb5f27d8e8631");
+                new NetworkCredential("6c66e5d6bcdadebccbc50630514264b6", "cd1badbdf724560e6c99608ad44cc08a");
             client.UseDefaultCredentials = false;
             client.Credentials = credentials;
 
             MailMessage msg = new MailMessage();
-            msg.From = new MailAddress("mailclone1007@gmail.com", "A-Football-League");
+            msg.From = new MailAddress("afootballleague14@gmail.com", "A-Football-League");
             msg.To.Add(new MailAddress(model.ToEmail));
             msg.Priority = MailPriority.High;
 

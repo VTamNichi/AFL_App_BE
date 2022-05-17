@@ -71,38 +71,39 @@ namespace AmateurFootballLeague.Controllers
                 {
                     tournamentList = tournamentList.Where(s => s.FootballFieldType.FootballFieldTypeName.ToUpper().Contains(footballType.ToString().Trim().ToUpper()));
                 }
+                tournamentList = tournamentList.Where(s => s.Status == true);
 
                 int countList = tournamentList.Count();
 
-                var tournamentListPaging = tournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-
-                var tournamentListOrder = new List<Tournament>();
                 if (orderBy == TournamentFieldEnum.TournamentName)
                 {
-                    tournamentListOrder = tournamentListPaging.OrderBy(tnm => tnm.TournamentName).ToList();
+                    tournamentList = tournamentList.OrderBy(tnm => tnm.TournamentName);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.TournamentName).ToList();
+                        tournamentList = tournamentList.OrderByDescending(tnm => tnm.TournamentName);
                     }
                 }
                 if (orderBy == TournamentFieldEnum.Mode)
                 {
-                    tournamentListOrder = tournamentListPaging.OrderBy(tnm => tnm.Mode).ToList();
+                    tournamentList = tournamentList.OrderBy(tnm => tnm.Mode);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.Mode).ToList();
+                        tournamentList = tournamentList.OrderByDescending(tnm => tnm.Mode);
                     }
                 }
                 if (orderBy == TournamentFieldEnum.DateCreate)
                 {
-                    tournamentListOrder = tournamentListPaging.OrderBy(tnm => tnm.DateCreate).ToList();
+                    tournamentList = tournamentList.OrderBy(tnm => tnm.DateCreate);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        tournamentListOrder = tournamentListPaging.OrderByDescending(tnm => tnm.DateCreate).ToList();
+                        tournamentList = tournamentList.OrderByDescending(tnm => tnm.DateCreate);
                     }
                 }
+
+                var tournamentListVM = tournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 List<TournamentVM> listTournamentVM = new List<TournamentVM>();
-                listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListOrder);
+                listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListVM);
                 foreach (var tournamentVM in listTournamentVM)
                 {
                     tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(tournamentVM.Id);

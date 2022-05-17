@@ -137,6 +137,22 @@ namespace AmateurFootballLeague.Controllers
             FootballPlayer footballPlayer = new FootballPlayer();
             try
             {
+                FootballPlayer currentFP = _footballPlayerService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
+                if (currentFP != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Email này đã tồn tại trong hệ thống"
+                    });
+                }
+                FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                if (fpCheckPhone != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Số điện thoại này đã tồn tại trong hệ thống"
+                    });
+                }
                 footballPlayer.Email = model.Email;
                 footballPlayer.PlayerName = model.PlayerName;
                 if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
