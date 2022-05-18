@@ -145,25 +145,34 @@ namespace AmateurFootballLeague.Controllers
                         message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
-                FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
-                if (fpCheckPhone != null)
+                if (!String.IsNullOrEmpty(model.Phone))
                 {
-                    return BadRequest(new
+                    FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                    if (fpCheckPhone != null)
                     {
-                        message = "Số điện thoại này đã tồn tại trong hệ thống"
-                    });
+                        return BadRequest(new
+                        {
+                            message = "Số điện thoại này đã tồn tại trong hệ thống"
+                        });
+                    }
                 }
+                
                 footballPlayer.Email = model.Email;
                 footballPlayer.PlayerName = model.PlayerName;
-                if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+
+                try
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
-                    footballPlayer.PlayerAvatar = fileUrl;
+                    if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
+                        footballPlayer.PlayerAvatar = fileUrl;
+                    }
                 }
-                else
+                catch (Exception)
                 {
                     footballPlayer.PlayerAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
+                
                 if (!String.IsNullOrEmpty(model.DateOfBirth.ToString()))
                 {
                     footballPlayer.DateOfBirth = model.DateOfBirth;
