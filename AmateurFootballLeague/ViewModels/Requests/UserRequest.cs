@@ -95,4 +95,29 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string Token { get; set; }
         public string Email { get; set; }
     }
+    public class UserCPM
+    {
+        [Required(AllowEmptyStrings = false)]
+        public int Id { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(128)]
+        public string CurrentPassword { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(128)]
+        public string NewPassword { get; set; }
+    }
+
+    public class UserRPM
+    {
+
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(128)]
+        public string Email { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(128)]
+        public string NewPassword { get; set; }
+    }
 }

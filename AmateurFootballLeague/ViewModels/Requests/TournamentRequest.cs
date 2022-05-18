@@ -17,7 +17,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         Field5,
         Field7,
-        Field9,
         Field11
     }
     public enum TournamentFieldEnum

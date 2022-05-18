@@ -340,7 +340,7 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.TournamentController.GetListTournament(System.String,System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentModeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentTypeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentGenderEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentFootballFieldTypeEnum},AmateurFootballLeague.ViewModels.Requests.TournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.TournamentController.GetListTournament(System.String,System.String,System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentModeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentTypeEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentGenderEnum},System.Nullable{AmateurFootballLeague.ViewModels.Requests.TournamentFootballFieldTypeEnum},AmateurFootballLeague.ViewModels.Requests.TournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list tournament</summary>
             <returns>List tournament</returns>
             <response code="200">Returns list tournament</response>
@@ -495,14 +495,14 @@
             <response code="400">Bad Request</response>
             <response code="500">Failed to save request</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.UserController.ChangePassword(System.Int32,System.String,System.String)">
+        <member name="M:AmateurFootballLeague.Controllers.UserController.ChangePassword(AmateurFootballLeague.ViewModels.Requests.UserCPM)">
             <summary>Change password</summary>
             <response code="200">Success</response>
             <response code="404">Not Found</response>
             <response code="400">Wrong password</response>
             <response code="500">Failed to save request</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.UserController.ResetPassword(System.String,System.String)">
+        <member name="M:AmateurFootballLeague.Controllers.UserController.ResetPassword(AmateurFootballLeague.ViewModels.Requests.UserRPM)">
             <summary>Reset password</summary>
             <response code="200">Success</response>
             <response code="404">Not Found</response>

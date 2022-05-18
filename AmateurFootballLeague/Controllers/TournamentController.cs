@@ -38,6 +38,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public ActionResult<TournamentListVM> GetListTournament(
             [FromQuery(Name = "tournament-name")] string? name,
+            [FromQuery(Name = "tournament-area")] string? area,
             [FromQuery(Name = "tournament-mode")] TournamentModeEnum? mode,
             [FromQuery(Name = "tournament-type")] TournamentTypeEnum? type,
             [FromQuery(Name = "tournament-gender")] TournamentGenderEnum? gender,
@@ -54,6 +55,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(name))
                 {
                     tournamentList = tournamentList.Where(s => s.TournamentName.ToUpper().Contains(name.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(area))
+                {
+                    tournamentList = tournamentList.Where(s => s.FootballFieldAddress.ToUpper().Contains(area.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(mode.ToString()))
                 {
@@ -211,7 +216,7 @@ namespace AmateurFootballLeague.Controllers
                 tournament.FootballPlayerMaxNumber = model.FootballPlayerMaxNumber;
                 tournament.UserId = model.UserId;
                 tournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : 3;
-                tournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field9 ? 3 : 4;
+                tournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : 3;
                 tournament.DateCreate = DateTime.Now;
                 tournament.Status = true;
                 tournament.StatusTnm = "";
@@ -278,7 +283,7 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.FootballTeamNumber = String.IsNullOrEmpty(model.FootballTeamNumber.ToString()) ? currentTournament.FootballTeamNumber : model.FootballTeamNumber;
                 currentTournament.FootballPlayerMaxNumber = String.IsNullOrEmpty(model.FootballPlayerMaxNumber.ToString()) ? currentTournament.FootballPlayerMaxNumber : model.FootballPlayerMaxNumber;
                 currentTournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : model.TournamentTypeEnum == TournamentTypeEnum.GroupStage ? 3 : currentTournament.TournamentTypeId;
-                currentTournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field9 ? 3 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field11 ? 4 : currentTournament.FootballFieldTypeId;
+                currentTournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field11 ? 3 : currentTournament.FootballFieldTypeId;
                 currentTournament.DateUpdate = DateTime.Now;
 
                 bool isUpdated = await _tournamentService.UpdateAsync(currentTournament);

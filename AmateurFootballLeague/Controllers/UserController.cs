@@ -432,22 +432,22 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="400">Wrong password</response>
         /// <response code="500">Failed to save request</response>
-        [HttpPatch("change-password")]
+        [HttpPost("change-password")]
         [Produces("application/json")]
-        public async Task<ActionResult> ChangePassword([FromQuery(Name = "id")] int id, [FromQuery(Name = "current-password")] string currentPassword, [FromQuery(Name = "new-password")] string newPassword)
+        public async Task<ActionResult> ChangePassword([FromBody] UserCPM model)
         {
             try
             {
-                User user = await _userService.GetByIdAsync(id);
+                User user = await _userService.GetByIdAsync(model.Id);
                 if (user == null)
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-                if (!_userService.CheckPassword(currentPassword, user.PasswordHash, user.PasswordSalt))
+                if (!_userService.CheckPassword(model.CurrentPassword, user.PasswordHash, user.PasswordSalt))
                 {
                     return BadRequest("Sai mật khẩu");
                 }
-                List<byte[]> listPassword = _userService.EncriptPassword(newPassword);
+                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
                 user.DateUpdate = DateTime.Now;
@@ -469,19 +469,19 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="400">Wrong password</response>
         /// <response code="500">Failed to save request</response>
-        [HttpPatch("reset-password")]
+        [HttpPost("reset-password")]
         [Produces("application/json")]
-        public async Task<ActionResult> ResetPassword([FromQuery(Name = "email")] String email, [FromQuery(Name = "new-password")] string newPassword)
+        public async Task<ActionResult> ResetPassword([FromBody] UserRPM model)
         {
             try
             {
-                User user = _userService.GetUserByEmail(email);
+                User user = _userService.GetUserByEmail(model.Email);
                 if (user == null)
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
 
-                List<byte[]> listPassword = _userService.EncriptPassword(newPassword);
+                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
                 user.DateUpdate = DateTime.Now;
