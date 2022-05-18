@@ -38,6 +38,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public ActionResult<TournamentListVM> GetListTournament(
             [FromQuery(Name = "tournament-name")] string? name,
+            [FromQuery(Name = "userId")] int? userId,
             [FromQuery(Name = "tournament-area")] string? area,
             [FromQuery(Name = "tournament-mode")] TournamentModeEnum? mode,
             [FromQuery(Name = "tournament-type")] TournamentTypeEnum? type,
@@ -55,6 +56,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(name))
                 {
                     tournamentList = tournamentList.Where(s => s.TournamentName.ToUpper().Contains(name.Trim().ToUpper()));
+                }
+                if (userId != null)
+                {
+                    tournamentList = tournamentList.Where(s => s.UserId == userId);
                 }
                 if (!String.IsNullOrEmpty(area))
                 {
@@ -156,6 +161,7 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
 
         /// <summary>Create a new tournament</summary>
         /// <response code="201">Created new tournament successfull</response>
