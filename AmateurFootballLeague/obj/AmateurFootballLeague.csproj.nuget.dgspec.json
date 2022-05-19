@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Doan\\NewVer\\AFL_App_BE\\AmateurFootballLeague\\AmateurFootballLeague.csproj": {}
+    "E:\\Schools\\FS\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague.csproj": {}
   },
   "projects": {
-    "E:\\Doan\\NewVer\\AFL_App_BE\\AmateurFootballLeague\\AmateurFootballLeague.csproj": {
+    "E:\\Schools\\FS\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Doan\\NewVer\\AFL_App_BE\\AmateurFootballLeague\\AmateurFootballLeague.csproj",
+        "projectUniqueName": "E:\\Schools\\FS\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague.csproj",
         "projectName": "AmateurFootballLeague",
-        "projectPath": "E:\\Doan\\NewVer\\AFL_App_BE\\AmateurFootballLeague\\AmateurFootballLeague.csproj",
-        "packagesPath": "C:\\Users\\tuana\\.nuget\\packages\\",
-        "outputPath": "E:\\Doan\\NewVer\\AFL_App_BE\\AmateurFootballLeague\\obj\\",
+        "projectPath": "E:\\Schools\\FS\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague.csproj",
+        "packagesPath": "C:\\Users\\dell\\.nuget\\packages\\",
+        "outputPath": "E:\\Schools\\FS\\AmateurFootballLeague\\AmateurFootballLeague\\AmateurFootballLeague\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\tuana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -109,7 +109,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

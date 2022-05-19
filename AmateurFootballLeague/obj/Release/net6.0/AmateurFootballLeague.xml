@@ -28,6 +28,12 @@
             <response code="400">Send mail fail</response>
             <response code="500">Internal Server</response>
         </member>
+        <member name="M:AmateurFootballLeague.Controllers.AuthController.CheckVerifyCode(System.String,System.String)">
+            <summary>Check verify code</summary>
+            <response code="200">verify code success</response>
+            <response code="400">verify code fail</response>
+            <response code="500">Internal Server</response>
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.FootballFieldTypeController.GetListTournamentType(System.String,AmateurFootballLeague.ViewModels.Requests.FootballFieldTypeEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list football field types</summary>
             <returns>List football field types</returns>

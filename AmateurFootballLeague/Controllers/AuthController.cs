@@ -14,12 +14,14 @@ namespace AmateurFootballLeague.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IVerifyCodeService _verifyCodeService;
         private readonly IJWTProvider _jwtProvider;
         private readonly ISendEmailService _sendEmailService;
         private readonly IMapper _mapper;
-        public AuthController(IUserService userService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
+        public AuthController(IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
         {
             _userService = userService;
+            _verifyCodeService = verifyCodeService;
             _jwtProvider = jwtProvider;
             _sendEmailService = sendEmailService;
             _mapper = mapper;
@@ -144,7 +146,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal Server</response>
         [HttpPost("send-verify-code")]
         [Produces("application/json")]
-        public async Task<ActionResult<String>> SendVerifyCode(String email, int toDo)
+        public async Task<ActionResult> SendVerifyCode(String email, int toDo)
         {
             try
             {
@@ -174,8 +176,44 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Gửi thất bại");
                 }
+                VerifyCode verifyCode = new VerifyCode();
+                verifyCode.Email = model.ToEmail;
+                verifyCode.Code = code.ToString();
+                verifyCode.Status = true;
+                verifyCode.DateCreate = DateTime.Now;
+                verifyCode.DateExpire = DateTime.Now.AddMinutes(2);
 
-                return Ok(code.ToString());
+                await _verifyCodeService.AddAsync(verifyCode);
+
+                return Ok("Gửi thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Check verify code</summary>
+        /// <response code="200">verify code success</response>
+        /// <response code="400">verify code fail</response>
+        /// <response code="500">Internal Server</response>
+        [HttpPost("check-verify-code")]
+        [Produces("application/json")]
+        public async Task<ActionResult> CheckVerifyCode(String email, String code)
+        {
+            try
+            {
+                VerifyCode checkVerifyCode = _verifyCodeService.GetList().Where(vc => vc.Email == email && vc.Code == code).OrderByDescending(vco => vco.DateCreate).Take(1).FirstOrDefault();
+                if (checkVerifyCode == null)
+                {
+                    return BadRequest("Xác nhận thất bại");
+                }
+                if (DateTime.Compare(checkVerifyCode.DateExpire ?? DateTime.Now.AddMinutes(-1), DateTime.Now) < 0) {
+                    return BadRequest("Mã xác nhận đã hết hạn");
+                }
+                
+                return Ok("Xác nhận thành công");
+
             }
             catch (Exception)
             {

@@ -33,6 +33,7 @@ namespace AmateurFootballLeague.Models
         public virtual DbSet<TournamentResult> TournamentResults { get; set; } = null!;
         public virtual DbSet<TournamentType> TournamentTypes { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<VerifyCode> VerifyCodes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -470,6 +471,19 @@ namespace AmateurFootballLeague.Models
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
                     .HasConstraintName("FK__Users__RoleID__398D8EEE");
+            });
+
+            modelBuilder.Entity<VerifyCode>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code).HasMaxLength(16);
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.DateExpire).HasColumnType("datetime");
+
+                entity.Property(e => e.Email).HasMaxLength(64);
             });
 
             OnModelCreatingPartial(modelBuilder);
