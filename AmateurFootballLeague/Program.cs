@@ -102,6 +102,9 @@ builder.Services.AddTransient<IScorePredictionService, ScorePredictionService>()
 builder.Services.AddTransient<ITournamentResultRepository, TournamentResultRepository>();
 builder.Services.AddTransient<ITournamentResultService, TournamentResultService>();
 
+builder.Services.AddTransient<IVerifyCodeRepository, VerifyCodeRepository>();
+builder.Services.AddTransient<IVerifyCodeService, VerifyCodeService>();
+
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.Converters.Add(new StringEnumConverter());
