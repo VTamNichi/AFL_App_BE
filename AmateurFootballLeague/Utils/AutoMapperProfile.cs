@@ -62,6 +62,7 @@ namespace AmateurFootballLeague.Utils
 
             #region AutoMapper PlayerInTeamViewModel
             CreateMap<PlayerInTeam, PlayerInTeamVM>();
+            CreateMap<PlayerInTeam, PlayerInTeamFVM>();
             CreateMap<PlayerInTeamCM, PlayerInTeam>();
             #endregion
             

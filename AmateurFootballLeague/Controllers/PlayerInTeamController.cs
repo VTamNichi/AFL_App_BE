@@ -14,29 +14,60 @@ namespace AmateurFootballLeague.Controllers
     {
         private readonly IPlayerInTeamService _playerInTeam;
         private readonly IMapper _mapper;
-        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper)
+        private readonly IFootballPlayerService _footballPlayerService;
+        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer)
         {
             _playerInTeam = playerInTeamService;
             _mapper = mapper;
+            _footballPlayerService = footballPlayer;
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamVM> GetAllPlayerInTeam(int teamId, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
+        public ActionResult<PlayerInTeamVM> GetAllPlayerInTeam(int teamId,string? name, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
         {
             try
             {
 
             IQueryable<PlayerInTeam> playerList = _playerInTeam.GetList();
-                playerList = playerList.Where(p => (int)p.TeamId == teamId);
+                
+                if (!String.IsNullOrEmpty(name))
+                {
+                    playerList = playerList.Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
+                    {
+                        Id = pit.Id,
+                        Status = pit.Status,
+                        TeamId = pit.TeamId,
+                        FootballPlayerId = p.Id,
+                        FootballPlayer = p
+                    }).Where(p =>p.TeamId == teamId && p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
+                }
+                else
+                {
+                    playerList = playerList.Where(p => (int)p.TeamId == teamId);
+                }
                 var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
                 var playerListOrder = playerListPaging;
                 if (orderType == SortTypeEnum.DESC)
                 {
                     playerListOrder = playerListPaging.OrderByDescending(p => p.Id).ToList();
                 }
+                int CountList = playerList.Count();
+                if (!String.IsNullOrEmpty(name))
+                {
+                    var playerListFull = new PlayerInTeamLFV
+                    {
+                        PlayerInTeamsFull = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamFVM>>(playerListOrder),
+                        CountList = CountList,
+                        CurrentPage = pageIndex,
+                        Size = limit
+                    };
+                    return Ok(playerListFull);
+                    
+                }
                 var playerListResponse = new PlayerInTeamLV
                 {
                     PlayerInTeams = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamVM>>(playerListOrder),
+                    CountList = CountList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
