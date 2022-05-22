@@ -15,16 +15,62 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMapper _mapper;
         private readonly IMatchService _matchService;
         private readonly ITeamService _teamService;
+        private readonly ITournamentService _tournamentService;
 
-        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService, ITeamService teamService)
+        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService, ITeamService teamService)
         {
             _teamInMatch = teamInMatch;
             _mapper = mapper;
             _matchService = matchService;
             _teamService = teamService;
+            _tournamentService= tournamentService;
+
         }
 
         [HttpGet]
+        public ActionResult<TeamInMatchMT> GetAllTeamInMatchInTournament(int tournamentId)
+        {
+            try
+            {
+                IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
+                    .Join(_tournamentService.GetList(), timt => timt.m.Tournament, t => t, (timt, t) => new TeamInMatch
+                    {
+                        Id = timt.tim.Id,
+                        TeamScore = timt.tim.TeamScore,
+                        YellowCardNumber = timt.tim.YellowCardNumber,
+                        RedCardNumber = timt.tim.RedCardNumber,
+                        TeamId = t.Id,
+                        MatchId = timt.m.Id,
+                        Result = timt.tim.Result,
+                        NextTeam = timt.tim.NextTeam,
+                        TeamName = timt.tim.TeamName,
+                        Match = timt.m
+
+                    }).Where(m => m.Match.TournamentId == tournamentId);
+                var temInMatch = new List<TeamInMatch>();
+                temInMatch = listTeam.ToList();
+                if (temInMatch.Count() > 0)
+                {
+
+                    var teamListResponse = new TeamInMatchMTLV
+                    {
+
+                        TeamsInMatch = _mapper.Map<List<TeamInMatch>, List<TeamInMatchMT>>(temInMatch)
+
+                    };
+                    return Ok(teamListResponse);
+
+                }
+
+                return NotFound("Không tìm thấy đội bóng trong trận đấu");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("matchId")]
         public ActionResult<TeamInMatchMT> GetAllTeamInMatch(int matchId)
         {
             try
@@ -38,6 +84,9 @@ namespace AmateurFootballLeague.Controllers
                         RedCardNumber = timt.tim.RedCardNumber,
                         TeamId =t.Id,
                         MatchId = timt.m.Id,
+                        Result = timt.tim.Result,
+                        NextTeam = timt.tim.NextTeam,
+                        TeamName = timt.tim.TeamName,
                         Match = timt.m,
                         Team = t
 
@@ -143,6 +192,7 @@ namespace AmateurFootballLeague.Controllers
                     team.TeamScore = teamInMatch.TeamScore;    
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
                     team.RedCardNumber = teamInMatch.RedCardNumber;
+                    team.TeamId = teamInMatch.TeamId;
                     team.Result = teamInMatch.Result;
                     team.NextTeam = teamInMatch.NextTeam;
                     team.TeamName = teamInMatch.TeamName;
