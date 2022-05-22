@@ -301,6 +301,8 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
+                entity.Property(e => e.TeamName).HasMaxLength(128);
+
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.TeamInMatches)
                     .HasForeignKey(d => d.MatchId)
