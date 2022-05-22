@@ -23,37 +23,48 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamLV> GetAllPlayerInTeam(int teamId,string? name, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
+        public ActionResult<PlayerInTeamLV> GetAllPlayerInTeam(int teamId,string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
         {
             try
             {
 
-            IQueryable<PlayerInTeam> playerList = _playerInTeam.GetList();
+            IQueryable<PlayerInTeam> playerList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
+            {
+                Id = pit.Id,
+                Status = pit.Status,
+                TeamId = pit.TeamId,
+                FootballPlayerId = p.Id,
+                FootballPlayer = p
+            }).Where(p => p.TeamId == teamId);
                 
                 if (!String.IsNullOrEmpty(name))
                 {
-                    playerList = playerList.Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
-                    {
-                        Id = pit.Id,
-                        Status = pit.Status,
-                        TeamId = pit.TeamId,
-                        FootballPlayerId = p.Id,
-                        FootballPlayer = p
-                    }).Where(p =>p.TeamId == teamId && p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
+                    //playerList = playerList.Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
+                    //{
+                    //    Id = pit.Id,
+                    //    Status = pit.Status,
+                    //    TeamId = pit.TeamId,
+                    //    FootballPlayerId = p.Id,
+                    //    FootballPlayer = p
+                    //}).Where(p =>p.TeamId == teamId && p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
+                    playerList = playerList.Where(p =>p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
                 }
-                else
+                if (!String.IsNullOrEmpty(status))
                 {
-                    playerList = playerList.Where(p => (int)p.TeamId == teamId);
+                    playerList = playerList.Where(p => p.Status.ToLower() == status.ToLower());
                 }
-                var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                    //else
+                    //{
+                    //    playerList = playerList.Where(p => (int)p.TeamId == teamId);
+                    //}
+                    var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
                 var playerListOrder = playerListPaging;
                 if (orderType == SortTypeEnum.DESC)
                 {
                     playerListOrder = playerListPaging.OrderByDescending(p => p.Id).ToList();
                 }
                 int CountList = playerList.Count();
-                if (!String.IsNullOrEmpty(name))
-                {
+               
                     var playerListFull = new PlayerInTeamLFV
                     {
                         PlayerInTeamsFull = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamFVM>>(playerListOrder),
@@ -63,16 +74,16 @@ namespace AmateurFootballLeague.Controllers
                     };
                     return Ok(playerListFull);
                     
-                }
-                var playerListResponse = new PlayerInTeamLV
-                {
-                    PlayerInTeams = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamVM>>(playerListOrder),
-                    CountList = CountList,
-                    CurrentPage = pageIndex,
-                    Size = limit
-                };
+                
+                //var playerListResponse = new PlayerInTeamLV
+                //{
+                //    PlayerInTeams = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamVM>>(playerListOrder),
+                //    CountList = CountList,
+                //    CurrentPage = pageIndex,
+                //    Size = limit
+                //};
 
-                return Ok(playerListResponse);
+                //return Ok(playerListResponse);
             }
             catch
             {
@@ -94,7 +105,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Cầu thủ đã có đội bóng"
                     });
                 }
-                pInTeam.Status = "";
+                pInTeam.Status = "true";
                 pInTeam.TeamId = player.TeamId;
                 pInTeam.FootballPlayerId = player.FootballPlayerId;
                 PlayerInTeam playerInTeamCreated = await _playerInTeam.AddAsync(pInTeam);
