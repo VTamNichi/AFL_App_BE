@@ -4,8 +4,121 @@
         <name>AmateurFootballLeague</name>
     </assembly>
     <members>
+        <member name="T:AmateurFootballLeague.AgoraIO.Common.ByteBuffer">
+            <summary>
+            创建一个可变长的Byte数组方便Push数据和Pop数据
+            数组的最大长度为1024,超过会产生溢出
+            数组的最大长度由常量MAX_LENGTH设定
+            
+            注:由于实际需要,可能要从左到右取数据,所以这里
+            定义的Pop函数并不是先进后出的函数,而是从0开始.
+            
+            @Author: Red_angelX
+            </summary>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.#ctor">
+            <summary>
+            默认构造函数
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.#ctor(System.Byte[])" -->
+        <member name="P:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.Length">
+            <summary>
+            获取当前ByteBuffer的长度
+            </summary>
+        </member>
+        <member name="P:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.Position">
+            <summary>
+            获取/设置当前出栈指针位置
+            </summary>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.ToByteArray">
+            <summary>
+            获取ByteBuffer所生成的数组
+            长度必须小于 [MAXSIZE]
+            </summary>
+            <returns>Byte[]</returns>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.Initialize">
+            <summary>
+            初始化ByteBuffer的每一个元素,并把当前指针指向头一位
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PushByte(System.Byte)" -->
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PushByteArray(System.Byte[])" -->
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PushUInt16(System.UInt16)" -->
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PushInt(System.UInt32)" -->
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PushLong(System.Int64)" -->
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PopByte">
+            <summary>
+            从ByteBuffer的当前位置弹出一个Byte,并提升一位
+            </summary>
+            <returns>1字节Byte</returns>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PopUInt16">
+            <summary>
+            从ByteBuffer的当前位置弹出一个Short,并提升两位
+            </summary>
+            <returns>2字节Short</returns>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PopUInt">
+            <summary>
+            从ByteBuffer的当前位置弹出一个uint,并提升4位
+            </summary>
+            <returns>4字节UInt</returns>
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PopLong">
+            <summary>
+            从ByteBuffer的当前位置弹出一个long,并提升4位
+            </summary>
+            <returns>4字节Long</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:AmateurFootballLeague.AgoraIO.Common.ByteBuffer.PopByteArray(System.Int32)" -->
+        <member name="M:AmateurFootballLeague.AgoraIO.Media.DynamicKey4.generatePublicSharingKey(System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.Int32)">
+            Generate Dynamic Key for Public Sharing Service
+            @param appID App IDassigned by Agora
+            @param appCertificate App Certificate assigned by Agora
+            @param channelName name of channel to join, limited to 64 bytes and should be printable ASCII characters
+            @param unixTs unix timestamp in seconds when generating the Dynamic Key
+            @param randomInt salt for generating dynamic key
+            @param uid user id, range from 0 - max uint32
+            @param expiredTs should be 0
+            @return String representation of dynamic key
+            @throws Exception if any error occurs
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Media.DynamicKey4.generateRecordingKey(System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.Int32)">
+            Generate Dynamic Key for recording service
+            @param appID Vendor key assigned by Agora
+            @param appCertificate Sign key assigned by Agora
+            @param channelName name of channel to join, limited to 64 bytes and should be printable ASCII characters
+            @param unixTs unix timestamp in seconds when generating the Dynamic Key
+            @param randomInt salt for generating dynamic key
+            @param uid user id, range from 0 - max uint32
+            @param expiredTs should be 0
+            @return String representation of dynamic key
+            @throws Exception if any error occurs
+        </member>
+        <member name="M:AmateurFootballLeague.AgoraIO.Media.DynamicKey4.generateMediaChannelKey(System.String,System.String,System.String,System.Int32,System.Int32,System.String,System.Int32)">
+            Generate Dynamic Key for media channel service
+            @param appID Vendor key assigned by Agora
+            @param appCertificate Sign key assigned by Agora
+            @param channelName name of channel to join, limited to 64 bytes and should be printable ASCII characters
+            @param unixTs unix timestamp in seconds when generating the Dynamic Key
+            @param randomInt salt for generating dynamic key
+            @param uid user id, range from 0 - max uint32
+            @param expiredTs service expiring timestamp. After this timestamp, user will not be able to stay in the channel.
+            @return String representation of dynamic key
+            @throws Exception if any error occurs
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.AuthController.LoginWithEmailAndPassword(AmateurFootballLeague.ViewModels.Requests.UserLEPM)">
             <summary>Login with email and password</summary>
+            <returns>Return user and token token</returns>
+            <response code="200">Returns user and token</response>
+            <response code="404">Not found users</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.AuthController.LoginAmin(AmateurFootballLeague.ViewModels.Requests.UserLM)">
+            <summary>Login admin</summary>
             <returns>Return user and token token</returns>
             <response code="200">Returns user and token</response>
             <response code="404">Not found users</response>
@@ -23,8 +136,8 @@
         </member>
         <member name="M:AmateurFootballLeague.Controllers.AuthController.SendVerifyCode(System.String,System.Int32)">
             <summary>Send verify code from system</summary>
-            <returns>Return verify code</returns>
-            <response code="200">Returns verify code</response>
+            <returns>Return success</returns>
+            <response code="200">Returns success</response>
             <response code="400">Send mail fail</response>
             <response code="500">Internal Server</response>
         </member>
@@ -164,13 +277,13 @@
             <response code="404">No match found with the specified id</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.MatchController.CreateMatch(System.DateTime,AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.CreateMatch(System.DateTime,AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum,System.Int32,System.String,System.String,System.String)">
             <summary>Create a new match</summary>
             <response code="201">Created new match successfull</response>
             <response code="400">Field is not matched or duplicated</response>
             <response code="500">Failed to save request</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.MatchController.UpdateMatch(System.Nullable{System.DateTime},System.Nullable{AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum},System.Nullable{System.Int32})">
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.UpdateMatch(System.Int32,System.Nullable{System.DateTime},System.Nullable{AmateurFootballLeague.ViewModels.Requests.MatchStatusEnum},System.Nullable{System.Int32},System.String,System.String,System.String,System.String)">
             <summary>Update a match</summary>
             <response code="200">Success</response>
             <response code="404">Not Found</response>
@@ -183,6 +296,13 @@
             <response code="404">Not Found</response>
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
+        </member>
+        <member name="M:AmateurFootballLeague.Controllers.MatchController.ScheduleMatch(System.Int32)">
+            <summary>Schedule the match</summary>
+            <response code="200">Success</response>
+            <response code="404">Not Found</response>
+            <response code="400">Field is not matched</response>
+            <response code="500">Failed to save request</response>
         </member>
         <member name="M:AmateurFootballLeague.Controllers.NewsController.GetListNews(System.String,AmateurFootballLeague.ViewModels.Requests.NewsFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list news</summary>
@@ -461,7 +581,7 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.UserController.GetListUser(AmateurFootballLeague.ViewModels.Requests.UserFieldEnum,System.Int32,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.UserController.GetListUser(System.String,System.Nullable{AmateurFootballLeague.ViewModels.Requests.UserGenderEnum},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String,System.String,System.Nullable{System.Int32},AmateurFootballLeague.ViewModels.Requests.UserFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list users</summary>
             <returns>List users</returns>
             <response code="200">Returns list roles</response>
