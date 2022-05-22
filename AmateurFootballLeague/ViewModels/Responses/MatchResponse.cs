@@ -7,6 +7,11 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int Id { get; set; }
         public DateTime MatchDate { get; set; }
         public string Status { get; set; }
+        public int TournamentId { get; set; }
+        public string Round { get; set; }
+        public string Fight { get; set; }
+        public string GroupFight { get; set; }
+        public string TokenLivestream { get; set; }
     }
 
     public class MatchFVM

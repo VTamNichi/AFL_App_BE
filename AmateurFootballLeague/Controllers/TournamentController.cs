@@ -220,6 +220,7 @@ namespace AmateurFootballLeague.Controllers
                 tournament.MatchMinutes = model.MatchMinutes;
                 tournament.FootballTeamNumber = model.FootballTeamNumber;
                 tournament.FootballPlayerMaxNumber = model.FootballPlayerMaxNumber;
+                tournament.GroupNumber = String.IsNullOrEmpty(model.GroupNumber.ToString()) ? 0 : model.GroupNumber;
                 tournament.UserId = model.UserId;
                 tournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : 3;
                 tournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : 3;
@@ -284,6 +285,7 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? currentTournament.TournamentStartDate : model.TournamentStartDate;
                 currentTournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? currentTournament.TournamentEndDate : model.TournamentEndDate;
                 currentTournament.FootballFieldAddress = String.IsNullOrEmpty(model.FootballFieldAddress) ? currentTournament.FootballFieldAddress : model.FootballFieldAddress.Trim();
+                currentTournament.GroupNumber = String.IsNullOrEmpty(model.GroupNumber.ToString()) ? currentTournament.GroupNumber : model.GroupNumber;
                 currentTournament.Description = String.IsNullOrEmpty(model.Description) ? currentTournament.Description : model.Description.Trim();
                 currentTournament.MatchMinutes = String.IsNullOrEmpty(model.MatchMinutes.ToString()) ? currentTournament.MatchMinutes : model.MatchMinutes;
                 currentTournament.FootballTeamNumber = String.IsNullOrEmpty(model.FootballTeamNumber.ToString()) ? currentTournament.FootballTeamNumber : model.FootballTeamNumber;

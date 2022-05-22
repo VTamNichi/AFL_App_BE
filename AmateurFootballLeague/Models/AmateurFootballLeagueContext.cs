@@ -115,7 +115,13 @@ namespace AmateurFootballLeague.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Fight).HasMaxLength(16);
+
+                entity.Property(e => e.GroupFight).HasMaxLength(16);
+
                 entity.Property(e => e.MatchDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Round).HasMaxLength(16);
 
                 entity.Property(e => e.Status).HasMaxLength(16);
 
@@ -288,6 +294,10 @@ namespace AmateurFootballLeague.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
+
+                entity.Property(e => e.NextTeam).HasMaxLength(32);
+
+                entity.Property(e => e.Result).HasMaxLength(16);
 
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 

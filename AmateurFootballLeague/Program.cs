@@ -50,6 +50,7 @@ builder.Services.AddSingleton<IJWTProvider, JWTProvider>();
 
 builder.Services.AddTransient<IUploadFileService, UploadFileService>();
 builder.Services.AddTransient<ISendEmailService, SendEmailService>();
+builder.Services.AddTransient<IAgoraProvider, AgoraProvider>();
 
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();

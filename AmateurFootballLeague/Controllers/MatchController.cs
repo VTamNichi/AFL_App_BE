@@ -13,13 +13,17 @@ namespace AmateurFootballLeague.Controllers
     public class MatchController : ControllerBase
     {
         private readonly IMatchService _matchService;
+        private readonly ITeamInMatchService _teamInMatch;
         private readonly ITournamentService _tournamentService;
+        private readonly IAgoraProvider _agoraProvider;
         private readonly IMapper _mapper;
 
-        public MatchController(IMatchService matchService, ITournamentService tournamentService, IMapper mapper)
+        public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService, IAgoraProvider agoraProvider, IMapper mapper)
         {
             _matchService = matchService;
+            _teamInMatch = teamInMatch;
             _tournamentService = tournamentService;
+            _agoraProvider = agoraProvider;
             _mapper = mapper;
         }
 
@@ -123,7 +127,10 @@ namespace AmateurFootballLeague.Controllers
         public async Task<ActionResult<MatchVM>> CreateMatch(
                 [FromQuery(Name = "match-date")] DateTime matchDate,
                 [FromQuery(Name = "status")] MatchStatusEnum status,
-                [FromQuery(Name = "tournament-id")] int tournamentID
+                [FromQuery(Name = "tournament-id")] int tournamentID,
+                [FromQuery(Name = "round")] string? round,
+                [FromQuery(Name = "fight")] string? fight,
+                [FromQuery(Name = "group-fight")] string? groupFight
             )
         {
             Match match = new Match();
@@ -137,6 +144,10 @@ namespace AmateurFootballLeague.Controllers
                 match.TournamentId = tournamentID;
                 match.MatchDate = matchDate;
                 match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Process" : "Finished";
+                match.Round = String.IsNullOrEmpty(round) ? "" : round;
+                match.Fight = String.IsNullOrEmpty(fight) ? "" : fight;
+                match.GroupFight = String.IsNullOrEmpty(groupFight) ? "" : groupFight;
+                match.TokenLivestream = "";
 
                 Match matchCreated = await _matchService.AddAsync(match);
                 if (matchCreated != null)
@@ -159,14 +170,23 @@ namespace AmateurFootballLeague.Controllers
         [HttpPut]
         [Produces("application/json")]
         public async Task<ActionResult<MatchVM>> UpdateMatch(
+                [FromQuery(Name = "match-id")] int matchId,
                 [FromQuery(Name = "match-date")] DateTime? matchDate,
                 [FromQuery(Name = "status")] MatchStatusEnum? status,
-                [FromQuery(Name = "tournament-id")] int? tournamentID
+                [FromQuery(Name = "tournament-id")] int? tournamentID,
+                [FromQuery(Name = "round")] string? round,
+                [FromQuery(Name = "fight")] string? fight,
+                [FromQuery(Name = "group-fight")] string? groupFight,
+                [FromQuery(Name = "create-token")] string? createToken
             )
         {
-            Match match = new Match();
             try
             {
+                Match match = await _matchService.GetByIdAsync(matchId);
+                if(match == null)
+                {
+                    return NotFound("Không tìm thấy trận đấu");
+                }
                 if (!String.IsNullOrEmpty(tournamentID.ToString()))
                 {
                     Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
@@ -180,6 +200,10 @@ namespace AmateurFootballLeague.Controllers
                 }
                 match.MatchDate = String.IsNullOrEmpty(matchDate.ToString()) ? match.MatchDate : matchDate;
                 match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Processing" : status == MatchStatusEnum.Finished ? "Finished" : match.Status;
+                match.Round = String.IsNullOrEmpty(round) ? match.Round : round;
+                match.Fight = String.IsNullOrEmpty(fight) ? match.Fight : fight;
+                match.GroupFight = String.IsNullOrEmpty(groupFight) ? match.GroupFight : groupFight;
+                match.TokenLivestream = String.IsNullOrEmpty(createToken) ? match.TokenLivestream : _agoraProvider.GenerateToken("MATCH_" + matchId, 0.ToString(), 0);
 
                 bool isUpdated = await _matchService.UpdateAsync(match);
                 if (isUpdated)
@@ -223,6 +247,341 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
                 return BadRequest("Xóa trận đấu thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Schedule the match</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Field is not matched</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPost("schedule")]
+        [Produces("application/json")]
+        public async Task<ActionResult> ScheduleMatch(
+                [FromQuery(Name = "tournament-id")] int tournamentID
+            )
+        {
+            try
+            {
+                Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
+                if (tournament == null)
+                {
+                    return BadRequest("Giải đấu không tồn tại");
+                }
+                int totalMatch = 0;
+                if (tournament.TournamentTypeId == 1)
+                {
+                    int n = 0;
+                    for (int i = 0; i <= tournament.FootballTeamNumber; i++)
+                    {
+                        n = (int)Math.Pow(2, i);
+                        if (n > tournament.FootballTeamNumber)
+                        {
+                            i -= 1;
+                            n = i;
+                            break;
+                        }
+                    }
+
+                    int numberMatchR1 = (int)(tournament.FootballTeamNumber - Math.Pow(2, n));
+                    if(numberMatchR1 == 0)
+                    {
+                        int round = 1;
+                        int fight = 1;
+                        totalMatch = (int) tournament.FootballTeamNumber - 1;
+                        tournament.FootballTeamNumber = tournament.FootballTeamNumber / 2;
+                        int winNumber = 1;
+                        while (tournament.FootballTeamNumber >= 1)
+                        {
+                            for (int i = 1; i <= tournament.FootballTeamNumber; i++)
+                            {
+                                Match match = new Match();
+                                match.TournamentId = tournamentID;
+                                match.Status = "Not start";
+                                match.TokenLivestream = "";
+                                if (tournament.FootballTeamNumber == 2)
+                                {
+                                    match.Round = "Bán kết";
+                                } else if (tournament.FootballTeamNumber == 1)
+                                {
+                                    match.Round = "Chung kết";
+                                } else
+                                {
+                                    match.Round = "Vòng " + round;
+                                }
+                                match.Fight = "Trận " + fight;
+                                match.GroupFight = "";
+
+                                Match matchCreated = await _matchService.AddAsync(match);
+
+                                TeamInMatch tim1 = new TeamInMatch();
+                                tim1.MatchId = matchCreated.Id;
+                                if(round > 1)
+                                {
+                                    tim1.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                }
+                                await _teamInMatch.AddAsync(tim1);
+
+                                TeamInMatch tim2 = new TeamInMatch();
+                                tim2.MatchId = matchCreated.Id;
+                                if (round > 1)
+                                {
+                                    tim2.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                }
+                                await _teamInMatch.AddAsync(tim2);
+
+                                fight++;
+                            }
+                            round++;
+                            tournament.FootballTeamNumber = tournament.FootballTeamNumber / 2;
+                        }
+                    }
+                    else
+                    {
+
+                        totalMatch += numberMatchR1;
+                        
+                        int round = 1;
+                        int fight = 1;
+                        int winNumber = 1;
+                        for (int i = 1; i <= numberMatchR1; i++)
+                        {
+                            Match match = new Match();
+                            match.TournamentId = tournamentID;
+                            match.Status = "Not start";
+                            match.Round = "Vòng " + round;
+                            match.TokenLivestream = "";
+                            match.Fight = "Trận " + fight;
+                            match.GroupFight = "";
+
+                            Match matchCreated = await _matchService.AddAsync(match);
+
+                            TeamInMatch tim1 = new TeamInMatch();
+                            tim1.MatchId = matchCreated.Id;
+                            tim1.NextTeam = "";
+                            await _teamInMatch.AddAsync(tim1);
+
+                            TeamInMatch tim2 = new TeamInMatch();
+                            tim2.MatchId = matchCreated.Id;
+                            tim2.NextTeam = "";
+                            await _teamInMatch.AddAsync(tim2);
+                            fight++;
+                        }
+                        round++;
+
+                        int numberMatchR2 = ((int)tournament.FootballTeamNumber - totalMatch) / 2;
+                        int tmpNumberMatchR2 = numberMatchR2;
+                        int numberOfNext = numberMatchR1;
+                        totalMatch += numberMatchR2;
+                        while (numberMatchR2 >= 1)
+                        {
+                            for (int i = 1; i <= numberMatchR2; i++)
+                            {
+                                Match match = new Match();
+                                match.TournamentId = tournamentID;
+                                match.Status = "Not start";
+                                match.TokenLivestream = "";
+                                if (numberMatchR2 == 2)
+                                {
+                                    match.Round = "Bán kết";
+                                }
+                                else if (numberMatchR2 == 1)
+                                {
+                                    match.Round = "Chung kết";
+                                }
+                                else
+                                {
+                                    match.Round = "Vòng " + round;
+                                }
+                                match.Fight = "Trận " + fight;
+                                match.GroupFight = "";
+
+                                Match matchCreated = await _matchService.AddAsync(match);
+
+                                TeamInMatch tim1 = new TeamInMatch();
+                                tim1.MatchId = matchCreated.Id;
+                                if (round == 2 && numberOfNext > 0)
+                                {
+                                    tim1.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                    numberOfNext--;
+                                } else
+                                {
+                                    tim1.NextTeam = "";
+                                }
+                                if (round > 2)
+                                {
+                                    tim1.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                }                               
+                                await _teamInMatch.AddAsync(tim1);
+
+                                TeamInMatch tim2 = new TeamInMatch();
+                                tim2.MatchId = matchCreated.Id;
+                                tim2.NextTeam = "";
+                                if (round > 2)
+                                {
+                                    tim2.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                }
+                                if (round == 2 && numberOfNext > 0 && numberMatchR1 > tmpNumberMatchR2)
+                                {
+                                    tim2.NextTeam = "Thắng Trận " + winNumber;
+                                    winNumber++;
+                                    numberOfNext--;
+                                }
+                                await _teamInMatch.AddAsync(tim2);
+
+                                fight++;
+                            }
+                            round++;
+                            numberMatchR2 = numberMatchR2 / 2;
+                            if(numberMatchR2 >= 1)
+                            {
+                                totalMatch += numberMatchR2;
+                            }
+                        }
+
+                    }
+
+                }
+                else if (tournament.TournamentTypeId == 2)
+                {
+                    for (int i = 1; i < tournament.FootballTeamNumber; i++)
+                    {
+                        totalMatch += i;
+                    }
+                    for (int i = 1; i <= totalMatch; i++)
+                    {
+                        Match match = new Match();
+                        match.TournamentId = tournamentID;
+                        match.Status = "Not start";
+                        match.Round = "";
+                        match.TokenLivestream = "";
+                        match.GroupFight = "";
+                        match.Fight = "Trận " + i;
+
+                        Match matchCreated = await _matchService.AddAsync(match);
+
+                        TeamInMatch tim1 = new TeamInMatch();
+                        tim1.MatchId = matchCreated.Id;
+                        await _teamInMatch.AddAsync(tim1);
+                        
+                        TeamInMatch tim2 = new TeamInMatch();
+                        tim2.MatchId = matchCreated.Id;
+                        await _teamInMatch.AddAsync(tim2);
+                    }
+
+                }
+                else
+                {
+                    int numberTeamOfGroup = (int) (tournament.FootballTeamNumber / tournament.GroupNumber);
+                    int numberTeamRemain = (int) tournament.FootballTeamNumber % numberTeamOfGroup;
+                    int table = 65;
+                    for (int i = 1; i <= tournament.GroupNumber; i++)
+                    {
+                        int totalMatchInGroup = 0;
+                        if(numberTeamRemain > 0)
+                        {
+                            for (int j = 1; j < numberTeamOfGroup + 1; j++)
+                            {
+                                totalMatchInGroup += j;
+                                totalMatch += j;
+                            }
+                            numberTeamRemain--;
+                        } else
+                        {
+                            for (int j = 1; j < numberTeamOfGroup; j++)
+                            {
+                                totalMatchInGroup += j;
+                                totalMatch += j;
+                            }
+                        }
+
+                        for (int j = 1; j <= totalMatchInGroup; j++)
+                        {
+                            Match match = new Match();
+                            match.TournamentId = tournamentID;
+                            match.Status = "Not start";
+                            match.Round = "Vòng bảng";
+                            match.TokenLivestream = "";
+                            match.GroupFight = "Bảng " + char.ConvertFromUtf32(table);
+                            match.Fight = "";
+
+                            Match matchCreated = await _matchService.AddAsync(match);
+
+                            TeamInMatch tim1 = new TeamInMatch();
+                            tim1.MatchId = matchCreated.Id;
+                            await _teamInMatch.AddAsync(tim1);
+
+                            TeamInMatch tim2 = new TeamInMatch();
+                            tim2.MatchId = matchCreated.Id;
+                            await _teamInMatch.AddAsync(tim2);
+                        }
+                        table++;
+                    }
+
+                    int round = 1;
+                    int fight = 1;
+                    totalMatch += (int)tournament.GroupNumber * 2 - 1;
+                    int winNumber = 1;
+                    while (tournament.GroupNumber >= 1)
+                    {
+                        for (int i = 1; i <= tournament.GroupNumber; i++)
+                        {
+                            Match match = new Match();
+                            match.TournamentId = tournamentID;
+                            match.Status = "Not start";
+                            match.TokenLivestream = "";
+                            if (tournament.GroupNumber == 2)
+                            {
+                                match.Round = "Bán kết";
+                            }
+                            else if (tournament.GroupNumber == 1)
+                            {
+                                match.Round = "Chung kết";
+                            }
+                            else
+                            {
+                                match.Round = "Vòng " + round;
+                            }
+                            match.Fight = "Trận " + fight;
+                            match.GroupFight = "";
+
+                            Match matchCreated = await _matchService.AddAsync(match);
+
+                            TeamInMatch tim1 = new TeamInMatch();
+                            tim1.MatchId = matchCreated.Id;
+                            if (round > 1)
+                            {
+                                tim1.NextTeam = "Thắng Trận " + winNumber;
+                                winNumber++;
+                            }
+                            await _teamInMatch.AddAsync(tim1);
+
+                            TeamInMatch tim2 = new TeamInMatch();
+                            tim2.MatchId = matchCreated.Id;
+                            if (round > 1)
+                            {
+                                tim2.NextTeam = "Thắng Trận " + winNumber;
+                                winNumber++;
+                            }
+                            await _teamInMatch.AddAsync(tim2);
+
+                            fight++;
+                        }
+                        round++;
+                        tournament.GroupNumber = tournament.GroupNumber / 2;
+                    }
+                }
+
+                return Ok(totalMatch);
             }
             catch (Exception)
             {

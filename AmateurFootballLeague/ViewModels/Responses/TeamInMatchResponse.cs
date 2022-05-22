@@ -10,6 +10,8 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int RedCardNumber { get; set; }
         public int TeamId { get; set; }
         public int MatchId { get; set; }
+        public string Result { get; set; }
+        public string NextTeam { get; set; }
     }
 
     public class TeamInMatchMT

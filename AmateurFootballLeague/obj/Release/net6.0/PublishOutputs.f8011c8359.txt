@@ -7,6 +7,7 @@ E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AmateurFootballLeague.pdb
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AutoMapper.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\Crc32.NET.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\Firebase.Auth.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\FirebaseAdmin.dll
 E:\Schools\FS\AmateurFootballLeague\AmateurFootballLeague\AmateurFootballLeague\obj\Release\net6.0\PubTmp\Out\Firebase.Storage.dll
