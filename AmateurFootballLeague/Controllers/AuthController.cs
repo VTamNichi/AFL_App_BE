@@ -65,6 +65,60 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
+        /// <summary>Login amin</summary>
+        /// <returns>Return user and token token</returns>
+        /// <response code="200">Returns user and token</response>
+        /// <response code="404">Not found users</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost("login-amin")]
+        [Produces("application/json")]
+        public async Task<ActionResult<UserLVM>> LoginAmin([FromBody] UserLM model)
+        {
+            var auth = FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance;
+            string email;
+            try
+            {
+                var token = await auth.VerifyIdTokenAsync(model.TokenId);
+                email = (string)token.Claims["email"];
+            }
+            catch (Exception e)
+            {
+                return Unauthorized(e.Message);
+            }
+
+            try
+            {
+                User user = _userService.GetUserByEmail(email);
+                if (user == null)
+                {
+                    return NotFound("Tài khoản không tồn tại");
+                }
+
+                if (!user.Status.HasValue)
+                {
+                    return BadRequest("Tài khoản đã bị khóa");
+                }
+                if (user.RoleId != 1)
+                {
+                    return BadRequest("Vai trò của tài khoản không phù hợp");
+                }
+
+                UserVM userVM = _mapper.Map<UserVM>(user);
+                UserLVM userLEPVM = new UserLVM
+                {
+                    UserVM = userVM,
+                    AccessToken = await _jwtProvider.GenerationToken(user)
+                };
+
+                return Ok(userLEPVM);
+            }
+            catch (Exception e)
+            {
+                Response.StatusCode = StatusCodes.Status500InternalServerError;
+                return new JsonResult(e.Message);
+            }
+        }
+
         /// <summary>Login with google</summary>
         /// <returns>Return user and token token</returns>
         /// <response code="200">Returns user and token</response>

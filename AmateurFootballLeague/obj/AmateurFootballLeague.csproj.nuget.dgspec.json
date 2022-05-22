@@ -44,6 +44,10 @@
               "target": "Package",
               "version": "[11.0.0, )"
             },
+            "Crc32.NET": {
+              "target": "Package",
+              "version": "[1.2.0, )"
+            },
             "Firebase.Auth": {
               "target": "Package",
               "version": "[1.0.0, )"

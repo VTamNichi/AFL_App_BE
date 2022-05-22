@@ -66,6 +66,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
         [Required(AllowEmptyStrings = false)]
         public int FootballPlayerMaxNumber { get; set; }
 
+        public int? GroupNumber { get; set; }
+
         [Required(AllowEmptyStrings = false)]
         public int UserId { get; set; }
 
@@ -104,6 +106,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int? FootballTeamNumber { get; set; }
 
         public int? FootballPlayerMaxNumber { get; set; }
+
+        public int? GroupNumber { get; set; }
 
         public TournamentTypeEnum? TournamentTypeEnum { get; set; }
 

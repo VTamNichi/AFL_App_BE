@@ -204,23 +204,54 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<FootballPlayerVM>> UpdateFootballPlayer([FromForm] FootballPlayerUM model)
         {
-            FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(model.Id);
+            try
+            {
+                FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(model.Id);
             if (currentFootballPlayer == null)
             {
                 return NotFound("Không thể tìm thấy cầu thủ với id là " + model.Id);
             }
-            try
-            {
-                if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+                if(!String.IsNullOrEmpty(model.Email))
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
-                    currentFootballPlayer.PlayerAvatar = fileUrl;
+                    FootballPlayer currentFP = _footballPlayerService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
+                    if (currentFP != null && model.Email != currentFP.Email)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Email này đã tồn tại trong hệ thống"
+                        });
+                    }
                 }
+                if (!String.IsNullOrEmpty(model.Phone))
+                {
+                    FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                    if (fpCheckPhone != null && model.Phone != currentFootballPlayer.Phone)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Số điện thoại này đã tồn tại trong hệ thống"
+                        });
+                    }
+                    currentFootballPlayer.Phone = model.Phone;
+                }
+                try
+                {
+                    if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
+                        currentFootballPlayer.PlayerAvatar = fileUrl;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+
+                
                 currentFootballPlayer.Email = String.IsNullOrEmpty(model.Email) ? currentFootballPlayer.Email : model.Email.Trim();
                 currentFootballPlayer.PlayerName = String.IsNullOrEmpty(model.PlayerName) ? currentFootballPlayer.PlayerName : model.PlayerName.Trim();
                 currentFootballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : currentFootballPlayer.Gender;
                 currentFootballPlayer.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? currentFootballPlayer.DateOfBirth : model.DateOfBirth;
-                currentFootballPlayer.Phone = String.IsNullOrEmpty(model.Phone) ? currentFootballPlayer.Phone : model.Phone;
+                
                 currentFootballPlayer.DateUpdate = DateTime.Now;
 
                 bool isUpdated = await _footballPlayerService.UpdateAsync(currentFootballPlayer);

@@ -16,6 +16,10 @@ namespace AmateurFootballLeague.Models
         public DateTime? MatchDate { get; set; }
         public string? Status { get; set; }
         public int? TournamentId { get; set; }
+        public string? Round { get; set; }
+        public string? Fight { get; set; }
+        public string? GroupFight { get; set; }
+        public string? TokenLivestream { get; set; }
 
         public virtual Tournament? Tournament { get; set; }
         public virtual ICollection<MatchDetail> MatchDetails { get; set; }

@@ -118,6 +118,8 @@ namespace AmateurFootballLeague.Controllers
                 team.RedCardNumber = teamInMatch.RedCardNumber;
                 team.TeamId = teamInMatch.TeamId;
                 team.MatchId = teamInMatch.MatchId;
+                team.Result = "";
+                team.NextTeam = "";
                 TeamInMatch created = await _teamInMatch.AddAsync(team);
                 if (created != null)
                 {
@@ -141,7 +143,9 @@ namespace AmateurFootballLeague.Controllers
                 {
                     team.TeamScore = teamInMatch.TeamScore;    
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
-                    team.RedCardNumber = teamInMatch.RedCardNumber;   
+                    team.RedCardNumber = teamInMatch.RedCardNumber;
+                    team.Result = teamInMatch.Result;
+                    team.NextTeam = teamInMatch.NextTeam;
                     bool isUpdated =await _teamInMatch.UpdateAsync(team);
                     if (isUpdated)
                     {

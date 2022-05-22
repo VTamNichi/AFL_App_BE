@@ -36,6 +36,7 @@ namespace AmateurFootballLeague.Models
         public int? UserId { get; set; }
         public int? TournamentTypeId { get; set; }
         public int? FootballFieldTypeId { get; set; }
+        public int? GroupNumber { get; set; }
 
         public virtual FootballFieldType? FootballFieldType { get; set; }
         public virtual TournamentType? TournamentType { get; set; }
