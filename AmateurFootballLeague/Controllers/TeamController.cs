@@ -372,6 +372,13 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                List<Team> teamList = _teamService.GetList().OrderBy(t => t.DateCreate).Take(4).ToList();
+                List<TeamVM> listTeamVMB = _mapper.Map<List<TeamVM>>(teamList);
+                foreach (var teamVM in listTeamVMB)
+                {
+                    teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(teamVM.Id);
+                }
+
                 var top4ID = _teamInTournamentService.GetList().Join(_tournamentResultService.GetList(), tit => tit.Id, ts => ts.TeamInTournamentId, (tit, ts) => new { tit.TeamId })
                           .GroupBy(t => t.TeamId).Select(g => new { teamId = g.Key, count = g.Count()}).OrderByDescending(t => t.count).Take(4).ToList();
                 List<TeamVM> listTeamVM = new List<TeamVM>();
@@ -380,6 +387,27 @@ namespace AmateurFootballLeague.Controllers
                     TeamVM teamVM = _mapper.Map<TeamVM>(await _teamService.GetByIdAsync((int) tid.teamId));
                     teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam((int)tid.teamId);
                     listTeamVM.Add(teamVM);
+                }
+
+                foreach (var teamVMB in listTeamVMB)
+                {
+                    if(listTeamVM.Count >= 4)
+                    {
+                        break;
+                    }
+                    bool flag = true;
+                    foreach (var teamVM in listTeamVM)
+                    {
+                        if (teamVM.Id == teamVMB.Id)
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if(flag)
+                    {
+                        listTeamVM.Add(teamVMB);
+                    }
                 }
 
                 return Ok(listTeamVM);

@@ -213,14 +213,16 @@ namespace AmateurFootballLeague.Controllers
             }
                 if(!String.IsNullOrEmpty(model.Email))
                 {
+                    
                     FootballPlayer currentFP = _footballPlayerService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
-                    if (currentFP != null && model.Email != currentFP.Email)
+                    if (currentFP != null && model.Email != currentFootballPlayer.Email)
                     {
                         return BadRequest(new
                         {
                             message = "Email này đã tồn tại trong hệ thống"
                         });
                     }
+                    currentFootballPlayer.Email = model.Email;
                 }
                 if (!String.IsNullOrEmpty(model.Phone))
                 {

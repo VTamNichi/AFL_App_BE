@@ -12,6 +12,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int MatchId { get; set; }
         public string Result { get; set; }
         public string NextTeam { get; set; }
+        public string TeamName { get; set; }
     }
 
     public class TeamInMatchMT

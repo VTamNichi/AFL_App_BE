@@ -471,10 +471,12 @@ namespace AmateurFootballLeague.Controllers
 
                         TeamInMatch tim1 = new TeamInMatch();
                         tim1.MatchId = matchCreated.Id;
+//                        tim1.TeamName = tn1;
                         await _teamInMatch.AddAsync(tim1);
-                        
+
                         TeamInMatch tim2 = new TeamInMatch();
                         tim2.MatchId = matchCreated.Id;
+  //                      tim2.TeamName = tn2;
                         await _teamInMatch.AddAsync(tim2);
                     }
 
