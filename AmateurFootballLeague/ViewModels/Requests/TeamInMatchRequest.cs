@@ -14,6 +14,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int MatchId { get; set; }
         public string? Result { get; set; }
         public string? NextTeam { get; set; }
+        public string? TeamName { get; set; }
     }
 
     public class TeamInMatchUM
@@ -26,5 +27,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int MatchId { get; set; }
         public string? Result { get; set; }
         public string? NextTeam { get; set; }
+        public string? TeamName { get; set; }
     }
 }

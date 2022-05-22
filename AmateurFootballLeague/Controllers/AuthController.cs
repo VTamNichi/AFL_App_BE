@@ -65,12 +65,12 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Login amin</summary>
+        /// <summary>Login admin</summary>
         /// <returns>Return user and token token</returns>
         /// <response code="200">Returns user and token</response>
         /// <response code="404">Not found users</response>
         /// <response code="500">Internal server error</response>
-        [HttpPost("login-amin")]
+        [HttpPost("login-admin")]
         [Produces("application/json")]
         public async Task<ActionResult<UserLVM>> LoginAmin([FromBody] UserLM model)
         {
@@ -194,8 +194,8 @@ namespace AmateurFootballLeague.Controllers
         }
 
         /// <summary>Send verify code from system</summary>
-        /// <returns>Return verify code</returns>
-        /// <response code="200">Returns verify code</response>
+        /// <returns>Return success</returns>
+        /// <response code="200">Returns success</response>
         /// <response code="400">Send mail fail</response>
         /// <response code="500">Internal Server</response>
         [HttpPost("send-verify-code")]

@@ -8,7 +8,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
         Email,
         Username,
         Gender,
-        Phone,
         DateOfBirth,
         DateCreate,
     }

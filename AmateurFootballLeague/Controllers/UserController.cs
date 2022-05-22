@@ -36,7 +36,15 @@ namespace AmateurFootballLeague.Controllers
         [HttpGet]
         [Produces("application/json")]
         public ActionResult<UserListVM> GetListUser(
+            [FromQuery(Name = "user-name")] string? name,
+            [FromQuery(Name = "gender")] UserGenderEnum? gender,
+            [FromQuery(Name = "start-dob")] DateTime? startDOB,
+            [FromQuery(Name = "end-dob")] DateTime? endDOB,
+            [FromQuery(Name = "address")] string? address,
+            [FromQuery(Name = "phone")] string? phone,
+            [FromQuery(Name = "role-id")] int? roleId,
             [FromQuery(Name = "order-by")] UserFieldEnum orderBy,
+            [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
             int limit = 5
         )
@@ -44,29 +52,94 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<User> userList = _userService.GetList();
-                //if (!String.IsNullOrEmpty(name))
-                //{
-                //    roleList = roleList.Where(s => s.RoleName.ToUpper().Contains(name.Trim().ToUpper()));
-                //}
-                var userListPaging = userList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                if (!String.IsNullOrEmpty(name))
+                {
+                    userList = userList.Where(s => s.Username.ToUpper().Contains(name.Trim().ToUpper()));
+                }
+                if(gender == UserGenderEnum.Male)
+                {
+                    userList = userList.Where(s => s.Gender == "Male");
+                } else if (gender == UserGenderEnum.Female)
+                {
+                    userList = userList.Where(s => s.Gender == "Female");
+                }
+                if(!String.IsNullOrEmpty(startDOB.ToString()))
+                {
+                    userList = userList.Where(s => s.DateOfBirth.Value.CompareTo(startDOB.Value) >= 0);
+                }
+                if (!String.IsNullOrEmpty(endDOB.ToString()))
+                {
+                    userList = userList.Where(s => s.DateOfBirth.Value.CompareTo(endDOB.Value) <= 0);
+                }
 
-                //var roleListFilter = new List<Role>();
-                //if (orderBy == RoleFieldEnum.Id)
-                //{
-                //    roleListFilter = roleListPaging.OrderBy(rl => rl.Id).ToList();
-                //    if (orderType == SortTypeEnum.DESC)
-                //    {
-                //        roleListFilter = roleListPaging.OrderByDescending(rl => rl.Id).ToList();
-                //    }
-                //}
-                //if (orderBy == RoleFieldEnum.RoleName)
-                //{
-                //    roleListFilter = roleListPaging.OrderBy(rl => rl.RoleName).ToList();
-                //    if (orderType == SortTypeEnum.DESC)
-                //    {
-                //        roleListFilter = roleListPaging.OrderByDescending(rl => rl.RoleName).ToList();
-                //    }
-                //}
+                if (!String.IsNullOrEmpty(address))
+                {
+                    userList = userList.Where(s => s.Address.ToUpper().Contains(address.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(phone))
+                {
+                    userList = userList.Where(s => s.Phone.ToUpper().Contains(phone.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(roleId.ToString()))
+                {
+                    userList = userList.Where(s => s.RoleId == roleId);
+                }
+
+                if (orderType == SortTypeEnum.ASC)
+                {
+                    if(orderBy == UserFieldEnum.Id)
+                    {
+                        userList = userList.OrderBy(rl => rl.Id);
+                    }
+                    else if (orderBy == UserFieldEnum.Email)
+                    {
+                        userList = userList.OrderBy(rl => rl.Email);
+                    }
+                    else if (orderBy == UserFieldEnum.Username)
+                    {
+                        userList = userList.OrderBy(rl => rl.Username);
+                    }
+                    else if (orderBy == UserFieldEnum.Gender)
+                    {
+                        userList = userList.OrderBy(rl => rl.Gender);
+                    }
+                    else if (orderBy == UserFieldEnum.DateOfBirth)
+                    {
+                        userList = userList.OrderBy(rl => rl.DateOfBirth);
+                    }
+                    else if (orderBy == UserFieldEnum.DateCreate)
+                    {
+                        userList = userList.OrderBy(rl => rl.DateCreate);
+                    }
+                } else if(orderType == SortTypeEnum.DESC)
+                {
+                    if (orderBy == UserFieldEnum.Id)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.Id);
+                    }
+                    else if (orderBy == UserFieldEnum.Email)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.Email);
+                    }
+                    else if (orderBy == UserFieldEnum.Username)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.Username);
+                    }
+                    else if (orderBy == UserFieldEnum.Gender)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.Gender);
+                    }
+                    else if (orderBy == UserFieldEnum.DateOfBirth)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.DateOfBirth);
+                    }
+                    else if (orderBy == UserFieldEnum.DateCreate)
+                    {
+                        userList = userList.OrderByDescending(rl => rl.DateCreate);
+                    }
+                }
+
+                var userListPaging = userList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var userListResponse = new UserListVM
                 {
@@ -191,7 +264,7 @@ namespace AmateurFootballLeague.Controllers
 
                 convertUser.Username = String.IsNullOrEmpty(model.Username) ? "" : model.Username.Trim();
                 convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : "All";
-                convertUser.DateOfBirth = model.DateOfBirth;
+                convertUser.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? DateTime.Now.AddYears(-20) : model.DateOfBirth;
                 convertUser.Address = String.IsNullOrEmpty(model.Address) ? "" : model.Address.Trim();
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
                 convertUser.Bio = String.IsNullOrEmpty(model.Bio) ? "" : model.Bio.Trim();
