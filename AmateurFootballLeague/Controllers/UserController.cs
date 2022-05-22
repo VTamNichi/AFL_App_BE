@@ -139,11 +139,14 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
 
+                int countList = userList.Count();
+
                 var userListPaging = userList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var userListResponse = new UserListVM
                 {
                     Users = _mapper.Map<List<User>, List<UserVM>>(userListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
