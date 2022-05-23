@@ -1616,11 +1616,7 @@
         "tools/about_EntityFrameworkCore.help.txt",
         "tools/init.ps1",
         "tools/net461/any/ef.exe",
-        "tools/net461/any/gef.exe",
-        "tools/net461/any/gef.ico",
         "tools/net461/win-x86/ef.exe",
-        "tools/net461/win-x86/gef.exe",
-        "tools/net461/win-x86/gef.ico",
         "tools/netcoreapp2.0/any/ef.dll",
         "tools/netcoreapp2.0/any/ef.runtimeconfig.json"
       ]
