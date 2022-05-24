@@ -39,7 +39,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamScore = timt.tim.TeamScore,
                         YellowCardNumber = timt.tim.YellowCardNumber,
                         RedCardNumber = timt.tim.RedCardNumber,
-                        TeamId = t.Id,
+                        TeamId = timt.tim.TeamId,
                         MatchId = timt.m.Id,
                         Result = timt.tim.Result,
                         NextTeam = timt.tim.NextTeam,
