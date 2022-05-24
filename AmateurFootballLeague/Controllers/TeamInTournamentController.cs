@@ -1,11 +1,9 @@
-﻿using AmateurFootballLeague.ExternalService;
-using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -35,6 +33,8 @@ namespace AmateurFootballLeague.Controllers
         [HttpGet]
         [Produces("application/json")]
         public ActionResult<TeamInTournamentListVM> GetListTeamInTournament(
+            [FromQuery(Name = "tournament-id")] int? tourId,
+            [FromQuery(Name = "team-id")] int? teamId,
             [FromQuery(Name = "point-min")] int? pointMin,
             [FromQuery(Name = "point-max")] int? pointMax,
             [FromQuery(Name = "difference-point-min")] int? differencePointMin,
@@ -48,6 +48,14 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<TeamInTournament> teamInTournamentList = _teamInTournamentService.GetList();
+                if (!String.IsNullOrEmpty(tourId.ToString()))
+                {
+                    teamInTournamentList = teamInTournamentList.Where(s => s.TournamentId == tourId);
+                }
+                if (!String.IsNullOrEmpty(teamId.ToString()))
+                {
+                    teamInTournamentList = teamInTournamentList.Where(s => s.TeamId == teamId);
+                }
                 if (!String.IsNullOrEmpty(pointMin.ToString()))
                 {
                     teamInTournamentList = teamInTournamentList.Where(s => s.Point >= pointMin);
