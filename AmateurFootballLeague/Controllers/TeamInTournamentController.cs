@@ -73,42 +73,44 @@ namespace AmateurFootballLeague.Controllers
                 {
                     teamInTournamentList = teamInTournamentList.Where(s => s.Point <= differencePointMax);
                 }
-                if (!String.IsNullOrEmpty(status.ToString()))
+                if (!String.IsNullOrEmpty(status))
                 {
                     teamInTournamentList = teamInTournamentList.Where(s => s.Status == status);
                 }
 
-                var teamInTournamentListPaging = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-
-                var teamInTournamentListOrder = new List<TeamInTournament>();
                 if (orderBy == TeamInTournamentFieldEnum.Id)
                 {
-                    teamInTournamentListOrder = teamInTournamentListPaging.OrderBy(tnm => tnm.Id).ToList();
+                    teamInTournamentList = teamInTournamentList.OrderBy(tnm => tnm.Id);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        teamInTournamentListOrder = teamInTournamentListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                        teamInTournamentList = teamInTournamentList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
                 if (orderBy == TeamInTournamentFieldEnum.Point)
                 {
-                    teamInTournamentListOrder = teamInTournamentListPaging.OrderBy(tnm => tnm.Point).ToList();
+                    teamInTournamentList = teamInTournamentList.OrderBy(tnm => tnm.Point);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        teamInTournamentListOrder = teamInTournamentListPaging.OrderByDescending(tnm => tnm.Point).ToList();
+                        teamInTournamentList = teamInTournamentList.OrderByDescending(tnm => tnm.Point);
                     }
                 }
                 if (orderBy == TeamInTournamentFieldEnum.DifferentPoint)
                 {
-                    teamInTournamentListOrder = teamInTournamentListPaging.OrderBy(tnm => tnm.DifferentPoint).ToList();
+                    teamInTournamentList = teamInTournamentList.OrderBy(tnm => tnm.DifferentPoint);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        teamInTournamentListOrder = teamInTournamentListPaging.OrderByDescending(tnm => tnm.DifferentPoint).ToList();
+                        teamInTournamentList = teamInTournamentList.OrderByDescending(tnm => tnm.DifferentPoint);
                     }
                 }
 
+                int countList = teamInTournamentList.Count();
+
+                var teamInTournamentListPaging = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 var teamInTournamentListResponse = new TeamInTournamentListVM
                 {
-                    TeamInTournaments = _mapper.Map<List<TeamInTournament>, List<TeamInTournamentVM>>(teamInTournamentListOrder),
+                    TeamInTournaments = _mapper.Map<List<TeamInTournament>, List<TeamInTournamentVM>>(teamInTournamentListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };

@@ -22,21 +22,56 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamVM> GetAllPlayerInTournament(SortTypeEnum orderType, int pageIndex = 1, int limit = 5)
+        public ActionResult<PlayerInTournamentLV> GetAllPlayerInTournament(
+                [FromQuery(Name = "team-in-tournament-id")] int? teamInTourId,
+                [FromQuery(Name = "player-in-team-id")] int? playerInTeamId,
+                [FromQuery(Name = "status")] string? status,
+                [FromQuery(Name = "clothes-number-min")] int? clothesNumberMin,
+                [FromQuery(Name = "clothes-number-max")] int? clothesNumberMax,
+                [FromQuery(Name = "order-by")] TeamInTournamentFieldEnum orderBy,
+                [FromQuery(Name = "order-type")] SortTypeEnum orderType,
+                [FromQuery(Name = "page-offset")] int pageIndex = 1,
+                int limit = 5
+            )
         {
             try
             {
                 IQueryable<PlayerInTournament> playerList = _playerInTournament.GetList();
-                playerList = playerList.Select(p => p);
-                var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-                var playerListOrder = playerListPaging;
+                if (!String.IsNullOrEmpty(teamInTourId.ToString()))
+                {
+                    playerList = playerList.Where(s => s.TeamInTournamentId == teamInTourId);
+                }
+                if (!String.IsNullOrEmpty(playerInTeamId.ToString()))
+                {
+                    playerList = playerList.Where(s => s.PlayerInTeamId == playerInTeamId);
+                }
+                if (!String.IsNullOrEmpty(status))
+                {
+                    playerList = playerList.Where(s => s.Status == status);
+                }
+                if (!String.IsNullOrEmpty(clothesNumberMin.ToString()))
+                {
+                    playerList = playerList.Where(s => s.ClothesNumber >= clothesNumberMin);
+                }
+                if (!String.IsNullOrEmpty(clothesNumberMax.ToString()))
+                {
+                    playerList = playerList.Where(s => s.ClothesNumber <= clothesNumberMax);
+                }
+
+                playerList = playerList.OrderBy(p => p.Id);
                 if (orderType == SortTypeEnum.DESC)
                 {
-                    playerListOrder = playerListPaging.OrderByDescending(p => p.Id).ToList();
+                    playerList = playerList.OrderByDescending(p => p.Id);
                 }
+
+                int countList = playerList.Count();
+
+                var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 var playerListResponse = new PlayerInTournamentLV
                 {
-                    PlayerInTournaments = _mapper.Map<List<PlayerInTournament>, List<PlayerInTournamentVM>>(playerListOrder),
+                    PlayerInTournaments = _mapper.Map<List<PlayerInTournament>, List<PlayerInTournamentVM>>(playerListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };

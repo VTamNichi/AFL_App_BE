@@ -12,6 +12,7 @@
     public class TeamInTournamentListVM
     {
         public List<TeamInTournamentVM> TeamInTournaments { get; set; } = new List<TeamInTournamentVM>();
+        public int CountList { get; set; }
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
