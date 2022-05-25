@@ -28,7 +28,6 @@ namespace AmateurFootballLeague.Controllers
                 [FromQuery(Name = "status")] string? status,
                 [FromQuery(Name = "clothes-number-min")] int? clothesNumberMin,
                 [FromQuery(Name = "clothes-number-max")] int? clothesNumberMax,
-                [FromQuery(Name = "order-by")] TeamInTournamentFieldEnum orderBy,
                 [FromQuery(Name = "order-type")] SortTypeEnum orderType,
                 [FromQuery(Name = "page-offset")] int pageIndex = 1,
                 int limit = 5
