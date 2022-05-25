@@ -8,5 +8,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int TeamInTournamentId { get; set; }
         [Required]
         public int PlayerInTeamId { get; set; }
+
+        public string? Status { get; set; }
+        public int? ClothesNumber { get; set; }
     }
 }
