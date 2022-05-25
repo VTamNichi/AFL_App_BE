@@ -39,6 +39,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "point-max")] int? pointMax,
             [FromQuery(Name = "difference-point-min")] int? differencePointMin,
             [FromQuery(Name = "difference-point-max")] int? differencePointMax,
+            [FromQuery(Name = "status")] string? status,
             [FromQuery(Name = "order-by")] TeamInTournamentFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -71,6 +72,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(differencePointMax.ToString()))
                 {
                     teamInTournamentList = teamInTournamentList.Where(s => s.Point <= differencePointMax);
+                }
+                if (!String.IsNullOrEmpty(status.ToString()))
+                {
+                    teamInTournamentList = teamInTournamentList.Where(s => s.Status == status);
                 }
 
                 var teamInTournamentListPaging = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();

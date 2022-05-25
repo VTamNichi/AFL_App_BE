@@ -432,7 +432,7 @@
             <response code="200">Returns top 4 teams by achievement</response>
             <response code="500">Internal server error</response>
         </member>
-        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetListTeamInTournament(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},AmateurFootballLeague.ViewModels.Requests.TeamInTournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+        <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.GetListTeamInTournament(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,AmateurFootballLeague.ViewModels.Requests.TeamInTournamentFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list team in tournament</summary>
             <returns>List team in tournament</returns>
             <response code="200">Returns list team in tournament</response>
