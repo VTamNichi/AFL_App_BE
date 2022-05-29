@@ -23,7 +23,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamLV> GetAllPlayerInTeam(int teamId,string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
+        public ActionResult<PlayerInTeamLFV> GetAllPlayerInTeam(int teamId,string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
         {
             try
             {

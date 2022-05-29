@@ -173,7 +173,7 @@ namespace AmateurFootballLeague.Controllers
                 teamInTournament.TeamId = model.TeamId;
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
                 teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) ? 0 : model.DifferentPoint;
-                teamInTournament.Status = String.IsNullOrEmpty(model.Status.ToString()) ? "" : model.Status;
+                teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? "" : model.Status;
 
                 TeamInTournament teamInTournamentCreated = await _teamInTournamentService.AddAsync(teamInTournament);
                 if (teamInTournamentCreated != null)
@@ -189,7 +189,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         /// <summary>Update a team in tournament</summary>
-        /// <response code="200">Success</response>
+        /// <response code="201">Success</response>
         /// <response code="404">Not Found</response>
         /// <response code="400">Field is not team in tournament</response>
         /// <response code="500">Failed to save request</response>
@@ -204,7 +204,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy đội bóng trong giải đấu với id là " + model.Id);
                 }
-                if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
+                if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
                     Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
                     if (tournament == null)
@@ -216,7 +216,7 @@ namespace AmateurFootballLeague.Controllers
                         teamInTournament.TournamentId = model.TournamentId;
                     }
                 }
-                if (!String.IsNullOrEmpty(model.TeamId.ToString()))
+                if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
                     Team team = await _teamService.GetByIdAsync((int)model.TeamId);
                     if (team == null)
@@ -229,14 +229,14 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
                 
-                teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
-                teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) ? 0 : model.DifferentPoint;
-                teamInTournament.Status = String.IsNullOrEmpty(model.Status.ToString()) ? "" : model.Status;
+                teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) && model.Point != 0 ? teamInTournament.Point : model.Point;
+                teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) && model.DifferentPoint != 0 ? teamInTournament.DifferentPoint : model.DifferentPoint;
+                teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? teamInTournament.Status : model.Status;
 
-                TeamInTournament teamInTournamentCreated = await _teamInTournamentService.AddAsync(teamInTournament);
-                if (teamInTournamentCreated != null)
+                 bool isUpdate = await _teamInTournamentService.UpdateAsync(teamInTournament);
+                if (isUpdate)
                 {
-                    return CreatedAtAction("GetTeamInTournamentById", new { id = teamInTournamentCreated.Id }, _mapper.Map<TeamInTournamentVM>(teamInTournamentCreated));
+                    return CreatedAtAction("GetTeamInTournamentById", new { id = teamInTournament.Id }, _mapper.Map<TeamInTournamentVM>(teamInTournament));
                 }
                 return BadRequest("Cập nhật đội bóng trong giải đấu thất bại");
             }

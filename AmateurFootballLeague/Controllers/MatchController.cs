@@ -320,6 +320,7 @@ namespace AmateurFootballLeague.Controllers
 
                                 TeamInMatch tim1 = new TeamInMatch();
                                 tim1.MatchId = matchCreated.Id;
+                                tim1.TeamName = "Chưa có đội";
                                 if(round > 1)
                                 {
                                     tim1.NextTeam = "Thắng Trận " + winNumber;
@@ -329,6 +330,7 @@ namespace AmateurFootballLeague.Controllers
 
                                 TeamInMatch tim2 = new TeamInMatch();
                                 tim2.MatchId = matchCreated.Id;
+                                tim2.TeamName = "Chưa có đội";
                                 if (round > 1)
                                 {
                                     tim2.NextTeam = "Thắng Trận " + winNumber;
@@ -364,11 +366,13 @@ namespace AmateurFootballLeague.Controllers
 
                             TeamInMatch tim1 = new TeamInMatch();
                             tim1.MatchId = matchCreated.Id;
+                            tim1.TeamName = "Chưa có đội";
                             tim1.NextTeam = "";
                             await _teamInMatch.AddAsync(tim1);
 
                             TeamInMatch tim2 = new TeamInMatch();
                             tim2.MatchId = matchCreated.Id;
+                            tim2.TeamName = "Chưa có đội";
                             tim2.NextTeam = "";
                             await _teamInMatch.AddAsync(tim2);
                             fight++;
@@ -406,6 +410,7 @@ namespace AmateurFootballLeague.Controllers
 
                                 TeamInMatch tim1 = new TeamInMatch();
                                 tim1.MatchId = matchCreated.Id;
+                                tim1.TeamName = "Chưa có đội";
                                 if (round == 2 && numberOfNext > 0)
                                 {
                                     tim1.NextTeam = "Thắng Trận " + winNumber;
@@ -424,6 +429,7 @@ namespace AmateurFootballLeague.Controllers
 
                                 TeamInMatch tim2 = new TeamInMatch();
                                 tim2.MatchId = matchCreated.Id;
+                                tim2.TeamName = "Chưa có đội";
                                 tim2.NextTeam = "";
                                 if (round > 2)
                                 {
@@ -471,10 +477,12 @@ namespace AmateurFootballLeague.Controllers
 
                         TeamInMatch tim1 = new TeamInMatch();
                         tim1.MatchId = matchCreated.Id;
+                        tim1.TeamName = "Chưa có đội";
 //                        tim1.TeamName = tn1;
                         await _teamInMatch.AddAsync(tim1);
 
                         TeamInMatch tim2 = new TeamInMatch();
+                        tim2.TeamName = "Chưa có đội";
                         tim2.MatchId = matchCreated.Id;
   //                      tim2.TeamName = tn2;
                         await _teamInMatch.AddAsync(tim2);
@@ -520,10 +528,12 @@ namespace AmateurFootballLeague.Controllers
 
                             TeamInMatch tim1 = new TeamInMatch();
                             tim1.MatchId = matchCreated.Id;
+                            tim1.TeamName = "Chưa có đội";
                             await _teamInMatch.AddAsync(tim1);
 
                             TeamInMatch tim2 = new TeamInMatch();
                             tim2.MatchId = matchCreated.Id;
+                            tim2.TeamName = "Chưa có đội";
                             await _teamInMatch.AddAsync(tim2);
                         }
                         table++;
@@ -560,6 +570,7 @@ namespace AmateurFootballLeague.Controllers
 
                             TeamInMatch tim1 = new TeamInMatch();
                             tim1.MatchId = matchCreated.Id;
+                            tim1.TeamName = "Chưa có đội";
                             if (round > 1)
                             {
                                 tim1.NextTeam = "Thắng Trận " + winNumber;
@@ -569,6 +580,7 @@ namespace AmateurFootballLeague.Controllers
 
                             TeamInMatch tim2 = new TeamInMatch();
                             tim2.MatchId = matchCreated.Id;
+                            tim2.TeamName = "Chưa có đội";
                             if (round > 1)
                             {
                                 tim2.NextTeam = "Thắng Trận " + winNumber;

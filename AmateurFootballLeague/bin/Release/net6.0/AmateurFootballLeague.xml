@@ -454,7 +454,7 @@
         </member>
         <member name="M:AmateurFootballLeague.Controllers.TeamInTournamentController.UpdateTeamInTournament(AmateurFootballLeague.ViewModels.Requests.TeamInTournamentUM)">
             <summary>Update a team in tournament</summary>
-            <response code="200">Success</response>
+            <response code="201">Success</response>
             <response code="404">Not Found</response>
             <response code="400">Field is not team in tournament</response>
             <response code="500">Failed to save request</response>
