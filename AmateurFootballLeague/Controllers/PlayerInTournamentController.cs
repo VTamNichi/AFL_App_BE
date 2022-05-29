@@ -107,6 +107,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 playerCreate.TeamInTournamentId = player.TeamInTournamentId;
                 playerCreate.PlayerInTeamId = player.PlayerInTeamId;
+                playerCreate.ClothesNumber = String.IsNullOrEmpty(player.ClothesNumber.ToString()) ? 0 : player.ClothesNumber; 
                 PlayerInTournament playerCreatedSuccess = await _playerInTournament.AddAsync(playerCreate);
                 if(playerCreatedSuccess != null)
                 {
