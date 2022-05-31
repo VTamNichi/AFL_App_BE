@@ -7,6 +7,8 @@ namespace AmateurFootballLeague.Models
     {
         public User()
         {
+            Comments = new HashSet<Comment>();
+            PromoteRequests = new HashSet<PromoteRequest>();
             ScorePredictions = new HashSet<ScorePrediction>();
             Tournaments = new HashSet<Tournament>();
         }
@@ -40,6 +42,8 @@ namespace AmateurFootballLeague.Models
 
         public virtual Role? Role { get; set; }
         public virtual Team Team { get; set; } = null!;
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<PromoteRequest> PromoteRequests { get; set; }
         public virtual ICollection<ScorePrediction> ScorePredictions { get; set; }
         public virtual ICollection<Tournament> Tournaments { get; set; }
     }

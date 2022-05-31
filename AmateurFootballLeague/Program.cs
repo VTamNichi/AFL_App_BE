@@ -106,6 +106,12 @@ builder.Services.AddTransient<ITournamentResultService, TournamentResultService>
 builder.Services.AddTransient<IVerifyCodeRepository, VerifyCodeRepository>();
 builder.Services.AddTransient<IVerifyCodeService, VerifyCodeService>();
 
+builder.Services.AddTransient<IPromoteRequestRepository, PromoteRequestRepository>();
+builder.Services.AddTransient<IPromoteRequestService, PromoteRequestService>();
+
+builder.Services.AddTransient<ICommentRepository, CommentRepository>();
+builder.Services.AddTransient<ICommentService, CommentService>();
+
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.Converters.Add(new StringEnumConverter());

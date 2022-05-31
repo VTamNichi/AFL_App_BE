@@ -16,6 +16,7 @@ namespace AmateurFootballLeague.Models
         {
         }
 
+        public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<FootballFieldType> FootballFieldTypes { get; set; } = null!;
         public virtual DbSet<FootballPlayer> FootballPlayers { get; set; } = null!;
         public virtual DbSet<Image> Images { get; set; } = null!;
@@ -24,6 +25,7 @@ namespace AmateurFootballLeague.Models
         public virtual DbSet<News> News { get; set; } = null!;
         public virtual DbSet<PlayerInTeam> PlayerInTeams { get; set; } = null!;
         public virtual DbSet<PlayerInTournament> PlayerInTournaments { get; set; } = null!;
+        public virtual DbSet<PromoteRequest> PromoteRequests { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<ScorePrediction> ScorePredictions { get; set; } = null!;
         public virtual DbSet<Team> Teams { get; set; } = null!;
@@ -46,6 +48,49 @@ namespace AmateurFootballLeague.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Content).HasMaxLength(256);
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.DateDelete).HasColumnType("datetime");
+
+                entity.Property(e => e.DateUpdate).HasColumnType("datetime");
+
+                entity.Property(e => e.MatchId).HasColumnName("MatchID");
+
+                entity.Property(e => e.Status).HasMaxLength(32);
+
+                entity.Property(e => e.TeamId).HasColumnName("TeamID");
+
+                entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Match)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.MatchId)
+                    .HasConstraintName("FK__Comments__MatchI__7F2BE32F");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__Comments__TeamID__00200768");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK__Comments__Tourna__01142BA1");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Comments__UserID__02084FDA");
+            });
+
             modelBuilder.Entity<FootballFieldType>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -212,6 +257,39 @@ namespace AmateurFootballLeague.Models
                     .WithMany(p => p.PlayerInTournaments)
                     .HasForeignKey(d => d.TeamInTournamentId)
                     .HasConstraintName("FK__PlayerInT__TeamI__5AEE82B9");
+            });
+
+            modelBuilder.Entity<PromoteRequest>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.IdentityCard)
+                    .HasMaxLength(32)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NameBusiness).HasMaxLength(128);
+
+                entity.Property(e => e.PhoneBusiness)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RequestContent).HasMaxLength(256);
+
+                entity.Property(e => e.Status).HasMaxLength(32);
+
+                entity.Property(e => e.Tinbusiness)
+                    .HasMaxLength(32)
+                    .IsUnicode(false)
+                    .HasColumnName("TINBusiness");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.PromoteRequests)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__PromoteRe__UserI__7C4F7684");
             });
 
             modelBuilder.Entity<Role>(entity =>

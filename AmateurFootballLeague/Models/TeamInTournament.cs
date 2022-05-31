@@ -22,10 +22,5 @@ namespace AmateurFootballLeague.Models
         public virtual Tournament? Tournament { get; set; }
         public virtual ICollection<PlayerInTournament> PlayerInTournaments { get; set; }
         public virtual ICollection<TournamentResult> TournamentResults { get; set; }
-
-        public static implicit operator TeamInTournament(bool v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
