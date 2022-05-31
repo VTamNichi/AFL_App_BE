@@ -7,6 +7,7 @@ namespace AmateurFootballLeague.Models
     {
         public Match()
         {
+            Comments = new HashSet<Comment>();
             MatchDetails = new HashSet<MatchDetail>();
             ScorePredictions = new HashSet<ScorePrediction>();
             TeamInMatches = new HashSet<TeamInMatch>();
@@ -22,6 +23,7 @@ namespace AmateurFootballLeague.Models
         public string? TokenLivestream { get; set; }
 
         public virtual Tournament? Tournament { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<MatchDetail> MatchDetails { get; set; }
         public virtual ICollection<ScorePrediction> ScorePredictions { get; set; }
         public virtual ICollection<TeamInMatch> TeamInMatches { get; set; }

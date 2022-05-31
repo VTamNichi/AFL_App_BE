@@ -7,6 +7,7 @@ namespace AmateurFootballLeague.Models
     {
         public Team()
         {
+            Comments = new HashSet<Comment>();
             PlayerInTeams = new HashSet<PlayerInTeam>();
             TeamInMatches = new HashSet<TeamInMatch>();
             TeamInTournaments = new HashSet<TeamInTournament>();
@@ -25,6 +26,7 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateDelete { get; set; }
 
         public virtual User IdNavigation { get; set; } = null!;
+        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
         public virtual ICollection<TeamInMatch> TeamInMatches { get; set; }
         public virtual ICollection<TeamInTournament> TeamInTournaments { get; set; }

@@ -7,6 +7,7 @@ namespace AmateurFootballLeague.Models
     {
         public Tournament()
         {
+            Comments = new HashSet<Comment>();
             Images = new HashSet<Image>();
             Matches = new HashSet<Match>();
             News = new HashSet<News>();
@@ -41,6 +42,7 @@ namespace AmateurFootballLeague.Models
         public virtual FootballFieldType? FootballFieldType { get; set; }
         public virtual TournamentType? TournamentType { get; set; }
         public virtual User? User { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
         public virtual ICollection<News> News { get; set; }
