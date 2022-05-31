@@ -98,6 +98,10 @@ namespace AmateurFootballLeague.Utils
             CreateMap<PromoteRequest, PromoteRequestVM>();
             CreateMap<PromoteRequestCM, PromoteRequest>();
             #endregion
+            #region AutoMapper CommentViewModel
+            CreateMap<Comment, CommentVM>();
+            CreateMap<CommentCM, Comment>();
+            #endregion
         }
     }
 }
