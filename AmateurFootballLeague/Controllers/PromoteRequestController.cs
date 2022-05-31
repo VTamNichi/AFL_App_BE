@@ -13,11 +13,13 @@ namespace AmateurFootballLeague.Controllers
     public class PromoteRequestController : ControllerBase
     {
         private readonly IPromoteRequestService _promoteRequestService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public PromoteRequestController(IPromoteRequestService promoteRequestService, IMapper mapper)
+        public PromoteRequestController(IPromoteRequestService promoteRequestService, IUserService userService, IMapper mapper)
         {
             _promoteRequestService = promoteRequestService;
+            _userService = userService;
             _mapper = mapper;
         }
 
@@ -137,6 +139,101 @@ namespace AmateurFootballLeague.Controllers
                 };
 
                 return Ok(promoteRequestListResponse);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Get promote request by id</summary>
+        /// <returns>Return the promote request with the corresponding id</returns>
+        /// <response code="200">Returns the promote request type with the specified id</response>
+        /// <response code="404">No promote request found with the specified id</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet]
+        [Route("{id}")]
+        [Produces("application/json")]
+        public async Task<ActionResult<PromoteRequestVM>> GetPromoteRequestById(int id)
+        {
+            try
+            {
+                PromoteRequest currentPR = await _promoteRequestService.GetByIdAsync(id);
+                if (currentPR != null)
+                {
+                    return Ok(_mapper.Map<PromoteRequestVM>(currentPR));
+                }
+                return NotFound("Không thể tìm thấy yêu cầu nâng cấp với id là " + id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Create a new promote request</summary>
+        /// <response code="201">Created new promote request successfull</response>
+        /// <response code="400">Field is not matched or duplicated</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPost]
+        [Produces("application/json")]
+        public async Task<ActionResult<PromoteRequestVM>> CreatePromoteRequest([FromBody] PromoteRequestCM model)
+        {
+            try
+            {
+                User user = await _userService.GetByIdAsync(model.UserId);
+                if(user == null)
+                {
+                    return NotFound("Không tìm thấy người dùng");
+                }
+                PromoteRequest promoteRequest = _mapper.Map<PromoteRequest>(model);
+                promoteRequest.DateCreate = DateTime.Now;
+                promoteRequest.Status = "Chưa duyệt";
+                promoteRequest.Reason = "";
+
+                PromoteRequest promoteRequestCreated = await _promoteRequestService.AddAsync(promoteRequest);
+                if (promoteRequestCreated != null)
+                {
+                    return CreatedAtAction("GetPromoteRequestById", new { id = promoteRequestCreated.Id }, _mapper.Map<PromoteRequestVM>(promoteRequestCreated));
+                }
+                return BadRequest("Tạo vai trò mới thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Update a promoteRequest</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Field is not matched</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPut]
+        [Produces("application/json")]
+        public async Task<ActionResult<PromoteRequestVM>> UpdatePromoteRequest([FromBody] PromoteRequestUM model)
+        {
+            try
+            {
+                PromoteRequest currentPromoteRequest = await _promoteRequestService.GetByIdAsync(model.Id);
+                if (currentPromoteRequest == null)
+                {
+                    return NotFound("Không tìm thấy yêu cầu nâng cấp tài khoản");
+                }
+                currentPromoteRequest.RequestContent = String.IsNullOrEmpty(model.RequestContent) ? currentPromoteRequest.RequestContent : model.RequestContent;
+                currentPromoteRequest.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? currentPromoteRequest.IdentityCard : model.IdentityCard;
+                currentPromoteRequest.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? currentPromoteRequest.PhoneBusiness : model.PhoneBusiness;
+                currentPromoteRequest.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? currentPromoteRequest.NameBusiness : model.NameBusiness;
+                currentPromoteRequest.Tinbusiness = String.IsNullOrEmpty(model.Tinbusiness) ? currentPromoteRequest.Tinbusiness : model.Tinbusiness;
+                currentPromoteRequest.Status = String.IsNullOrEmpty(model.Status) ? currentPromoteRequest.Status : model.Status;
+                currentPromoteRequest.Reason = String.IsNullOrEmpty(model.Reason) ? currentPromoteRequest.Reason : model.Reason;
+
+                bool isUpdated = await _promoteRequestService.UpdateAsync(currentPromoteRequest);
+                if (isUpdated)
+                {
+                    return Ok(_mapper.Map<PromoteRequestVM>(currentPromoteRequest));
+                }
+                return BadRequest("Cập nhật vai trò thất bại");
             }
             catch (Exception)
             {

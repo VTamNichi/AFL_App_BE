@@ -275,6 +275,8 @@ namespace AmateurFootballLeague.Models
                     .HasMaxLength(16)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Reason).HasMaxLength(256);
+
                 entity.Property(e => e.RequestContent).HasMaxLength(256);
 
                 entity.Property(e => e.Status).HasMaxLength(32);
