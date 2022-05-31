@@ -1,12 +1,5 @@
 ﻿namespace AmateurFootballLeague.ViewModels.Requests
 {
-    public enum PromoteRequestStatus
-    {
-        Approved,
-        NotApproved,
-        Refused
-    }
-
     public enum PromoteRequestFieldEnum
     {
         Id,
@@ -24,7 +17,7 @@
         public string? PhoneBusiness { get; set; }
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
     }
 
     public class PromoteRequestUM
@@ -36,6 +29,6 @@
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
         public string? Status { get; set; }
-        public int? UserId { get; set; }
+        public string? Reason { get; set; }
     }
 }

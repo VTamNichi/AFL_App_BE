@@ -93,6 +93,11 @@ namespace AmateurFootballLeague.Utils
             CreateMap<TournamentResult, TournamentResultVM>();
             CreateMap<TournamentResultCM, TournamentResult>();
             #endregion
+
+            #region AutoMapper PromoteRequestViewModel
+            CreateMap<PromoteRequest, PromoteRequestVM>();
+            CreateMap<PromoteRequestCM, PromoteRequest>();
+            #endregion
         }
     }
 }
