@@ -32,7 +32,25 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                IQueryable<Comment> listComment = _commentService.GetList();
+                IQueryable<Comment> listComment = _commentService.GetList().Join(_userService.GetList(), c => c.User , u => u , (c, u) => new Comment
+                {
+                    Id = c.Id,
+                    Content = c.Content,
+                    DateCreate = c.DateCreate,
+                    DateDelete = c.DateDelete,
+                    DateUpdate = c.DateUpdate,
+                    Status =c.Status,
+                    TeamId = c.TeamId,
+                    TournamentId = c.TournamentId,
+                    UserId = u.Id,
+                    User = new User
+                    {
+                        Id = u.Id,
+                        Username = u.Username,
+                        Avatar = u.Avatar 
+
+                    }
+                });
                 if (tounamentID > 0)
                 {
                     listComment = listComment.Where(c => c.TournamentId == tounamentID).OrderByDescending(c => c.Id);

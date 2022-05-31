@@ -1,4 +1,6 @@
-﻿namespace AmateurFootballLeague.ViewModels.Responses
+﻿using AmateurFootballLeague.Models;
+
+namespace AmateurFootballLeague.ViewModels.Responses
 {
     public class CommentVM
     {
@@ -11,6 +13,7 @@
         public int TeamId { get; set; }
         public int TournamentId { get; set; }
         public int UserId { get; set; }
+        public virtual User User { get; set; }
     }
 
 
