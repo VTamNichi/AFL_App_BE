@@ -345,6 +345,13 @@
             <response code="400">Bad Request</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:AmateurFootballLeague.Controllers.PromoteRequestController.GetListPromoteRequest(System.String,System.String,System.String,System.String,System.String,System.String,AmateurFootballLeague.ViewModels.Requests.PromoteRequestFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
+            <summary>Get list promote requests</summary>
+            <returns>List promoteRequests</returns>
+            <response code="200">Returns list promoteRequests</response>
+            <response code="404">Not found promoteRequests</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:AmateurFootballLeague.Controllers.RoleController.GetListRole(System.String,AmateurFootballLeague.ViewModels.Requests.RoleFieldEnum,AmateurFootballLeague.Utils.SortTypeEnum,System.Int32,System.Int32)">
             <summary>Get list roles</summary>
             <returns>List roles</returns>
