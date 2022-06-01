@@ -17,6 +17,7 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateUpdate { get; set; }
         public DateTime? DateDelete { get; set; }
         public int? TournamentId { get; set; }
+        public string? NewsImage { get; set; }
 
         public virtual Tournament? Tournament { get; set; }
         public virtual ICollection<Image> Images { get; set; }

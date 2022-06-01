@@ -1,4 +1,5 @@
-﻿using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.ExternalService;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
@@ -15,12 +16,14 @@ namespace AmateurFootballLeague.Controllers
         private readonly INewsService _newsService;
         private readonly ITournamentService _tournamentService;
         private readonly IMapper _mapper;
+        private readonly IUploadFileService _uploadFileService;
 
-        public NewsController(INewsService newsService, ITournamentService tournamentService, IMapper mapper)
+        public NewsController(INewsService newsService, ITournamentService tournamentService, IMapper mapper, IUploadFileService uploadFileService)
         {
             _newsService = newsService;
             _tournamentService = tournamentService;
             _mapper = mapper;
+            _uploadFileService = uploadFileService;
         }
 
         /// <summary>Get list news</summary>
@@ -46,29 +49,31 @@ namespace AmateurFootballLeague.Controllers
                     newsList = newsList.Where(s => s.Content.ToUpper().Contains(content.Trim().ToUpper()));
                 }
 
-                var newsListPaging = newsList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-
-                var newsListOrder = new List<News>();
                 if (orderBy == NewsFieldEnum.Id)
                 {
-                    newsListOrder = newsListPaging.OrderBy(tnm => tnm.Id).ToList();
+                    newsList = newsList.OrderBy(tnm => tnm.Id);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        newsListOrder = newsListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                        newsList = newsList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
                 if (orderBy == NewsFieldEnum.Content)
                 {
-                    newsListOrder = newsListPaging.OrderBy(tnm => tnm.Content).ToList();
+                    newsList = newsList.OrderBy(tnm => tnm.Content);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        newsListOrder = newsListPaging.OrderByDescending(tnm => tnm.Content).ToList();
+                        newsList = newsList.OrderByDescending(tnm => tnm.Content);
                     }
                 }
 
+                int countList = newsList.Count();
+
+                var newsListPaging = newsList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 var newsListResponse = new NewsListVM
                 {
-                    News = _mapper.Map<List<News>, List<NewsVM>>(newsListOrder),
+                    News = _mapper.Map<List<News>, List<NewsVM>>(newsListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -111,21 +116,30 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Field is not newsed or duplicated</response>
         /// <response code="500">Failed to save request</response>
         [HttpPost]
-        [Produces("application/json")]
-        public async Task<ActionResult<NewsVM>> CreateNews(
-                [FromQuery(Name = "content")] string content,
-                [FromQuery(Name = "tournament-id")] int tournamentID
-            )
+        public async Task<ActionResult<NewsVM>> CreateNews([FromForm] NewsCM model)
         {
             News news = new News();
             try
             {
-                Tournament tournament = await _tournamentService.GetByIdAsync(tournamentID);
+                Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
                 if (tournament == null)
                 {
-                    return BadRequest("Giải đấu không tồn tại");
+                    return NotFound("Giải đấu không tồn tại");
                 }
-                news.Content = content;
+                try
+                {
+                    if (!String.IsNullOrEmpty(model.NewsImage.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.NewsImage, "images", "image-url");
+                        news.NewsImage = fileUrl;
+                    }
+                }
+                catch (Exception)
+                {
+                    news.NewsImage = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
+                }
+                news.TournamentId = model.TournamentId;
+                news.Content = model.Content;
                 news.Status = true;
                 news.DateCreate = DateTime.Now;
 
@@ -148,34 +162,45 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Field is not newsed</response>
         /// <response code="500">Failed to save request</response>
         [HttpPut]
-        [Produces("application/json")]
-        public async Task<ActionResult<NewsVM>> UpdateNews(
-                [FromQuery(Name = "content")] string? content,
-                [FromQuery(Name = "tournament-id")] int? tournamentID
-            )
+        public async Task<ActionResult<NewsVM>> UpdateNews([FromForm] NewsUM model)
         {
-            News news = new News();
             try
             {
-                if (!String.IsNullOrEmpty(tournamentID.ToString()))
+                News oldNews = await _newsService.GetByIdAsync(model.Id);
+                if(oldNews == null)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
+                    return NotFound("Không tìm thấy bản tin");
+                }
+
+                if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
+                {
+                    Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
                     }
                     else
                     {
-                        news.TournamentId = (int)tournamentID;
+                        oldNews.TournamentId = (int)model.TournamentId;
                     }
                 }
-                news.Content = String.IsNullOrEmpty(content) ? news.Content : content;
-                news.DateUpdate = DateTime.Now;
+                try
+                {
+                    if (!String.IsNullOrEmpty(model.NewsImage.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.NewsImage, "images", "image-url");
+                        oldNews.NewsImage = fileUrl;
+                    }
+                }
+                catch (Exception) {}
 
-                bool isUpdated = await _newsService.UpdateAsync(news);
+                oldNews.Content = String.IsNullOrEmpty(model.Content) ? oldNews.Content : model.Content;
+                oldNews.DateUpdate = DateTime.Now;
+
+                bool isUpdated = await _newsService.UpdateAsync(oldNews);
                 if (isUpdated)
                 {
-                    return Ok(_mapper.Map<NewsVM>(news));
+                    return Ok(_mapper.Map<NewsVM>(oldNews));
                 }
                 return BadRequest("Cập nhật bản tin thất bại");
             }
