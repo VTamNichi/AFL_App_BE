@@ -37,6 +37,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "name-business")] string? nameBusiness,
             [FromQuery(Name = "tin-business")] string? tinBusiness,
             [FromQuery(Name = "status")] string? status,
+            [FromQuery(Name = "user-id")] int? userId,
             [FromQuery(Name = "order-by")] PromoteRequestFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -69,6 +70,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(status))
                 {
                     promoteRequestList = promoteRequestList.Where(s => s.Status == status);
+                }
+                if (!String.IsNullOrEmpty(userId.ToString()))
+                {
+                    promoteRequestList = promoteRequestList.Where(s => s.UserId == userId);
                 }
 
                 int countList = promoteRequestList.Count();
@@ -222,6 +227,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 currentPromoteRequest.RequestContent = String.IsNullOrEmpty(model.RequestContent) ? currentPromoteRequest.RequestContent : model.RequestContent;
                 currentPromoteRequest.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? currentPromoteRequest.IdentityCard : model.IdentityCard;
+                currentPromoteRequest.DateIssuance = String.IsNullOrEmpty(model.DateIssuance.ToString()) ? currentPromoteRequest.DateIssuance : model.DateIssuance;
                 currentPromoteRequest.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? currentPromoteRequest.PhoneBusiness : model.PhoneBusiness;
                 currentPromoteRequest.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? currentPromoteRequest.NameBusiness : model.NameBusiness;
                 currentPromoteRequest.Tinbusiness = String.IsNullOrEmpty(model.Tinbusiness) ? currentPromoteRequest.Tinbusiness : model.Tinbusiness;

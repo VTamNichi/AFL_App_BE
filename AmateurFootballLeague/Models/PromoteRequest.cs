@@ -15,6 +15,7 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateCreate { get; set; }
         public int? UserId { get; set; }
         public string? Reason { get; set; }
+        public DateTime? DateIssuance { get; set; }
 
         public virtual User? User { get; set; }
     }

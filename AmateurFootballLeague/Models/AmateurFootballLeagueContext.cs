@@ -209,6 +209,8 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.DateUpdate).HasColumnType("datetime");
 
+                entity.Property(e => e.NewsImage).IsUnicode(false);
+
                 entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
 
                 entity.HasOne(d => d.Tournament)
@@ -264,6 +266,8 @@ namespace AmateurFootballLeague.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.DateIssuance).HasColumnType("datetime");
 
                 entity.Property(e => e.IdentityCard)
                     .HasMaxLength(32)
