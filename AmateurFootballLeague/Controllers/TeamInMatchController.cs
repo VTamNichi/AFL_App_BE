@@ -1,5 +1,6 @@
 ﻿using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
+using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
@@ -28,7 +29,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<TeamInMatchMT> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo)
+        public ActionResult<TeamInMatchMT> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo, SortTypeEnum orderType)
         {
             try
             {
@@ -65,6 +66,10 @@ namespace AmateurFootballLeague.Controllers
                        Match = timt.ttim.m,
                        Team = timt.te
                    }).Where(m => m.Match.TournamentId == tournamentId);
+                }
+                if(orderType == SortTypeEnum.DESC)
+                {
+                    listTeam = listTeam.OrderByDescending(t => t.Id);
                 }
                 var temInMatch = new List<TeamInMatch>();
                 temInMatch = listTeam.ToList();

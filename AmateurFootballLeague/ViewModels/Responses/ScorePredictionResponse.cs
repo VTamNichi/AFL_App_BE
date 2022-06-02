@@ -33,7 +33,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
 
     public class ScorePredictionLVF
     {
-        List<ScorePredictionFVM> scores { get; set; } = new List<ScorePredictionFVM>();
+        public List<ScorePredictionFVM> Scores { get; set; } = new List<ScorePredictionFVM>();
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }

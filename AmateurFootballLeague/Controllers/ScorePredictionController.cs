@@ -1,5 +1,7 @@
 ﻿using AmateurFootballLeague.IRepositories;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
+using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
@@ -12,13 +14,16 @@ namespace AmateurFootballLeague.Controllers
     [ApiController]
     public class ScorePredictionController : ControllerBase
     {
-        private readonly IScorePredictionRepository _scorePrediction;
+        private readonly IScorePredictionService _scorePrediction;
         private readonly IMapper _mapper;
-
-        public ScorePredictionController (IScorePredictionRepository scorePrediction , IMapper mapper)
+        private readonly IMatchService _matchService;
+        private readonly ITeamInMatchService _teamService;
+        public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService, ITeamInMatchService teamService)
         {
             _scorePrediction = scorePrediction; 
             _mapper = mapper;
+            _matchService = matchService;
+            _teamService = teamService;
         }
 
         [HttpGet]
@@ -40,6 +45,44 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult<ScorePredictionFVM> GetAllScorePrediction(int tournamentId, int userId,
+            SortTypeEnum orderType)
+        {
+            try
+            {
+                IQueryable<ScorePrediction> listPredict = _scorePrediction.GetList().Join(_matchService.GetList(), s => s.Match, m => m,
+                    (s, m) => new ScorePrediction
+                    {
+                        Id = s.Id,
+                        TeamAscore = s.TeamAscore,
+                        TeamBscore = s.TeamBscore,
+                        Status = s.Status,
+                        TeamInMatchAid = s.TeamInMatchAid,
+                        TeamInMatchBid = s.TeamInMatchBid,
+                        UserId = s.UserId,
+                        MatchId = m.Id,
+                        Match = m
+                    }).Where(s => s.UserId == userId && s.Match.TournamentId == tournamentId);
+                if (orderType == SortTypeEnum.DESC)
+                {
+                    listPredict = listPredict.OrderByDescending(s => s.Id);
+                }
+                var predictListResponse = new ScorePredictionLVF
+                {
+
+                    Scores = _mapper.Map<List<ScorePrediction>, List<ScorePredictionFVM>>(listPredict.ToList())
+                };
+            
+                return Ok(predictListResponse);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<ScorePredictionVM>> CreateScorePrediction(ScorePredictionCM model)
         {
@@ -47,7 +90,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 var check =  _scorePrediction.GetList().Where(s => s.UserId == model.UserId && s.MatchId == model.MatchId);
-                if(check == null)
+                if(check == null  || check.Count() == 0)
                 {
                     scorePrediction.TeamAscore = model.TeamAscore;
 
