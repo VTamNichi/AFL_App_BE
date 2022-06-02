@@ -33,6 +33,8 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public ActionResult<FootballPlayerListVM> GetListFootballPlayer(
             [FromQuery(Name = "football-player-name")] string? name,
+            [FromQuery(Name = "gender")] string? gender,
+            [FromQuery(Name = "position")] string? position,
             [FromQuery(Name = "order-by")] FootballPlayerFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -46,48 +48,56 @@ namespace AmateurFootballLeague.Controllers
                 {
                     footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(name.Trim().ToUpper()));
                 }
+                //if (!String.IsNullOrEmpty(gender))
+                //{
+                //    footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(gender.Trim().ToUpper()));
+                //}
+                //if (!String.IsNullOrEmpty(position))
+                //{
+                //    footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(position.Trim().ToUpper()));
+                //}
 
                 int countList = footballPlayerList.Count();
-
-                var footballPlayerListPaging = footballPlayerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var footballPlayerListOrder = new List<FootballPlayer>();
                 if (orderBy == FootballPlayerFieldEnum.Id)
                 {
-                    footballPlayerListOrder = footballPlayerListPaging.OrderBy(tnm => tnm.Id).ToList();
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.Id);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
                 if (orderBy == FootballPlayerFieldEnum.Email)
                 {
-                    footballPlayerListOrder = footballPlayerListPaging.OrderBy(tnm => tnm.Email).ToList();
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.Email);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.Email).ToList();
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.Email);
                     }
                 }
                 if (orderBy == FootballPlayerFieldEnum.PlayerName)
                 {
-                    footballPlayerListOrder = footballPlayerListPaging.OrderBy(tnm => tnm.PlayerName).ToList();
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.PlayerName);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.PlayerName).ToList();
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.PlayerName);
                     }
                 }
                 if (orderBy == FootballPlayerFieldEnum.DateOfBirth)
                 {
-                    footballPlayerListOrder = footballPlayerListPaging.OrderBy(tnm => tnm.DateOfBirth).ToList();
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.DateOfBirth);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        footballPlayerListOrder = footballPlayerListPaging.OrderByDescending(tnm => tnm.DateOfBirth).ToList();
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.DateOfBirth);
                     }
                 }
 
+                var footballPlayerListPaging = footballPlayerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
                 var footballPlayerListResponse = new FootballPlayerListVM
                 {
-                    FootballPlayers = _mapper.Map<List<FootballPlayer>, List<FootballPlayerVM>>(footballPlayerListOrder),
+                    FootballPlayers = _mapper.Map<List<FootballPlayer>, List<FootballPlayerVM>>(footballPlayerListPaging),
                     CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit

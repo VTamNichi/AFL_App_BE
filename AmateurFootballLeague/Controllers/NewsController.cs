@@ -35,6 +35,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public ActionResult<NewsListVM> GetListNews(
             [FromQuery(Name = "content")] string? content,
+            [FromQuery(Name = "tournament-id")] int? tourId,
             [FromQuery(Name = "order-by")] NewsFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -47,6 +48,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(content))
                 {
                     newsList = newsList.Where(s => s.Content.ToUpper().Contains(content.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(tourId.ToString()))
+                {
+                    newsList = newsList.Where(s => s.TournamentId == tourId);
                 }
 
                 if (orderBy == NewsFieldEnum.Id)
