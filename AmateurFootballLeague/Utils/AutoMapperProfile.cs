@@ -46,6 +46,11 @@ namespace AmateurFootballLeague.Utils
             #endregion
 
             #region AutoMapper NewsViewModel
+            CreateMap<News, NewsVM>();
+            CreateMap<NewsCM, News>();
+            #endregion
+
+            #region AutoMapper ImageViewModel
             CreateMap<Image, ImageVM>();
             CreateMap<ImageCM, Image>();
             #endregion

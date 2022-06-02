@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string Content { get; set; }
         public string NewsImage { get; set; }
+        public int tournamentId { get; set; }
         public bool Status { get; set; }
     }
     public class NewsListVM
