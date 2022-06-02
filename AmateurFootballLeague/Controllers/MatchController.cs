@@ -32,6 +32,71 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="200">Returns list match</response>
         /// <response code="404">Not found match</response>
         /// <response code="500">Internal server error</response>
+        /// 
+
+        [HttpGet]
+        [Route("TournamentID")]
+        public ActionResult<MatchListFVM> GetAllMatchByTournamentID (int tournamentId, bool? fullInfo, SortTypeEnum orderType)
+        {
+            try
+            {
+                IQueryable<Match> listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                {
+                    Id = m.Id,
+                    MatchDate = m.MatchDate,
+                    Status = m.Status,
+                    TournamentId = m.TournamentId,
+                    Round = m.Round,
+                    Fight = m.Fight,
+                    GroupFight = m.GroupFight,
+                    TeamInMatches = m.TeamInMatches
+                }).Where(m => m.TournamentId == tournamentId);
+                var match = new List<Match>();
+                var matchCheck = listMatch.ToList();
+                match.Add(matchCheck[0]);
+                var check = false;
+                for(int i=0; i<matchCheck.Count; i++)
+                {
+                    check = false;
+                    for(int j=0; j<match.Count; j++)
+                    {
+                        if(match[j].Id == matchCheck[i].Id)
+                        {
+                            check=true;
+                            break;
+                        }
+                        check=false;
+                    }
+                    if(check == false)
+                    {
+                        match.Add(matchCheck[i]);   
+                    }
+                }
+               /* match = listMatch.ToList()*/;
+                if (match.Count() > 0)
+                {
+
+                    var matchListResponse = new MatchListFVM
+                    {
+
+                        Matchs = _mapper.Map<List<Match>, List<MatchFVM>>(match)
+
+                    };
+                    return Ok(matchListResponse);
+
+                }
+
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                //return StatusCode(StatusCodes.Status500InternalServerError);
+                return BadRequest(ex);
+            }
+        }
+
+
         [HttpGet]
         [Produces("application/json")]
         public ActionResult<MatchListVM> GetListMatch(
