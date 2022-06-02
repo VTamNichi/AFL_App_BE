@@ -33,19 +33,20 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                    .Join(_tournamentService.GetList(), timt => timt.m.Tournament, t => t, (timt, t) => new TeamInMatch
+                    .Join(_teamService.GetList(), ttim => ttim.tim.Team, te=>te,(ttim,te)=> new {ttim,te})
+                    .Join(_tournamentService.GetList(), timt => timt.ttim.m.Tournament, t => t, (timt, t) => new TeamInMatch
                     {
-                        Id = timt.tim.Id,
-                        TeamScore = timt.tim.TeamScore,
-                        YellowCardNumber = timt.tim.YellowCardNumber,
-                        RedCardNumber = timt.tim.RedCardNumber,
-                        TeamId = timt.tim.TeamId,
-                        MatchId = timt.m.Id,
-                        Result = timt.tim.Result,
-                        NextTeam = timt.tim.NextTeam,
-                        TeamName = timt.tim.TeamName,
-                        Match = timt.m
-
+                        Id = timt.ttim.tim.Id,
+                        TeamScore = timt.ttim.tim.TeamScore,
+                        YellowCardNumber = timt.ttim.tim.YellowCardNumber,
+                        RedCardNumber = timt.ttim.tim.RedCardNumber,
+                        TeamId = timt.ttim.tim.TeamId,
+                        MatchId = timt.ttim.m.Id,
+                        Result = timt.ttim.tim.Result,
+                        NextTeam = timt.ttim.tim.NextTeam,
+                        TeamName = timt.ttim.tim.TeamName,
+                        Match = timt.ttim.m,
+                        Team = timt.te
                     }).Where(m => m.Match.TournamentId == tournamentId);
                 var temInMatch = new List<TeamInMatch>();
                 temInMatch = listTeam.ToList();

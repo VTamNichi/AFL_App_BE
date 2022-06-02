@@ -1,5 +1,6 @@
 ﻿using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
+using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
@@ -28,7 +29,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<CommentVM> GetAllCommentIntournament(int? tounamentID, int? teamID, int pageIndex = 1, int limit = 5)
+        public ActionResult<CommentVM> GetAllCommentIntournament(int? tounamentID, int? teamID, SortTypeEnum orderType, int pageIndex = 1, int limit = 5)
         {
             try
             {
@@ -53,14 +54,17 @@ namespace AmateurFootballLeague.Controllers
                 });
                 if (tounamentID > 0)
                 {
-                    listComment = listComment.Where(c => c.TournamentId == tounamentID).OrderByDescending(c => c.Id);
+                    listComment = listComment.Where(c => c.TournamentId == tounamentID);
                 }
                 if (teamID > 0)
                 {
-                    listComment = listComment.Where(c => c.TeamId == teamID).OrderByDescending(c => c.Id);
+                    listComment = listComment.Where(c => c.TeamId == teamID);
                 }
-
-                var commentListPagging = listComment.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                if (orderType == SortTypeEnum.DESC)
+                {
+                    listComment = listComment.OrderByDescending(c => c.Id);
+                }
+                    var commentListPagging = listComment.Skip((pageIndex - 1) * limit).Take(limit).ToList();
                 int CountList = listComment.Count();
 
                 var commentList = new CommentLV
