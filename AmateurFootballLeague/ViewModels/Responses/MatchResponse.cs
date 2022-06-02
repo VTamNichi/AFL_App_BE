@@ -20,7 +20,10 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public DateTime MatchDate { get; set; }
         public string Status { get; set; }
         public int TournamentId { get; set; }
-
+        public string Round { get; set; }
+        public string Fight { get; set; }
+        public string GroupFight { get; set; }
+        public string TokenLivestream { get; set; }
         public virtual Tournament Tournament { get; set; }
         public virtual ICollection<MatchDetail> MatchDetails { get; set; }
         public virtual ICollection<ScorePrediction> ScorePredictions { get; set; }
@@ -29,6 +32,13 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class MatchListVM
     {
         public List<MatchVM> Matchs { get; set; } = new List<MatchVM>();
+        public int CurrentPage { get; set; }
+        public int Size { get; set; }
+    }
+
+    public class MatchListFVM
+    {
+        public List<MatchFVM> Matchs { get; set; } = new List<MatchFVM>();
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
