@@ -14,14 +14,14 @@ namespace AmateurFootballLeague.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IImageService _imageService;
-        private readonly INewsService _newsService;
+        private readonly ITournamentService _tournamentService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public ImageController(IImageService imageService, INewsService newsService, IUploadFileService uploadFileService, IMapper mapper)
+        public ImageController(IImageService imageService, ITournamentService tournamentService, IUploadFileService uploadFileService, IMapper mapper)
         {
             _imageService = imageService;
-            _newsService = newsService;
+            _tournamentService = tournamentService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
@@ -34,6 +34,8 @@ namespace AmateurFootballLeague.Controllers
         [HttpGet]
         [Produces("application/json")]
         public ActionResult<ImageListVM> GetListImage(
+            [FromQuery(Name = "tournament-id")] int? tourId,
+            [FromQuery(Name = "status")] bool? status,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
             int limit = 5
@@ -42,20 +44,29 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Image> imageList = _imageService.GetList();
-                
-                var imageListPaging = imageList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                if (!String.IsNullOrEmpty(tourId.ToString()))
+                {
+                    imageList = imageList.Where(s => s.TournamentId == tourId);
+                }
+                if (!String.IsNullOrEmpty(status.ToString()))
+                {
+                    imageList = imageList.Where(s => s.Status == status);
+                }
 
-                var imageListOrder = new List<Image>();
-                
-                imageListOrder = imageListPaging.OrderBy(tnm => tnm.Id).ToList();
+                imageList = imageList.OrderBy(tnm => tnm.Id);
                 if (orderType == SortTypeEnum.DESC)
                 {
-                    imageListOrder = imageListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                    imageList = imageList.OrderByDescending(tnm => tnm.Id);
                 }
+
+                int countList = imageList.Count();
+
+                var imageListPaging = imageList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
                 var imageListResponse = new ImageListVM
                 {
-                    Images = _mapper.Map<List<Image>, List<ImageVM>>(imageListOrder),
+                    Images = _mapper.Map<List<Image>, List<ImageVM>>(imageListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -104,10 +115,10 @@ namespace AmateurFootballLeague.Controllers
             Image image = new Image();
             try
             {
-                News news = await _newsService.GetByIdAsync(model.NewsID);
-                if (news == null)
+                Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
+                if (tournament == null)
                 {
-                    return BadRequest("Bản tin không tồn tại");
+                    return BadRequest("Giải đấu không tồn tại");
                 }
 
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
@@ -137,13 +148,25 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<ImageVM>> UpdateImage([FromForm] ImageUM model)
         {
-            Image image = new Image();
             try
             {
-                if (!String.IsNullOrEmpty(model.File.ToString()))
+                Image image = await _imageService.GetByIdAsync(model.Id);
+                if(image == null)
                 {
-                    string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
-                    image.ImageUrl = fileUrl;
+                    return NotFound("Hình ảnh không tồn tại");
+                }
+                try
+                {
+                    if (!String.IsNullOrEmpty(model.File.ToString()))
+                    {
+                        string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
+                        image.ImageUrl = fileUrl;
+                    }
+                }
+                catch { }
+                if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
+                {
+                    image.TournamentId = model.TournamentId;
                 }
                 image.DateUpdate = DateTime.Now;
 

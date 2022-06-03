@@ -35,6 +35,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "football-player-name")] string? name,
             [FromQuery(Name = "gender")] string? gender,
             [FromQuery(Name = "position")] string? position,
+            [FromQuery(Name = "status")] bool? status,
             [FromQuery(Name = "order-by")] FootballPlayerFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -55,6 +56,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(position))
                 {
                     footballPlayerList = footballPlayerList.Where(s => s.Position.ToUpper().Contains(position.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(status.ToString()))
+                {
+                    footballPlayerList = footballPlayerList.Where(s => s.Status == status);
                 }
 
                 int countList = footballPlayerList.Count();
