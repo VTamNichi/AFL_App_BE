@@ -140,18 +140,6 @@ namespace AmateurFootballLeague.Controllers
             Image image = new Image();
             try
             {
-                if (!String.IsNullOrEmpty(model.NewsID.ToString()))
-                {
-                    News news = await _newsService.GetByIdAsync((int)model.NewsID);
-                    if (news == null)
-                    {
-                        return BadRequest("Bản tin không tồn tại");
-                    }
-                    else
-                    {
-                        image.NewsId = (int)model.NewsID;
-                    }
-                }
                 if (!String.IsNullOrEmpty(model.File.ToString()))
                 {
                     string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");

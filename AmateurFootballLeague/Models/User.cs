@@ -41,6 +41,7 @@ namespace AmateurFootballLeague.Models
         public int? RoleId { get; set; }
 
         public virtual Role? Role { get; set; }
+        public virtual FootballPlayer FootballPlayer { get; set; } = null!;
         public virtual Team Team { get; set; } = null!;
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<PromoteRequest> PromoteRequests { get; set; }

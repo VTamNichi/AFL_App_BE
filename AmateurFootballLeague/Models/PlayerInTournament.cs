@@ -6,10 +6,10 @@ namespace AmateurFootballLeague.Models
     public partial class PlayerInTournament
     {
         public int Id { get; set; }
-        public int? TeamInTournamentId { get; set; }
-        public int? PlayerInTeamId { get; set; }
         public string? Status { get; set; }
         public int? ClothesNumber { get; set; }
+        public int? TeamInTournamentId { get; set; }
+        public int? PlayerInTeamId { get; set; }
 
         public virtual PlayerInTeam? PlayerInTeam { get; set; }
         public virtual TeamInTournament? TeamInTournament { get; set; }

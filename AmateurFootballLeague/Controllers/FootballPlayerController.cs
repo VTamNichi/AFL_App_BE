@@ -48,14 +48,14 @@ namespace AmateurFootballLeague.Controllers
                 {
                     footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(name.Trim().ToUpper()));
                 }
-                //if (!String.IsNullOrEmpty(gender))
-                //{
-                //    footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(gender.Trim().ToUpper()));
-                //}
-                //if (!String.IsNullOrEmpty(position))
-                //{
-                //    footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(position.Trim().ToUpper()));
-                //}
+                if (!String.IsNullOrEmpty(gender))
+                {
+                    footballPlayerList = footballPlayerList.Where(s => s.IdNavigation.Gender.ToUpper() == gender.ToUpper());
+                }
+                if (!String.IsNullOrEmpty(position))
+                {
+                    footballPlayerList = footballPlayerList.Where(s => s.Position.ToUpper().Contains(position.Trim().ToUpper()));
+                }
 
                 int countList = footballPlayerList.Count();
 
@@ -68,14 +68,6 @@ namespace AmateurFootballLeague.Controllers
                         footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
-                if (orderBy == FootballPlayerFieldEnum.Email)
-                {
-                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.Email);
-                    if (orderType == SortTypeEnum.DESC)
-                    {
-                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.Email);
-                    }
-                }
                 if (orderBy == FootballPlayerFieldEnum.PlayerName)
                 {
                     footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.PlayerName);
@@ -84,12 +76,20 @@ namespace AmateurFootballLeague.Controllers
                         footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.PlayerName);
                     }
                 }
-                if (orderBy == FootballPlayerFieldEnum.DateOfBirth)
+                if (orderBy == FootballPlayerFieldEnum.Position)
                 {
-                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.DateOfBirth);
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.Position);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.DateOfBirth);
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.Position);
+                    }
+                }
+                if (orderBy == FootballPlayerFieldEnum.DateOfBirth)
+                {
+                    footballPlayerList = footballPlayerList.OrderBy(tnm => tnm.IdNavigation.DateOfBirth);
+                    if (orderType == SortTypeEnum.DESC)
+                    {
+                        footballPlayerList = footballPlayerList.OrderByDescending(tnm => tnm.IdNavigation.DateOfBirth);
                     }
                 }
 
@@ -144,32 +144,10 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<FootballPlayerVM>> CreateFootballPlayer([FromForm] FootballPlayerCM model)
         {
-            FootballPlayer footballPlayer = new FootballPlayer();
             try
             {
-                FootballPlayer currentFP = _footballPlayerService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
-                if (currentFP != null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Email này đã tồn tại trong hệ thống"
-                    });
-                }
-                if (!String.IsNullOrEmpty(model.Phone))
-                {
-                    FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
-                    if (fpCheckPhone != null)
-                    {
-                        return BadRequest(new
-                        {
-                            message = "Số điện thoại này đã tồn tại trong hệ thống"
-                        });
-                    }
-                }
-                
-                footballPlayer.Email = model.Email;
+                FootballPlayer footballPlayer = new FootballPlayer();
                 footballPlayer.PlayerName = model.PlayerName;
-
                 try
                 {
                     if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
@@ -182,13 +160,8 @@ namespace AmateurFootballLeague.Controllers
                 {
                     footballPlayer.PlayerAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
-                
-                if (!String.IsNullOrEmpty(model.DateOfBirth.ToString()))
-                {
-                    footballPlayer.DateOfBirth = model.DateOfBirth;
-                }
-                footballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : "Female";
-                footballPlayer.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone;
+                footballPlayer.Position = model.Position;
+                footballPlayer.Description = model.Description;
                 footballPlayer.DateCreate = DateTime.Now;
                 footballPlayer.Status = true;
 
@@ -217,34 +190,9 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(model.Id);
-            if (currentFootballPlayer == null)
-            {
-                return NotFound("Không thể tìm thấy cầu thủ với id là " + model.Id);
-            }
-                if(!String.IsNullOrEmpty(model.Email))
+                if (currentFootballPlayer == null)
                 {
-                    
-                    FootballPlayer currentFP = _footballPlayerService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
-                    if (currentFP != null && model.Email != currentFootballPlayer.Email)
-                    {
-                        return BadRequest(new
-                        {
-                            message = "Email này đã tồn tại trong hệ thống"
-                        });
-                    }
-                    currentFootballPlayer.Email = model.Email;
-                }
-                if (!String.IsNullOrEmpty(model.Phone))
-                {
-                    FootballPlayer fpCheckPhone = _footballPlayerService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
-                    if (fpCheckPhone != null && model.Phone != currentFootballPlayer.Phone)
-                    {
-                        return BadRequest(new
-                        {
-                            message = "Số điện thoại này đã tồn tại trong hệ thống"
-                        });
-                    }
-                    currentFootballPlayer.Phone = model.Phone;
+                    return NotFound("Không thể tìm thấy cầu thủ với id là " + model.Id);
                 }
                 try
                 {
@@ -258,12 +206,9 @@ namespace AmateurFootballLeague.Controllers
                 {
                 }
 
-                
-                currentFootballPlayer.Email = String.IsNullOrEmpty(model.Email) ? currentFootballPlayer.Email : model.Email.Trim();
                 currentFootballPlayer.PlayerName = String.IsNullOrEmpty(model.PlayerName) ? currentFootballPlayer.PlayerName : model.PlayerName.Trim();
-                currentFootballPlayer.Gender = model.Gender == FootballPlayerGenderEnum.Male ? "Male" : model.Gender == FootballPlayerGenderEnum.Female ? "Female" : currentFootballPlayer.Gender;
-                currentFootballPlayer.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? currentFootballPlayer.DateOfBirth : model.DateOfBirth;
-                
+                currentFootballPlayer.Position = String.IsNullOrEmpty(model.Position) ? currentFootballPlayer.Position : model.Position.Trim();
+                currentFootballPlayer.Description = String.IsNullOrEmpty(model.Description) ? currentFootballPlayer.Description : model.Description.Trim();
                 currentFootballPlayer.DateUpdate = DateTime.Now;
 
                 bool isUpdated = await _footballPlayerService.UpdateAsync(currentFootballPlayer);
