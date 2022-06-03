@@ -30,6 +30,7 @@ namespace AmateurFootballLeague.Models
         public int? MatchMinutes { get; set; }
         public int? FootballTeamNumber { get; set; }
         public int? FootballPlayerMaxNumber { get; set; }
+        public int? GroupNumber { get; set; }
         public bool? Status { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateUpdate { get; set; }
@@ -37,7 +38,6 @@ namespace AmateurFootballLeague.Models
         public int? UserId { get; set; }
         public int? TournamentTypeId { get; set; }
         public int? FootballFieldTypeId { get; set; }
-        public int? GroupNumber { get; set; }
 
         public virtual FootballFieldType? FootballFieldType { get; set; }
         public virtual TournamentType? TournamentType { get; set; }

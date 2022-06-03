@@ -10,44 +10,34 @@ namespace AmateurFootballLeague.ViewModels.Requests
     public enum FootballPlayerFieldEnum
     {
         Id,
-        Email,
         PlayerName,
+        Position,
         DateOfBirth,
     }
     public class FootballPlayerCM
     {
         [Required(AllowEmptyStrings = false)]
-        [StringLength(64)]
-        public string Email { get; set; }
+        public int Id { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
         public string PlayerName { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        public FootballPlayerGenderEnum Gender { get; set; } = FootballPlayerGenderEnum.Male;
-
-        public DateTime? DateOfBirth { get; set; }
-
         public IFormFile? PlayerAvatar { get; set; }
 
-        public string? Phone { get; set; }
+        public string? Position { get; set; }
+        public string? Description { get; set; }
     }
     public class FootballPlayerUM
     {
         [Required(AllowEmptyStrings = false)]
         public int Id { get; set; }
 
-        public string? Email { get; set; }
-
         public string? PlayerName { get; set; }
-
-        public FootballPlayerGenderEnum? Gender { get; set; }
-
-        public DateTime? DateOfBirth { get; set; }
 
         public IFormFile? PlayerAvatar { get; set; }
 
-        public string? Phone { get; set; }
+        public string? Position { get; set; }
+        public string? Description { get; set; }
     }
 }
