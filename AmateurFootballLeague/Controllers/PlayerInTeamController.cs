@@ -57,17 +57,18 @@ namespace AmateurFootballLeague.Controllers
                     //{
                     //    playerList = playerList.Where(p => (int)p.TeamId == teamId);
                     //}
-                    var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-                var playerListOrder = playerListPaging;
+                    
                 if (orderType == SortTypeEnum.DESC)
                 {
-                    playerListOrder = playerListPaging.OrderByDescending(p => p.Id).ToList();
+                    playerList = playerList.OrderByDescending(p => p.Id);
                 }
                 int CountList = playerList.Count();
-               
-                    var playerListFull = new PlayerInTeamLFV
+
+                var playerListPaging = playerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
+                var playerListFull = new PlayerInTeamLFV
                     {
-                        PlayerInTeamsFull = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamFVM>>(playerListOrder),
+                        PlayerInTeamsFull = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamFVM>>(playerListPaging),
                         CountList = CountList,
                         CurrentPage = pageIndex,
                         Size = limit
@@ -105,7 +106,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Cầu thủ đã có đội bóng"
                     });
                 }
-                pInTeam.Status = "true";
+                pInTeam.Status = player.Status;
                 pInTeam.TeamId = player.TeamId;
                 pInTeam.FootballPlayerId = player.FootballPlayerId;
                 PlayerInTeam playerInTeamCreated = await _playerInTeam.AddAsync(pInTeam);
@@ -161,6 +162,37 @@ namespace AmateurFootballLeague.Controllers
                 return NotFound("Không tìm thấy cầu thủ trong đội bóng với id là " + Id);
             }
             catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        [Produces("application/json")]
+        public async Task<ActionResult> DeleteById(int id)
+        {
+            PlayerInTeam player = await _playerInTeam.GetByIdAsync(id);
+            if (player == null)
+            {
+                return NotFound(new
+                {
+                    message = "Không thể tìm thấy cầu thủ trong đội bóng"
+                });
+            }
+            try
+            {
+                bool isDeleted = await _playerInTeam.DeleteAsync(player);
+                if (isDeleted)
+                {
+                    return Ok(new
+                    {
+                        message = "Xóa cầu thủ trong đội bóng thành công"
+                    });
+                }
+                return BadRequest("Xóa cầu thủ trong đội bóng thất bại");
+            }
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
