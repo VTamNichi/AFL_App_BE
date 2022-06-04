@@ -13,6 +13,7 @@
         public string DateCreate { get; set; }
         public string DateUpdate { get; set; }
         public string DateDelete { get; set; }
+        public UserVM UserVM { get; set; }
     }
     public class FootballPlayerListVM
     {
