@@ -11,7 +11,7 @@ namespace AmateurFootballLeague.Repositories
 
         public int CountPlayerInATeam(int teamId)
         {
-            return GetList().Where(pit => pit.TeamId == teamId).Count();
+            return GetList().Where(pit => pit.TeamId == teamId && pit.Status == "true").Count();
         }
     }
 }

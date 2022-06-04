@@ -136,6 +136,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(id);
+                if(currentFootballPlayer == null)
+                {
+                    return NotFound("Cầu thủ không tồn tại");
+                }
                 FootballPlayerVM footballPlayerVM = _mapper.Map<FootballPlayerVM>(currentFootballPlayer);
                 footballPlayerVM.UserVM = _mapper.Map<UserVM>(await _userService.GetByIdAsync(id));
                 if (currentFootballPlayer != null)

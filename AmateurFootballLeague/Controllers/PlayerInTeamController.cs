@@ -15,40 +15,55 @@ namespace AmateurFootballLeague.Controllers
         private readonly IPlayerInTeamService _playerInTeam;
         private readonly IMapper _mapper;
         private readonly IFootballPlayerService _footballPlayerService;
-        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer)
+        private readonly ITeamService _teamService;
+        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer, ITeamService teamService)
         {
             _playerInTeam = playerInTeamService;
             _mapper = mapper;
             _footballPlayerService = footballPlayer;
+            _teamService = teamService;
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamLFV> GetAllPlayerInTeam(int teamId,string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
+        public ActionResult<PlayerInTeamLFV> GetAllPlayerInTeam(int? teamId,int? footballPlayerId, string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
         {
             try
             {
 
-            IQueryable<PlayerInTeam> playerList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
-            {
-                Id = pit.Id,
-                Status = pit.Status,
-                TeamId = pit.TeamId,
-                FootballPlayerId = p.Id,
-                FootballPlayer = p
-            }).Where(p => p.TeamId == teamId);
-                
+                IQueryable<PlayerInTeam> playerList = _playerInTeam.GetList();
+
+                if (!String.IsNullOrEmpty(teamId.ToString()))
+                {
+                    playerList = playerList.Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
+                    {
+                        Id = pit.Id,
+                        Status = pit.Status,
+                        TeamId = pit.TeamId,
+                        FootballPlayerId = p.Id,
+                        FootballPlayer = p
+                    }).Where(p => p.TeamId == teamId);
+                }
+                if (!String.IsNullOrEmpty(footballPlayerId.ToString()) && String.IsNullOrEmpty(teamId.ToString()))
+                {
+                    playerList = playerList.Join(_teamService.GetList(), pit => pit.Team, p => p, (pit, p) => new PlayerInTeam
+                    {
+                        Id = pit.Id,
+                        Status = pit.Status,
+                        TeamId = pit.TeamId,
+                        FootballPlayerId = pit.FootballPlayerId,
+                        Team = p
+                    }).Where(p => p.FootballPlayerId == footballPlayerId);
+                }
+                if (!String.IsNullOrEmpty(footballPlayerId.ToString()) && !String.IsNullOrEmpty(teamId.ToString()))
+                {
+                    playerList = playerList.Where(p => p.FootballPlayerId == footballPlayerId);
+                }
+
                 if (!String.IsNullOrEmpty(name))
                 {
-                    //playerList = playerList.Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new PlayerInTeam
-                    //{
-                    //    Id = pit.Id,
-                    //    Status = pit.Status,
-                    //    TeamId = pit.TeamId,
-                    //    FootballPlayerId = p.Id,
-                    //    FootballPlayer = p
-                    //}).Where(p =>p.TeamId == teamId && p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
-                    playerList = playerList.Where(p =>p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
+                    playerList = playerList.Where(p => p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
                 }
+
                 if (!String.IsNullOrEmpty(status))
                 {
                     playerList = playerList.Where(p => p.Status.ToLower() == status.ToLower());
@@ -74,8 +89,8 @@ namespace AmateurFootballLeague.Controllers
                         Size = limit
                     };
                     return Ok(playerListFull);
-                    
-                
+
+
                 //var playerListResponse = new PlayerInTeamLV
                 //{
                 //    PlayerInTeams = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamVM>>(playerListOrder),
