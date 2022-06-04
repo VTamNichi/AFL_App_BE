@@ -14,12 +14,14 @@ namespace AmateurFootballLeague.Controllers
     public class FootballPlayerController : ControllerBase
     {
         private readonly IFootballPlayerService _footballPlayerService;
+        private readonly IUserService _userService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public FootballPlayerController(IFootballPlayerService footballPlayerService, IUploadFileService uploadFileService, IMapper mapper)
+        public FootballPlayerController(IFootballPlayerService footballPlayerService, IUserService userService, IUploadFileService uploadFileService, IMapper mapper)
         {
             _footballPlayerService = footballPlayerService;
+            _userService = userService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
         }
@@ -31,7 +33,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpGet]
         [Produces("application/json")]
-        public ActionResult<FootballPlayerListVM> GetListFootballPlayer(
+        public async Task<ActionResult<FootballPlayerListVM>> GetListFootballPlayer(
             [FromQuery(Name = "football-player-name")] string? name,
             [FromQuery(Name = "gender")] string? gender,
             [FromQuery(Name = "position")] string? position,
@@ -99,10 +101,15 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 var footballPlayerListPaging = footballPlayerList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                List<FootballPlayerVM> listVM = _mapper.Map<List<FootballPlayerVM>>(footballPlayerListPaging);
+                foreach(var fp in listVM)
+                {
+                    fp.UserVM = _mapper.Map<UserVM>(await _userService.GetByIdAsync(fp.Id));
+                }
 
                 var footballPlayerListResponse = new FootballPlayerListVM
                 {
-                    FootballPlayers = _mapper.Map<List<FootballPlayer>, List<FootballPlayerVM>>(footballPlayerListPaging),
+                    FootballPlayers = listVM,
                     CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
@@ -129,9 +136,11 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(id);
+                FootballPlayerVM footballPlayerVM = _mapper.Map<FootballPlayerVM>(currentFootballPlayer);
+                footballPlayerVM.UserVM = _mapper.Map<UserVM>(await _userService.GetByIdAsync(id));
                 if (currentFootballPlayer != null)
                 {
-                    return Ok(_mapper.Map<FootballPlayerVM>(currentFootballPlayer));
+                    return Ok(footballPlayerVM);
                 }
                 return NotFound("Không thể tìm thấy cầu thủ với id là " + id);
             }
@@ -151,7 +160,17 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                FootballPlayer currentFootballPlayer = await _footballPlayerService.GetByIdAsync(model.Id);
+                if (currentFootballPlayer != null)
+                {
+                    return BadRequest("Cầu thủ đã tồn tại");
+                }
                 FootballPlayer footballPlayer = new FootballPlayer();
+                User user = await _userService.GetByIdAsync(model.Id);
+                if(user == null)
+                {
+                    return NotFound("Người dùng không tồn tại");
+                }
                 footballPlayer.Id = model.Id;
                 footballPlayer.PlayerName = model.PlayerName;
                 try
@@ -174,7 +193,9 @@ namespace AmateurFootballLeague.Controllers
                 FootballPlayer footballPlayerCreated = await _footballPlayerService.AddAsync(footballPlayer);
                 if (footballPlayerCreated != null)
                 {
-                    return CreatedAtAction("GetFootballPlayerById", new { id = footballPlayerCreated.Id }, _mapper.Map<FootballPlayerVM>(footballPlayerCreated));
+                    FootballPlayerVM footballPlayerVM = _mapper.Map<FootballPlayerVM>(footballPlayerCreated);
+                    footballPlayerVM.UserVM = _mapper.Map<UserVM>(await _userService.GetByIdAsync(model.Id));
+                    return Ok(footballPlayerVM);
                 }
                 return BadRequest("Tạo cầu thủ thất bại");
             }
@@ -220,7 +241,9 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _footballPlayerService.UpdateAsync(currentFootballPlayer);
                 if (isUpdated)
                 {
-                    return Ok(_mapper.Map<FootballPlayerVM>(currentFootballPlayer));
+                    FootballPlayerVM footballPlayerVM = _mapper.Map<FootballPlayerVM>(currentFootballPlayer);
+                    footballPlayerVM.UserVM = _mapper.Map<UserVM>(await _userService.GetByIdAsync(model.Id));
+                    return Ok(footballPlayerVM);
                 }
                 return BadRequest("Cập nhật cầu thủ thất bại");
             }
