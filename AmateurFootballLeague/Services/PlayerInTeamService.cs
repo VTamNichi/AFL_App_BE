@@ -17,9 +17,9 @@ namespace AmateurFootballLeague.Services
              return await _playerInTeam.AddAsync(entity);  
         }
 
-        public Task<bool> DeleteAsync(PlayerInTeam entity)
+        public async Task<bool> DeleteAsync(PlayerInTeam entity)
         {
-            throw new NotImplementedException();
+            return await _playerInTeam.DeleteAsync(entity);
         }
 
         public async Task<PlayerInTeam> GetByIdAsync(int id)
