@@ -152,6 +152,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 FootballPlayer footballPlayer = new FootballPlayer();
+                footballPlayer.Id = model.Id;
                 footballPlayer.PlayerName = model.PlayerName;
                 try
                 {
