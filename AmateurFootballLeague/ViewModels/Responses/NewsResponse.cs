@@ -7,6 +7,7 @@
         public string NewsImage { get; set; }
         public int tournamentId { get; set; }
         public bool Status { get; set; }
+        public string DateCreate { get; set; }
     }
     public class NewsListVM
     {

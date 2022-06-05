@@ -118,13 +118,14 @@ namespace AmateurFootballLeague.Controllers
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
                 if (tournament == null)
                 {
-                    return BadRequest("Giải đấu không tồn tại");
+                    return NotFound("Giải đấu không tồn tại");
                 }
 
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
                 image.ImageUrl = fileUrl;
                 image.Status = true;
                 image.DateCreate = DateTime.Now;
+                image.TournamentId = model.TournamentId;
 
                 Image imageCreated = await _imageService.AddAsync(image);
                 if (imageCreated != null)
