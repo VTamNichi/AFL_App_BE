@@ -17,14 +17,16 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITournamentService _tournamentService;
         private readonly IAgoraProvider _agoraProvider;
         private readonly IMapper _mapper;
+        private readonly ITeamService _teamService;
 
-        public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService, IAgoraProvider agoraProvider, IMapper mapper)
+        public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService, IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
             _tournamentService = tournamentService;
             _agoraProvider = agoraProvider;
             _mapper = mapper;
+            _teamService = teamService;
         }
 
         /// <summary>Get list match</summary>
@@ -51,6 +53,72 @@ namespace AmateurFootballLeague.Controllers
                     GroupFight = m.GroupFight,
                     TeamInMatches = m.TeamInMatches
                 }).Where(m => m.TournamentId == tournamentId);
+
+                if(fullInfo == true)
+                {
+                    listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
+                       .Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new Match
+                       {
+                           Id = timt.m.Id,
+                           MatchDate = timt.m.MatchDate,
+                           Status = timt.m.Status,
+                           TournamentId = timt.m.TournamentId,
+                           Round = timt.m.Round,
+                           Fight = timt.m.Fight,
+                           GroupFight = timt.m.GroupFight,
+                           TeamInMatches = new List<TeamInMatch>
+                           {
+                               new TeamInMatch
+                               {
+                                   Id = timt.tim.Id,
+                                   TeamScore = timt.tim.TeamScore,
+                                   YellowCardNumber = timt.tim.YellowCardNumber,
+                                   RedCardNumber = timt.tim.RedCardNumber,
+                                   Result = timt.tim.Result,
+                                   TeamName = timt.tim.TeamName,
+                                   TeamId = t.Id,
+                                   MatchId = timt.tim.MatchId,
+                                   NextTeam = timt.tim.NextTeam,
+                                   Team = t
+                               }
+                           }    
+                       }).Where(m => m.TournamentId == tournamentId);
+                    var matchFull = new List<Match>();
+                    var matchCheckTeam = listMatch.ToList();
+                    matchFull.Add(matchCheckTeam[0]);
+                    var checkTeam = false;
+                    for (int i = 0; i < matchCheckTeam.Count; i++)
+                    {
+                        checkTeam = false;
+                        for (int j = 0; j < matchFull.Count; j++)
+                        {
+                            if (matchFull[j].Id == matchCheckTeam[i].Id)
+                            {
+                                checkTeam = true;
+                                var checkTeamInMatchFull = matchFull[j].TeamInMatches.FirstOrDefault();
+                                var checkTeamInMatch = matchCheckTeam[i].TeamInMatches.FirstOrDefault();
+                                if (checkTeamInMatchFull.Id != checkTeamInMatch.Id)
+                                {
+                                    matchFull[j].TeamInMatches.Add(matchCheckTeam[i].TeamInMatches.FirstOrDefault());
+                                }
+                                break;
+                            }
+                            checkTeam = false;
+                        }
+                        if (checkTeam == false)
+                        {
+                            matchFull.Add(matchCheckTeam[i]);
+                        }
+                    }
+
+                    var matchListResponse = new MatchListFVM
+                    {
+
+                        Matchs = _mapper.Map<List<Match>, List<MatchFVM>>(matchFull)
+
+                    };
+                    return Ok(matchListResponse);
+                }
                 var match = new List<Match>();
                 var matchCheck = listMatch.ToList();
                 match.Add(matchCheck[0]);
@@ -72,6 +140,7 @@ namespace AmateurFootballLeague.Controllers
                         match.Add(matchCheck[i]);   
                     }
                 }
+
                /* match = listMatch.ToList()*/;
                 if (match.Count() > 0)
                 {
