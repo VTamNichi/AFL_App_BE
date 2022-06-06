@@ -64,9 +64,11 @@ namespace AmateurFootballLeague.Controllers
                 if(footballPlayerID>0)
                 {
                     DateTime fromDate = DateTime.Now.Date;
-                    DateTime fromDate2 = DateTime.Now.Date.AddDays(+1);
-                    Console.WriteLine($"Date Value: {fromDate2}");
-                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate <= fromDate).
+                    var date = DateTime.Now.AddDays(+1).ToShortDateString().Split("/");
+                    string nextDate = date[2]+"-"+date[1]+"-"+date[0];
+                    DateTime fromDate2 = Convert.ToDateTime(nextDate);
+                    Console.WriteLine($"Date Value: {nextDate}");
+                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate>=fromDate&&m.m.MatchDate<fromDate2).
                         Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new {timt,t}).Join(_playerInTeamService.GetList(),
                         tpit=> tpit.t.Id, pit=>pit.TeamId, (tpit, pit) => new
                         {
