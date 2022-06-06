@@ -18,8 +18,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly IAgoraProvider _agoraProvider;
         private readonly IMapper _mapper;
         private readonly ITeamService _teamService;
+        private readonly IPlayerInTeamService _playerInTeamService;
 
-        public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService, IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService)
+        public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
+            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -27,6 +29,7 @@ namespace AmateurFootballLeague.Controllers
             _agoraProvider = agoraProvider;
             _mapper = mapper;
             _teamService = teamService;
+            _playerInTeamService = playerInTeamService;
         }
 
         /// <summary>Get list match</summary>
@@ -38,21 +41,133 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("TournamentID")]
-        public ActionResult<MatchListFVM> GetAllMatchByTournamentID (int tournamentId, bool? fullInfo, SortTypeEnum orderType)
+        public ActionResult<MatchListFVM> GetAllMatchByTournamentID (int? tournamentId,int? footballPlayerID, bool? fullInfo, SortTypeEnum orderType)
         {
             try
             {
-                IQueryable<Match> listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                IQueryable<Match> listMatch = _matchService.GetList();
+                if (tournamentId > 0)
                 {
-                    Id = m.Id,
-                    MatchDate = m.MatchDate,
-                    Status = m.Status,
-                    TournamentId = m.TournamentId,
-                    Round = m.Round,
-                    Fight = m.Fight,
-                    GroupFight = m.GroupFight,
-                    TeamInMatches = m.TeamInMatches
-                }).Where(m => m.TournamentId == tournamentId);
+                        listMatch= listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                     {
+                         Id = m.Id,
+                         MatchDate = m.MatchDate,
+                         Status = m.Status,
+                         TournamentId = m.TournamentId,
+                         Round = m.Round,
+                         Fight = m.Fight,
+                         GroupFight = m.GroupFight,
+                         TeamInMatches = m.TeamInMatches
+                     }).Where(m => m.TournamentId == tournamentId);
+                }
+
+                if(footballPlayerID>0)
+                {
+                    DateTime fromDate = DateTime.Now.Date;
+                    DateTime fromDate2 = DateTime.Now.Date.AddDays(+1);
+                    Console.WriteLine($"Date Value: {fromDate2}");
+                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate <= fromDate).
+                        Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new {timt,t}).Join(_playerInTeamService.GetList(),
+                        tpit=> tpit.t.Id, pit=>pit.TeamId, (tpit, pit) => new
+                        {
+                            tpit,pit
+                        }).Where(pit => pit.pit.FootballPlayerId == footballPlayerID).Select(m=> new Match
+                        {
+                            Id = m.tpit.timt.m.Id,
+                            MatchDate = m.tpit.timt.m.MatchDate,
+                            Status = m.tpit.timt.m.Status,
+                            TournamentId = m.tpit.timt.m.TournamentId,
+                            Round = m.tpit.timt.m.Round,
+                            Fight = m.tpit.timt.m.Fight,
+                            GroupFight = m.tpit.timt.m.GroupFight,
+                            TeamInMatches = new List<TeamInMatch>
+                           {
+                               new TeamInMatch
+                               {
+                                   Id = m.tpit.timt.tim.Id,
+                                   TeamScore = m.tpit.timt.tim.TeamScore,
+                                   YellowCardNumber = m.tpit.timt.tim.YellowCardNumber,
+                                   RedCardNumber = m.tpit.timt.tim.RedCardNumber,
+                                   Result = m.tpit.timt.tim.Result,
+                                   TeamName = m.tpit.timt.tim.TeamName,
+                                   TeamId = m.tpit.t.Id,
+                                   MatchId = m.tpit.timt.tim.MatchId,
+                                   NextTeam = m.tpit.timt.tim.NextTeam,
+                                   Team = m.tpit.t
+                               }
+                           }
+                        });
+                    var matchCheckTeam = new List<Match>();
+                    var findMatch = listMatch.ToList();
+                    for (int i = 0; i < findMatch.Count; i++)
+                    {
+                        IQueryable<Match> aMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
+                       .Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new Match
+                       {
+                           Id = timt.m.Id,
+                           MatchDate = timt.m.MatchDate,
+                           Status = timt.m.Status,
+                           TournamentId = timt.m.TournamentId,
+                           Round = timt.m.Round,
+                           Fight = timt.m.Fight,
+                           GroupFight = timt.m.GroupFight,
+                           TeamInMatches = new List<TeamInMatch>
+                           {
+                               new TeamInMatch
+                               {
+                                   Id = timt.tim.Id,
+                                   TeamScore = timt.tim.TeamScore,
+                                   YellowCardNumber = timt.tim.YellowCardNumber,
+                                   RedCardNumber = timt.tim.RedCardNumber,
+                                   Result = timt.tim.Result,
+                                   TeamName = timt.tim.TeamName,
+                                   TeamId = t.Id,
+                                   MatchId = timt.tim.MatchId,
+                                   NextTeam = timt.tim.NextTeam,
+                                   Team = t
+                               }
+                           }
+                       }).Where(m => m.Id == findMatch[i].Id);
+                        var matchQuery = aMatch.ToList();
+                        for(int j = 0; j < matchQuery.Count; j++)
+                        {
+                            matchCheckTeam.Add(matchQuery[j]);
+                        }
+                    }
+                        var matchFull = new List<Match>();
+                    matchFull.Add(matchCheckTeam[0]);
+                    var checkTeam = false;
+                    for (int i = 0; i < matchCheckTeam.Count; i++)
+                    {
+                        checkTeam = false;
+                        for (int j = 0; j < matchFull.Count; j++)
+                        {
+                            if (matchFull[j].Id == matchCheckTeam[i].Id)
+                            {
+                                checkTeam = true;
+                                var checkTeamInMatchFull = matchFull[j].TeamInMatches.FirstOrDefault();
+                                var checkTeamInMatch = matchCheckTeam[i].TeamInMatches.FirstOrDefault();
+                                if (checkTeamInMatchFull.Id != checkTeamInMatch.Id)
+                                {
+                                    matchFull[j].TeamInMatches.Add(matchCheckTeam[i].TeamInMatches.FirstOrDefault());
+                                }
+                                break;
+                            }
+                            checkTeam = false;
+                        }
+                        if (checkTeam == false)
+                        {
+                            matchFull.Add(matchCheckTeam[i]);
+                        }
+                    }
+                    var matchListResponse = new MatchListFVM
+                    {
+
+                        Matchs = _mapper.Map<List<Match>, List<MatchFVM>>(matchFull)
+
+                    };
+                    return Ok(matchListResponse);
+                }
 
                 if(fullInfo == true)
                 {

@@ -19,14 +19,21 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
+        private readonly IPlayerInTeamService _playerInTeamService;
+        private readonly IPlayerInTournamentService _playerInTournamentService;
+        private readonly IFootballPlayerService _footballPlayerService;
 
-        public TournamentController(ITournamentService tournamentService, IUserService userService, ITeamInTournamentService teamInTournamentService, IUploadFileService uploadFileService, IMapper mapper)
+        public TournamentController(ITournamentService tournamentService, IUserService userService, ITeamInTournamentService teamInTournamentService, IUploadFileService uploadFileService, IMapper mapper,
+            IPlayerInTeamService playerInTeamService, IPlayerInTournamentService playerInTournamentService, IFootballPlayerService footballPlayerService)
         {
             _tournamentService = tournamentService;
             _userService = userService;
             _teamInTournamentService = teamInTournamentService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
+            _playerInTeamService = playerInTeamService;
+            _playerInTournamentService = playerInTournamentService;
+            _footballPlayerService = footballPlayerService;
         }
 
         /// <summary>Get list tournament</summary>
@@ -134,6 +141,55 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpGet("FootballPlayerID")]
+        public async Task<ActionResult<TournamentListVM>> getAllTournamentOfFootballPlayer(int footballPlayerID, SortTypeEnum sort, int pageIndex = 1, int limit = 5)
+        {
+            try
+            {
+                IQueryable<Tournament> listTournament = _tournamentService.GetList().Join(_teamInTournamentService.GetList(), t => t.Id, tit => tit.TournamentId
+                , (t, tit) => new { t, tit }).Join(_playerInTournamentService.GetList(), tpit => tpit.tit.Id, ptour => ptour.TeamInTournamentId, (tpit, ptour) =>
+                     new { tpit, ptour }).Join(_playerInTeamService.GetList(), pitour => pitour.ptour.PlayerInTeam, pit => pit, (pitour, pit) =>
+                          new { pitour, pit }).Where(pit => pit.pit.FootballPlayerId == footballPlayerID).Join(_footballPlayerService.GetList(), fpit => fpit.pit.FootballPlayerId, f => f.Id, (fpit, f) => new Tournament
+                          {
+                              Id = fpit.pitour.tpit.t.Id,
+                              TournamentName = fpit.pitour.tpit.t.TournamentName,
+                              Mode = fpit.pitour.tpit.t.Mode,
+                              TournamentPhone = fpit.pitour.tpit.t.TournamentPhone,
+                              TournamentGender = fpit.pitour.tpit.t.TournamentGender,
+                              RegisterEndDate = fpit.pitour.tpit.t.RegisterEndDate,
+                              TournamentStartDate= fpit.pitour.tpit.t.TournamentStartDate,
+                              TournamentEndDate= fpit.pitour.tpit.t.TournamentEndDate,
+                              FootballFieldAddress = fpit.pitour.tpit.t.FootballFieldAddress,
+                              TournamentAvatar = fpit.pitour.tpit.t.TournamentAvatar,
+                              Description = fpit.pitour.tpit.t.Description,
+                              MatchMinutes= fpit.pitour.tpit.t.MatchMinutes,
+                              FootballTeamNumber= fpit.pitour.tpit.t.FootballTeamNumber,
+                              FootballPlayerMaxNumber= fpit.pitour.tpit.t.FootballPlayerMaxNumber,
+                              GroupNumber= fpit.pitour.tpit.t.GroupNumber,
+                              DateCreate= fpit.pitour.tpit.t.DateCreate,
+                              Status= fpit.pitour.tpit.t.Status
+                              
+                          });
+                if (sort == SortTypeEnum.DESC)
+                {
+                    listTournament = listTournament.OrderByDescending(t => t.Id);
+                }
+                var tournamentListPagging = listTournament.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                var tournamentListResponse = new TournamentListVM
+                {
+                    Tournaments = _mapper.Map<List<Tournament>, List<TournamentVM>>(tournamentListPagging),
+                    CurrentPage = pageIndex,
+                    Size = limit
+                };
+                return Ok(tournamentListResponse);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
 
         /// <summary>Get tournament by id</summary>
         /// <returns>Return the tournament with the corresponding id</returns>

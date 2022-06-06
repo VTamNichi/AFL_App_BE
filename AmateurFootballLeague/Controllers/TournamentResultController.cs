@@ -22,7 +22,7 @@ namespace AmateurFootballLeague.Controllers
             _teamInTournamentService = teamInTournamentService;
             _tournamentService = tournamentService;
             _mapper = mapper;
-        }
+    }
 
         /// <summary>Get list tournament result</summary>
         /// <returns>List tournamentResult</returns>

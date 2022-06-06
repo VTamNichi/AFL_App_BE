@@ -18,7 +18,8 @@ namespace AmateurFootballLeague.Controllers
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
 
-        public FootballPlayerController(IFootballPlayerService footballPlayerService, IUserService userService, IUploadFileService uploadFileService, IMapper mapper)
+        public FootballPlayerController(IFootballPlayerService footballPlayerService, IUserService userService,
+            IUploadFileService uploadFileService, IMapper mapper)
         {
             _footballPlayerService = footballPlayerService;
             _userService = userService;
