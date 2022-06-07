@@ -642,7 +642,11 @@ namespace AmateurFootballLeague.Controllers
                                 match.TournamentId = tournamentID;
                                 match.Status = "Not start";
                                 match.TokenLivestream = "";
-                                if (numberMatchR2 == 2)
+                                if (numberMatchR2 == 4)
+                                {
+                                    match.Round = "Tứ kết";
+                                }
+                                else if (numberMatchR2 == 2)
                                 {
                                     match.Round = "Bán kết";
                                 }
@@ -725,8 +729,10 @@ namespace AmateurFootballLeague.Controllers
                         match.Fight = "Trận " + i;
 
                         Match matchCreated = await _matchService.AddAsync(match);
+                        //Random rd = new Random();
 
                         TeamInMatch tim1 = new TeamInMatch();
+                        //int tn1 = rd.Next(1, tournament.FootballTeamNumber.Value);
                         tim1.MatchId = matchCreated.Id;
                         tim1.TeamName = "Chưa có đội";
 //                        tim1.TeamName = tn1;
@@ -802,20 +808,28 @@ namespace AmateurFootballLeague.Controllers
                             match.TournamentId = tournamentID;
                             match.Status = "Not start";
                             match.TokenLivestream = "";
+                            match.GroupFight = "";
+                            if (tournament.GroupNumber == 4)
+                            {
+                                match.Round = "Tứ kết";
+                                match.GroupFight = "Tứ kết";
+                            }
                             if (tournament.GroupNumber == 2)
                             {
                                 match.Round = "Bán kết";
+                                match.GroupFight = "Bán kết";
                             }
                             else if (tournament.GroupNumber == 1)
                             {
                                 match.Round = "Chung kết";
+                                match.GroupFight = "Chung kết";
                             }
                             else
                             {
                                 match.Round = "Vòng " + round;
                             }
                             match.Fight = "Trận " + fight;
-                            match.GroupFight = "";
+                            
 
                             Match matchCreated = await _matchService.AddAsync(match);
 
