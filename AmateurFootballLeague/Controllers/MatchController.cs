@@ -519,9 +519,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
+                int groupNum = tournament.GroupNumber.Value;
                 if (tournament == null)
                 {
-                    return BadRequest("Giải đấu không tồn tại");
+                    return NotFound("Giải đấu không tồn tại");
                 }
                 int totalMatch = 0;
                 if (tournament.TournamentTypeId == 1)
@@ -748,10 +749,10 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else
                 {
-                    int numberTeamOfGroup = (int) (tournament.FootballTeamNumber / tournament.GroupNumber);
+                    int numberTeamOfGroup = (int) (tournament.FootballTeamNumber / groupNum);
                     int numberTeamRemain = (int) tournament.FootballTeamNumber % numberTeamOfGroup;
                     int table = 65;
-                    for (int i = 1; i <= tournament.GroupNumber; i++)
+                    for (int i = 1; i <= groupNum; i++)
                     {
                         int totalMatchInGroup = 0;
                         if(numberTeamRemain > 0)
@@ -798,28 +799,28 @@ namespace AmateurFootballLeague.Controllers
 
                     int round = 1;
                     int fight = 1;
-                    totalMatch += (int)tournament.GroupNumber * 2 - 1;
+                    totalMatch += (int)groupNum * 2 - 1;
                     int winNumber = 1;
-                    while (tournament.GroupNumber >= 1)
+                    while (groupNum >= 1)
                     {
-                        for (int i = 1; i <= tournament.GroupNumber; i++)
+                        for (int i = 1; i <= groupNum; i++)
                         {
                             Match match = new Match();
                             match.TournamentId = tournamentID;
                             match.Status = "Not start";
                             match.TokenLivestream = "";
                             match.GroupFight = "";
-                            if (tournament.GroupNumber == 4)
+                            if (groupNum == 4)
                             {
                                 match.Round = "Tứ kết";
                                 match.GroupFight = "Tứ kết";
                             }
-                            if (tournament.GroupNumber == 2)
+                            if (groupNum == 2)
                             {
                                 match.Round = "Bán kết";
                                 match.GroupFight = "Bán kết";
                             }
-                            else if (tournament.GroupNumber == 1)
+                            else if (groupNum == 1)
                             {
                                 match.Round = "Chung kết";
                                 match.GroupFight = "Chung kết";
@@ -830,7 +831,6 @@ namespace AmateurFootballLeague.Controllers
                             }
                             match.Fight = "Trận " + fight;
                             
-
                             Match matchCreated = await _matchService.AddAsync(match);
 
                             TeamInMatch tim1 = new TeamInMatch();
@@ -856,7 +856,7 @@ namespace AmateurFootballLeague.Controllers
                             fight++;
                         }
                         round++;
-                        tournament.GroupNumber = tournament.GroupNumber / 2;
+                        groupNum = groupNum / 2;
                     }
                 }
 
