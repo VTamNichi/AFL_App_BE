@@ -124,6 +124,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Team currentTeam = await _teamService.GetByIdAsync(id);
+                if(currentTeam == null)
+                {
+                    return NotFound("Không tìm thấy đội bóng với id là " + id);
+                }
                 TeamVM teamVM = _mapper.Map<TeamVM>(currentTeam);
                 teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(id);
                 if (currentTeam != null)
