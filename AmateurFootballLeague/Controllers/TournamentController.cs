@@ -204,6 +204,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Tournament currentTournament = await _tournamentService.GetByIdAsync(id);
+                if (currentTournament == null)
+                {
+                    return NotFound("Không tìm thấy giải đấu với id là " + id);
+                }
                 TournamentVM tournamentVM = _mapper.Map<TournamentVM>(currentTournament);
                 tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(id);
                 if (currentTournament != null)

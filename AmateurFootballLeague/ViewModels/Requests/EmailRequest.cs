@@ -2,6 +2,11 @@
 
 namespace AmateurFootballLeague.ViewModels.Requests
 {
+    public enum TypeRegisterOrRecruit
+    {
+        Register,
+        Recruit
+    }
     public class EmailForm
     {   
         [Required, EmailAddress]
@@ -12,5 +17,21 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         [Required]
         public string Message { get; set; }
+    }
+
+    public class SendMailRegisterOrRecruitCM
+    {
+        public int? TournamentId { get; set; }
+
+        [Required]
+        public int FootballPlayerId { get; set; }
+
+        [Required]
+        public int TeamId { get; set; }
+
+        [Required]
+        public TypeRegisterOrRecruit Type { get; set; }
+        public bool Status { get; set; }
+
     }
 }
