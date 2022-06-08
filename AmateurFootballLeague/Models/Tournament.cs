@@ -11,6 +11,8 @@ namespace AmateurFootballLeague.Models
             Images = new HashSet<Image>();
             Matches = new HashSet<Match>();
             News = new HashSet<News>();
+            Notifications = new HashSet<Notification>();
+            Reports = new HashSet<Report>();
             TeamInTournaments = new HashSet<TeamInTournament>();
             TournamentResults = new HashSet<TournamentResult>();
         }
@@ -46,6 +48,8 @@ namespace AmateurFootballLeague.Models
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Match> Matches { get; set; }
         public virtual ICollection<News> News { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
         public virtual ICollection<TeamInTournament> TeamInTournaments { get; set; }
         public virtual ICollection<TournamentResult> TournamentResults { get; set; }
     }

@@ -46,11 +46,13 @@ FirebaseApp.Create(new AppOptions
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
-builder.Services.AddSingleton<IJWTProvider, JWTProvider>();
 
-builder.Services.AddTransient<IUploadFileService, UploadFileService>();
-builder.Services.AddTransient<ISendEmailService, SendEmailService>();
-builder.Services.AddTransient<IAgoraProvider, AgoraProvider>();
+builder.Services.AddSingleton<IJWTProvider, JWTProvider>();
+builder.Services.AddSingleton<IUploadFileService, UploadFileService>();
+builder.Services.AddSingleton<ISendEmailService, SendEmailService>();
+builder.Services.AddSingleton<IAgoraProvider, AgoraProvider>();
+builder.Services.AddSingleton<IRedisService, RedisService>();
+builder.Services.AddSingleton<IPushNotificationService, PushNotificationService>();
 
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();
@@ -111,6 +113,12 @@ builder.Services.AddTransient<IPromoteRequestService, PromoteRequestService>();
 
 builder.Services.AddTransient<ICommentRepository, CommentRepository>();
 builder.Services.AddTransient<ICommentService, CommentService>();
+
+builder.Services.AddTransient<IReportRepository, ReportRepository>();
+builder.Services.AddTransient<IReportService, ReportService>();
+
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {

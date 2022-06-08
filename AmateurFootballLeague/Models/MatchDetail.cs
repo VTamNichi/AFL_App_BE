@@ -10,9 +10,9 @@ namespace AmateurFootballLeague.Models
         public int? YellowCardNumber { get; set; }
         public int? RedCardNumber { get; set; }
         public int? MatchId { get; set; }
-        public int? PlayerInTeamId { get; set; }
+        public int? PlayerInTournamentId { get; set; }
 
         public virtual Match? Match { get; set; }
-        public virtual PlayerInTeam? PlayerInTeam { get; set; }
+        public virtual PlayerInTournament? PlayerInTournament { get; set; }
     }
 }
