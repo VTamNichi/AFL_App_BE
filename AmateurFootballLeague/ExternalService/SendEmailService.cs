@@ -13,32 +13,6 @@ namespace AmateurFootballLeague.ExternalService
     {
         public async Task<bool> SendEmail(EmailForm model)
         {
-            //MailMessage msg = new MailMessage();
-            //msg.From = new MailAddress("mailclone1007@gmail.com", "A-Football-League");
-            //msg.To.Add(new MailAddress(model.ToEmail));
-            //msg.Priority = MailPriority.High;
-            //msg.Subject = model.Subject;
-            //msg.IsBodyHtml = true;
-            //msg.Body = string.Format(model.Message);
-
-            //SmtpClient client = new SmtpClient("smtp.gmail.com");
-            //client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            //client.EnableSsl = true;
-            //client.Port = 587;
-            //client.Credentials = new NetworkCredential("mailclone1007@gmail.com", "vantam1007");
-
-            //try
-            //{
-            //    await client.SendMailAsync(msg);
-            //    return true;
-            //}
-            //catch (Exception ex)
-            //{
-            //    System.Diagnostics.Debug.WriteLine(ex);
-            //}
-
-            //return false;
-
             SmtpClient client = new SmtpClient();
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = true;

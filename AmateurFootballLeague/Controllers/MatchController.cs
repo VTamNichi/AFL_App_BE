@@ -32,13 +32,6 @@ namespace AmateurFootballLeague.Controllers
             _playerInTeamService = playerInTeamService;
         }
 
-        /// <summary>Get list match</summary>
-        /// <returns>List match</returns>
-        /// <response code="200">Returns list match</response>
-        /// <response code="404">Not found match</response>
-        /// <response code="500">Internal server error</response>
-        /// 
-
         [HttpGet]
         [Route("TournamentID")]
         public ActionResult<MatchListFVM> GetAllMatchByTournamentID (int? tournamentId,int? footballPlayerID, bool? fullInfo, SortTypeEnum orderType)
@@ -282,11 +275,17 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-
+        /// <summary>Get list match</summary>
+        /// <returns>List match</returns>
+        /// <response code="200">Returns list match</response>
+        /// <response code="404">Not found match</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
         [Produces("application/json")]
         public ActionResult<MatchListVM> GetListMatch(
             [FromQuery(Name = "match-date")] string? matchDate,
+            [FromQuery(Name = "status")] string? status,
+            [FromQuery(Name = "tournament-id")] int? tournamentId,
             [FromQuery(Name = "order-by")] MatchFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -296,42 +295,51 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Match> matchList = _matchService.GetList();
+                
                 if (!String.IsNullOrEmpty(matchDate))
                 {
                     matchList = matchList.Where(s => s.MatchDate.Equals(matchDate));
                 }
-
-                var matchListPaging = matchList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-
-                var matchListOrder = new List<Match>();
+                if (!String.IsNullOrEmpty(status))
+                {
+                    matchList = matchList.Where(s => s.Status.ToLower().Equals(status.ToLower()));
+                }
+                if (!String.IsNullOrEmpty(tournamentId.ToString()))
+                {
+                    matchList = matchList.Where(s => s.TournamentId == tournamentId);
+                }
+                
                 if (orderBy == MatchFieldEnum.Id)
                 {
-                    matchListOrder = matchListPaging.OrderBy(tnm => tnm.Id).ToList();
+                    matchList = matchList.OrderBy(tnm => tnm.Id);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        matchListOrder = matchListPaging.OrderByDescending(tnm => tnm.Id).ToList();
+                        matchList = matchList.OrderByDescending(tnm => tnm.Id);
                     }
                 }
                 if (orderBy == MatchFieldEnum.MatchDate)
                 {
-                    matchListOrder = matchListPaging.OrderBy(tnm => tnm.MatchDate).ToList();
+                    matchList = matchList.OrderBy(tnm => tnm.MatchDate);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        matchListOrder = matchListPaging.OrderByDescending(tnm => tnm.MatchDate).ToList();
+                        matchList = matchList.OrderByDescending(tnm => tnm.MatchDate);
                     }
                 }
                 if (orderBy == MatchFieldEnum.Status)
                 {
-                    matchListOrder = matchListPaging.OrderBy(tnm => tnm.Status).ToList();
+                    matchList = matchList.OrderBy(tnm => tnm.Status);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        matchListOrder = matchListPaging.OrderByDescending(tnm => tnm.Status).ToList();
+                        matchList = matchList.OrderByDescending(tnm => tnm.Status);
                     }
                 }
+                int countList = matchList.Count();
 
+                var matchListPaging = matchList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
                 var matchListResponse = new MatchListVM
                 {
-                    Matchs = _mapper.Map<List<Match>, List<MatchVM>>(matchListOrder),
+                    Matchs = _mapper.Map<List<Match>, List<MatchVM>>(matchListPaging),
+                    CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -375,29 +383,22 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
-        public async Task<ActionResult<MatchVM>> CreateMatch(
-                [FromQuery(Name = "match-date")] DateTime matchDate,
-                [FromQuery(Name = "status")] MatchStatusEnum status,
-                [FromQuery(Name = "tournament-id")] int tournamentID,
-                [FromQuery(Name = "round")] string? round,
-                [FromQuery(Name = "fight")] string? fight,
-                [FromQuery(Name = "group-fight")] string? groupFight
-            )
+        public async Task<ActionResult<MatchVM>> CreateMatch([FromBody] MatchCM model)
         {
             Match match = new Match();
             try
             {
-                Tournament tournament = await _tournamentService.GetByIdAsync(tournamentID);
+                Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
                 if(tournament == null)
                 {
                     return BadRequest("Giải đấu không tồn tại");
                 }
-                match.TournamentId = tournamentID;
-                match.MatchDate = matchDate;
-                match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Process" : "Finished";
-                match.Round = String.IsNullOrEmpty(round) ? "" : round;
-                match.Fight = String.IsNullOrEmpty(fight) ? "" : fight;
-                match.GroupFight = String.IsNullOrEmpty(groupFight) ? "" : groupFight;
+                match.TournamentId = model.TournamentId;
+                match.MatchDate = model.MatchDate;
+                match.Status = String.IsNullOrEmpty(model.Status) ? "Chưa bắt đầu" : model.Status;
+                match.Round = String.IsNullOrEmpty(model.Round) ? "" : model.Round;
+                match.Fight = String.IsNullOrEmpty(model.Fight) ? "" : model.Fight;
+                match.GroupFight = String.IsNullOrEmpty(model.GroupFight) ? "" : model.GroupFight;
                 match.TokenLivestream = "";
 
                 Match matchCreated = await _matchService.AddAsync(match);
@@ -420,41 +421,32 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
-        public async Task<ActionResult<MatchVM>> UpdateMatch(
-                [FromQuery(Name = "match-id")] int matchId,
-                [FromQuery(Name = "match-date")] DateTime? matchDate,
-                [FromQuery(Name = "status")] MatchStatusEnum? status,
-                [FromQuery(Name = "tournament-id")] int? tournamentID,
-                [FromQuery(Name = "round")] string? round,
-                [FromQuery(Name = "fight")] string? fight,
-                [FromQuery(Name = "group-fight")] string? groupFight,
-                [FromQuery(Name = "create-token")] string? createToken
-            )
+        public async Task<ActionResult<MatchVM>> UpdateMatch([FromBody] MatchUM model)
         {
             try
             {
-                Match match = await _matchService.GetByIdAsync(matchId);
+                Match match = await _matchService.GetByIdAsync(model.Id);
                 if(match == null)
                 {
                     return NotFound("Không tìm thấy trận đấu");
                 }
-                if (!String.IsNullOrEmpty(tournamentID.ToString()))
+                if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
+                    Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
                     } else
                     {
-                        match.TournamentId = (int)tournamentID;
+                        match.TournamentId = (int)model.TournamentId;
                     }
                 }
-                match.MatchDate = String.IsNullOrEmpty(matchDate.ToString()) ? match.MatchDate : matchDate;
-                match.Status = status == MatchStatusEnum.NotStart ? "Not start" : status == MatchStatusEnum.Processing ? "Processing" : status == MatchStatusEnum.Finished ? "Finished" : match.Status;
-                match.Round = String.IsNullOrEmpty(round) ? match.Round : round;
-                match.Fight = String.IsNullOrEmpty(fight) ? match.Fight : fight;
-                match.GroupFight = String.IsNullOrEmpty(groupFight) ? match.GroupFight : groupFight;
-                match.TokenLivestream = String.IsNullOrEmpty(createToken) ? match.TokenLivestream : _agoraProvider.GenerateToken("MATCH_" + matchId, 0.ToString(), 0);
+                match.MatchDate = String.IsNullOrEmpty(model.MatchDate.ToString()) ? match.MatchDate : model.MatchDate;
+                match.Status = String.IsNullOrEmpty(model.Status) ? match.Status : model.Status;
+                match.Round = String.IsNullOrEmpty(model.Round) ? match.Round : model.Round;
+                match.Fight = String.IsNullOrEmpty(model.Fight) ? match.Fight : model.Fight;
+                match.GroupFight = String.IsNullOrEmpty(model.GroupFight) ? match.GroupFight : model.GroupFight;
+                match.TokenLivestream = String.IsNullOrEmpty(model.CreateToken) ? match.TokenLivestream : _agoraProvider.GenerateToken("MATCH_" + model.Id, 0.ToString(), 0);
 
                 bool isUpdated = await _matchService.UpdateAsync(match);
                 if (isUpdated)
@@ -519,11 +511,11 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync((int)tournamentID);
-                int groupNum = tournament.GroupNumber.Value;
                 if (tournament == null)
                 {
                     return NotFound("Giải đấu không tồn tại");
                 }
+                int groupNum = tournament.GroupNumber.Value;
                 int totalMatch = 0;
                 if (tournament.TournamentTypeId == 1)
                 {
@@ -750,7 +742,7 @@ namespace AmateurFootballLeague.Controllers
                 else
                 {
                     int numberTeamOfGroup = (int) (tournament.FootballTeamNumber / groupNum);
-                    int numberTeamRemain = (int) tournament.FootballTeamNumber % numberTeamOfGroup;
+                    int numberTeamRemain = (int) tournament.FootballTeamNumber -  numberTeamOfGroup * groupNum;
                     int table = 65;
                     for (int i = 1; i <= groupNum; i++)
                     {

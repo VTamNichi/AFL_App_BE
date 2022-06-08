@@ -32,6 +32,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class MatchListVM
     {
         public List<MatchVM> Matchs { get; set; } = new List<MatchVM>();
+        public int CountList { get; set; }
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }

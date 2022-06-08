@@ -169,13 +169,6 @@ namespace AmateurFootballLeague.Controllers
                         message = "Người dùng không tồn tại"
                     });
                 }
-                if (user.RoleId != 3)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Người dùng không phải là vai trò quản lý đội bóng"
-                    });
-                }
 
                 bool isDuplicated = _teamService.GetList().Where(s => s.TeamName.Trim().ToUpper().Equals(model.TeamName.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)

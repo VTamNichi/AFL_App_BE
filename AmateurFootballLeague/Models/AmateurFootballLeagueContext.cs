@@ -23,9 +23,11 @@ namespace AmateurFootballLeague.Models
         public virtual DbSet<Match> Matchs { get; set; } = null!;
         public virtual DbSet<MatchDetail> MatchDetails { get; set; } = null!;
         public virtual DbSet<News> News { get; set; } = null!;
+        public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<PlayerInTeam> PlayerInTeams { get; set; } = null!;
         public virtual DbSet<PlayerInTournament> PlayerInTournaments { get; set; } = null!;
         public virtual DbSet<PromoteRequest> PromoteRequests { get; set; } = null!;
+        public virtual DbSet<Report> Reports { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<ScorePrediction> ScorePredictions { get; set; } = null!;
         public virtual DbSet<Team> Teams { get; set; } = null!;
@@ -177,17 +179,17 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
 
-                entity.Property(e => e.PlayerInTeamId).HasColumnName("PlayerInTeamID");
+                entity.Property(e => e.PlayerInTournamentId).HasColumnName("PlayerInTournamentID");
 
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.MatchDetails)
                     .HasForeignKey(d => d.MatchId)
                     .HasConstraintName("FK__MatchDeta__Match__6477ECF3");
 
-                entity.HasOne(d => d.PlayerInTeam)
+                entity.HasOne(d => d.PlayerInTournament)
                     .WithMany(p => p.MatchDetails)
-                    .HasForeignKey(d => d.PlayerInTeamId)
-                    .HasConstraintName("FK__MatchDeta__Playe__656C112C");
+                    .HasForeignKey(d => d.PlayerInTournamentId)
+                    .HasConstraintName("FK_MatchDetails_PlayerInTournament");
             });
 
             modelBuilder.Entity<News>(entity =>
@@ -210,6 +212,36 @@ namespace AmateurFootballLeague.Models
                     .WithMany(p => p.News)
                     .HasForeignKey(d => d.TournamentId)
                     .HasConstraintName("FK__News__Tournament__4CA06362");
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Content).HasMaxLength(256);
+
+                entity.Property(e => e.DateCreate).HasColumnType("datetime");
+
+                entity.Property(e => e.TeamId).HasColumnName("TeamID");
+
+                entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__Notificat__TeamI__0E6E26BF");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK__Notificat__Tourn__0D7A0286");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Notificat__UserI__0C85DE4D");
             });
 
             modelBuilder.Entity<PlayerInTeam>(entity =>
@@ -289,6 +321,43 @@ namespace AmateurFootballLeague.Models
                     .WithMany(p => p.PromoteRequests)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__PromoteRe__UserI__71D1E811");
+            });
+
+            modelBuilder.Entity<Report>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CommentId).HasColumnName("CommentID");
+
+                entity.Property(e => e.DateReport).HasColumnType("datetime");
+
+                entity.Property(e => e.Reason).HasMaxLength(256);
+
+                entity.Property(e => e.TeamId).HasColumnName("TeamID");
+
+                entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.Comment)
+                    .WithMany(p => p.Reports)
+                    .HasForeignKey(d => d.CommentId)
+                    .HasConstraintName("FK__Reports__Comment__07C12930");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.Reports)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK__Reports__TeamID__08B54D69");
+
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.Reports)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK__Reports__Tournam__09A971A2");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Reports)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Reports__UserID__06CD04F7");
             });
 
             modelBuilder.Entity<Role>(entity =>

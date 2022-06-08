@@ -14,14 +14,14 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMatchService _match;
         private readonly IMatchDetailService _matchDetail;
         private readonly IMapper _mapper;
-        private readonly IPlayerInTeamService _playerInTeam;
+        private readonly IPlayerInTournamentService _playerInTournament;
 
-        public MatchDetailController (IMatchService match, IMatchDetailService matchDetail, IMapper mapper, IPlayerInTeamService playerInTeam)
+        public MatchDetailController (IMatchService match, IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament)
         {
             _match = match; 
             _matchDetail = matchDetail;
             _mapper = mapper;
-            _playerInTeam = playerInTeam;
+            _playerInTournament = playerInTournament;
         }
 
         [HttpGet]
@@ -31,16 +31,16 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<MatchDetail> listDtMatch = _matchDetail.GetList().Join(_match.GetList(), md => md.Match, m => m, (md, m) => new { md, m })
-                    .Join(_playerInTeam.GetList(), mdp => mdp.md.PlayerInTeam, p => p, (mdp, p) => new MatchDetail
+                    .Join(_playerInTournament.GetList(), mdp => mdp.md.PlayerInTournament, p => p, (mdp, p) => new MatchDetail
                     {
                         Id = mdp.md.Id,
                         MatchScore = mdp.md.MatchScore,
                         YellowCardNumber = mdp.md.YellowCardNumber,
                         RedCardNumber = mdp.md.RedCardNumber,
                         MatchId = mdp.m.Id,
-                        PlayerInTeamId = p.Id,
+                        PlayerInTournamentId = p.Id,
                         Match = mdp.m,
-                        PlayerInTeam = p
+                        PlayerInTournament = p
 
                     }).Where(m => m.MatchId == matchId);
                 var matchDt = new List<MatchDetail>();
@@ -96,7 +96,7 @@ namespace AmateurFootballLeague.Controllers
                     matchDetail.YellowCardNumber = match.YellowCardNumber;
                     matchDetail.RedCardNumber = match.RedCardNumber;
                     matchDetail.MatchId = match.MatchId;
-                    matchDetail.PlayerInTeamId = match.PlayerInTeamId;
+                    matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
                     MatchDetail created =await _matchDetail.AddAsync(matchDetail);
                     if(created != null)
                     {

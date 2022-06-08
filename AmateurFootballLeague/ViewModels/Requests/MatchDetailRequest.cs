@@ -10,7 +10,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         [Required]
         public int MatchId { get; set; }
         [Required]
-        public int PlayerInTeamId { get; set; }
+        public int PlayerInTournamentId { get; set; }
     }
 
     public class MatchDetailUM
@@ -20,7 +20,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
         public int MatchId { get; set; }
-        public int PlayerInTeamId { get; set; }
+        public int PlayerInTournamentId { get; set; }
     }
 
 }
