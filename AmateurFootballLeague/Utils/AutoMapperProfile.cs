@@ -109,6 +109,16 @@ namespace AmateurFootballLeague.Utils
             CreateMap<Comment, CommentVM>();
             CreateMap<CommentCM, Comment>();
             #endregion
+
+            #region AutoMapper ReportViewModel
+            CreateMap<Report, ReportVM>();
+            CreateMap<ReportCM, Report>();
+            #endregion
+
+            #region AutoMapper NotificationViewModel
+            CreateMap<Notification, NotificationVM>();
+            CreateMap<NotificationCM, Notification>();
+            #endregion
         }
     }
 }

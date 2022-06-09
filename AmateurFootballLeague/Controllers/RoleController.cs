@@ -39,7 +39,6 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "Keys", "firebase_admin_sdk.json");
                 IQueryable<Role> roleList = _roleService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
