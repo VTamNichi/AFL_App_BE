@@ -29,4 +29,9 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
     }
+
+    public class TeamInMatchToTournamentUM
+    {
+        public int TeamInTournamentId { get; set; }
+    }
 }
