@@ -241,5 +241,57 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
+        /// <summary>Update a team in match to tournament</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Field is not matched</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPut("update-team-in-match-to-tournament")]
+        [Produces("application/json")]
+        public async Task<ActionResult> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
+        {
+            try
+            {
+                TeamInTournament currentTeamInTournament = await _teamInTournamentService.GetByIdAsync(model.TeamInTournamentId);
+                if (currentTeamInTournament == null)
+                {
+                    return NotFound("Không tìm thấy đội bóng trong trận đấu");
+                }
+                Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
+                int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId.Value) + 1;
+
+                IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
+                    .Join(_teamInMatch.GetList().Where(tim => tim.TeamName == "Đội " + numberTeamInTournament), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                    {
+                        Id = m.Id,
+                        MatchDate = m.MatchDate,
+                        Status = m.Status,
+                        TournamentId = m.TournamentId,
+                        Round = m.Round,
+                        Fight = m.Fight,
+                        GroupFight = m.GroupFight,
+                        TeamInMatches = m.TeamInMatches
+                    });
+
+                foreach (Match match in listMatchInTournament.ToList())
+                {
+                    foreach(TeamInMatch tim in match.TeamInMatches)
+                    {
+                        if(tim.TeamName == "Đội " + numberTeamInTournament)
+                        {
+                            tim.TeamName = team.TeamName;
+                            tim.TeamInTournamentId = currentTeamInTournament.Id;
+                            await _teamInMatch.UpdateAsync(tim);
+                        }
+                    }
+                }
+
+                return Ok("Thành Công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
