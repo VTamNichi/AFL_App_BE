@@ -89,7 +89,9 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Đội bóng không tồn tại");
                 }
-                
+                User userFP = await _userService.GetByIdAsync(modelRR.FootballPlayerId);
+                User userTeam = await _userService.GetByIdAsync(modelRR.TeamId);
+
                 EmailForm model = new EmailForm();
 
                 Tournament tournament = await _tournamentService.GetByIdAsync(modelRR.TournamentId.Value);
@@ -99,39 +101,97 @@ namespace AmateurFootballLeague.Controllers
                     {
                         if (modelRR.Type == TypeRegisterOrRecruit.Recruit)
                         {
-                            model.ToEmail = team.IdNavigation.Email;
+                            model.ToEmail = userTeam.Email;
                             model.Subject = "Yêu Cầu Chiêu Mộ Cầu Thủ Thành Công";
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã chấp nhận tham gia đội bóng của bạn. Hãy vào <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã chấp nhận tham gia đội bóng của bạn. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                         }
                         else
                         {
-                            model.ToEmail = footballPlayer.IdNavigation.Email;
+                            model.ToEmail = userFP.Email;
                             model.Subject = "Yêu Cầu Tham Gia Đội Bóng Thành Công";
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " đã chấp nhận yêu cầu tham gia của bạn. Hãy vào <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " đã chấp nhận yêu cầu tham gia của bạn. Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                         }
                     }
                     else
                     {
                         if (modelRR.Type == TypeRegisterOrRecruit.Register)
                         {
-                            model.ToEmail = team.IdNavigation.Email;
+                            model.ToEmail = userTeam.Email;
                             model.Subject = "Yêu Cầu Tham Gia Từ Cầu Thủ " + footballPlayer.PlayerName;
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã gửi lời mời tham gia đội bóng mà bạn quản lý. Hãy vào <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã gửi lời mời tham gia đội bóng mà bạn quản lý. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                         }
                         else
                         {
-                            model.ToEmail = footballPlayer.IdNavigation.Email;
+                            model.ToEmail = userFP.Email;
                             model.Subject = "Yêu Cầu Chiêu Mộ Từ Đội Bóng " + team.TeamName;
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " gửi lời mời chiêu mộ bạn vào đội. Hãy vào <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " gửi lời mời chiêu mộ bạn vào đội. Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                         }
                     }
                 }
                 else
                 {
-                    model.ToEmail = footballPlayer.IdNavigation.Email;
+                    model.ToEmail = userFP.Email;
                     model.Subject = "Thông báo tham gia giải đấu";
-                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Quản lý đội bóng " + team.IdNavigation.Username + " đã đăng ký bạn vào giải đấu " + tournament.TournamentName + ". Hãy vào <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Quản lý đội bóng " + userTeam.Username + " đã đăng ký bạn vào giải đấu " + tournament.TournamentName + ". Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
 
+                }
+
+                if (!await _sendEmailService.SendEmail(model))
+                {
+                    return BadRequest("Gửi thất bại");
+                }
+                return Ok("Gửi thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Send mail accept team to tournament</summary>
+        /// <returns>Return success</returns>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Send mail fail</response>
+        /// <response code="500">Internal Server</response>
+        [HttpPost("send-mail-register-recruit")]
+        [Produces("application/json")]
+        public async Task<ActionResult> SendMailAcceptTeamToTournament([FromBody] SendMailAcceptTeamToTournament modelRR)
+        {
+            try
+            {
+                Team team = await _teamService.GetByIdAsync(modelRR.TeamId);
+                if (team == null)
+                {
+                    return NotFound("Đội bóng không tồn tại");
+                }
+                Tournament tournament = await _tournamentService.GetByIdAsync(modelRR.TournamentId);
+                if(tournament == null)
+                {
+                    return NotFound("Giải đấu không tồn tại");
+                }
+                User userTeam = await _userService.GetByIdAsync(modelRR.TeamId);
+
+                EmailForm model = new EmailForm();
+
+                
+                if (modelRR.Status)
+                {
+                    model.ToEmail = userTeam.Email;
+                    model.Subject = "Thông báo chấp nhận tham gia giải đấu";
+                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã chấp nhận yêu cầu tham gia của đội bạn. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+
+                }
+                else
+                {
+                    string reason = "";
+                    if(!String.IsNullOrEmpty(modelRR.Reason))
+                    {
+                        reason = "<p>Lý do: " + modelRR.Reason + "</p>";
+
+                    }
+                    model.ToEmail = userTeam.Email;
+                    model.Subject = "Thông báo từ chối tham gia giải đấu";
+                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã từ chối yêu cầu tham gia của đội bạn.</p>" + reason + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                 }
 
                 if (!await _sendEmailService.SendEmail(model))

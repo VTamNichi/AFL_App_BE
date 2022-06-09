@@ -11,7 +11,6 @@ namespace AmateurFootballLeague.Models
             Notifications = new HashSet<Notification>();
             PlayerInTeams = new HashSet<PlayerInTeam>();
             Reports = new HashSet<Report>();
-            TeamInMatches = new HashSet<TeamInMatch>();
             TeamInTournaments = new HashSet<TeamInTournament>();
         }
 
@@ -32,7 +31,6 @@ namespace AmateurFootballLeague.Models
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
         public virtual ICollection<Report> Reports { get; set; }
-        public virtual ICollection<TeamInMatch> TeamInMatches { get; set; }
         public virtual ICollection<TeamInTournament> TeamInTournaments { get; set; }
     }
 }

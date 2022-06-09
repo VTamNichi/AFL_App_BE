@@ -16,16 +16,17 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMapper _mapper;
         private readonly IMatchService _matchService;
         private readonly ITeamService _teamService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly ITournamentService _tournamentService;
 
-        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService, ITeamService teamService)
+        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService, ITeamService teamService, ITeamInTournamentService teamInTournamentService)
         {
             _teamInMatch = teamInMatch;
             _mapper = mapper;
             _matchService = matchService;
             _teamService = teamService;
             _tournamentService= tournamentService;
-
+            _teamInTournamentService = teamInTournamentService;
         }
 
         [HttpGet]
@@ -41,7 +42,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamScore = timt.tim.TeamScore,
                         YellowCardNumber = timt.tim.YellowCardNumber,
                         RedCardNumber = timt.tim.RedCardNumber,
-                        TeamId = timt.tim.TeamId,
+                        TeamInTournamentId = timt.tim.TeamInTournamentId,
                         MatchId = timt.m.Id,
                         Result = timt.tim.Result,
                         NextTeam = timt.tim.NextTeam,
@@ -51,20 +52,20 @@ namespace AmateurFootballLeague.Controllers
                 if(fullInfo == true)
                 {
                     listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                   .Join(_teamService.GetList(), ttim => ttim.tim.Team, te => te, (ttim, te) => new { ttim, te })
+                   .Join(_teamInTournamentService.GetList(), ttim => ttim.tim.TeamInTournament, te => te, (ttim, te) => new { ttim, te })
                    .Join(_tournamentService.GetList(), timt => timt.ttim.m.Tournament, t => t, (timt, t) => new TeamInMatch
                    {
                        Id = timt.ttim.tim.Id,
                        TeamScore = timt.ttim.tim.TeamScore,
                        YellowCardNumber = timt.ttim.tim.YellowCardNumber,
                        RedCardNumber = timt.ttim.tim.RedCardNumber,
-                       TeamId = timt.ttim.tim.TeamId,
+                       TeamInTournamentId = timt.ttim.tim.TeamInTournamentId,
                        MatchId = timt.ttim.m.Id,
                        Result = timt.ttim.tim.Result,
                        NextTeam = timt.ttim.tim.NextTeam,
                        TeamName = timt.ttim.tim.TeamName,
                        Match = timt.ttim.m,
-                       Team = timt.te
+                       TeamInTournament = timt.te
                    }).Where(m => m.Match.TournamentId == tournamentId);
                 }
                 if(orderType == SortTypeEnum.DESC)
@@ -101,19 +102,19 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList() ,tim => tim.Match, m => m, (tim, m) => new  {tim , m})
-                    .Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt,t) => new TeamInMatch
+                    .Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt,t) => new TeamInMatch
                     {
                         Id = timt.tim.Id,
                         TeamScore = timt.tim.TeamScore,
                         YellowCardNumber = timt.tim.YellowCardNumber,
                         RedCardNumber = timt.tim.RedCardNumber,
-                        TeamId =t.Id,
+                        TeamInTournamentId =t.Id,
                         MatchId = timt.m.Id,
                         Result = timt.tim.Result,
                         NextTeam = timt.tim.NextTeam,
                         TeamName = timt.tim.TeamName,
                         Match = timt.m,
-                        Team = t
+                        TeamInTournament = t
 
                     } ).Where(m => m.MatchId == matchId);
                 var temInMatch = new List<TeamInMatch>();
@@ -168,7 +169,7 @@ namespace AmateurFootballLeague.Controllers
             TeamInMatch team = new TeamInMatch();
             try
             {
-                var checkTeam = _teamInMatch.GetList().Where(t=> t.MatchId == teamInMatch.MatchId && t.TeamId == teamInMatch.TeamId);
+                var checkTeam = _teamInMatch.GetList().Where(t=> t.MatchId == teamInMatch.MatchId && t.TeamInTournamentId == teamInMatch.TeamInTournamentId);
                 if(checkTeam != null)
                 {
                     return BadRequest(new
@@ -188,7 +189,7 @@ namespace AmateurFootballLeague.Controllers
                 team.TeamScore = teamInMatch.TeamScore;
                 team.YellowCardNumber = teamInMatch.YellowCardNumber;
                 team.RedCardNumber = teamInMatch.RedCardNumber;
-                team.TeamId = teamInMatch.TeamId;
+                team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
                 team.MatchId = teamInMatch.MatchId;
                 team.Result = "";
                 team.NextTeam = "";
@@ -217,7 +218,7 @@ namespace AmateurFootballLeague.Controllers
                     team.TeamScore = teamInMatch.TeamScore;    
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
                     team.RedCardNumber = teamInMatch.RedCardNumber;
-                    team.TeamId = teamInMatch.TeamId;
+                    team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
                     team.Result = teamInMatch.Result;
                     team.NextTeam = teamInMatch.NextTeam;
                     team.TeamName = teamInMatch.TeamName;

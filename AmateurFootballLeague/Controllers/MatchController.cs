@@ -18,10 +18,11 @@ namespace AmateurFootballLeague.Controllers
         private readonly IAgoraProvider _agoraProvider;
         private readonly IMapper _mapper;
         private readonly ITeamService _teamService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
 
         public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
-            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService)
+            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -29,6 +30,7 @@ namespace AmateurFootballLeague.Controllers
             _agoraProvider = agoraProvider;
             _mapper = mapper;
             _teamService = teamService;
+            _teamInTournamentService = teamInTournamentService;
             _playerInTeamService = playerInTeamService;
         }
 
@@ -62,7 +64,7 @@ namespace AmateurFootballLeague.Controllers
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
                     Console.WriteLine($"Date Value: {nextDate}");
                     listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate>=fromDate&&m.m.MatchDate<fromDate2).
-                        Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new {timt,t}).Join(_playerInTeamService.GetList(),
+                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTeamService.GetList(),
                         tpit=> tpit.t.Id, pit=>pit.TeamId, (tpit, pit) => new
                         {
                             tpit,pit
@@ -85,10 +87,10 @@ namespace AmateurFootballLeague.Controllers
                                    RedCardNumber = m.tpit.timt.tim.RedCardNumber,
                                    Result = m.tpit.timt.tim.Result,
                                    TeamName = m.tpit.timt.tim.TeamName,
-                                   TeamId = m.tpit.t.Id,
+                                   TeamInTournamentId = m.tpit.t.Id,
                                    MatchId = m.tpit.timt.tim.MatchId,
                                    NextTeam = m.tpit.timt.tim.NextTeam,
-                                   Team = m.tpit.t
+                                   TeamInTournament = m.tpit.t
                                }
                            }
                         });
@@ -97,7 +99,7 @@ namespace AmateurFootballLeague.Controllers
                     for (int i = 0; i < findMatch.Count; i++)
                     {
                         IQueryable<Match> aMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
-                       .Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new Match
+                       .Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new Match
                        {
                            Id = timt.m.Id,
                            MatchDate = timt.m.MatchDate,
@@ -116,10 +118,10 @@ namespace AmateurFootballLeague.Controllers
                                    RedCardNumber = timt.tim.RedCardNumber,
                                    Result = timt.tim.Result,
                                    TeamName = timt.tim.TeamName,
-                                   TeamId = t.Id,
+                                   TeamInTournamentId = t.Id,
                                    MatchId = timt.tim.MatchId,
                                    NextTeam = timt.tim.NextTeam,
-                                   Team = t
+                                   TeamInTournament = t
                                }
                            }
                        }).Where(m => m.Id == findMatch[i].Id);
@@ -167,7 +169,7 @@ namespace AmateurFootballLeague.Controllers
                 if(fullInfo == true)
                 {
                     listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
-                       .Join(_teamService.GetList(), timt => timt.tim.Team, t => t, (timt, t) => new Match
+                       .Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new Match
                        {
                            Id = timt.m.Id,
                            MatchDate = timt.m.MatchDate,
@@ -186,10 +188,10 @@ namespace AmateurFootballLeague.Controllers
                                    RedCardNumber = timt.tim.RedCardNumber,
                                    Result = timt.tim.Result,
                                    TeamName = timt.tim.TeamName,
-                                   TeamId = t.Id,
+                                   TeamInTournamentId = t.Id,
                                    MatchId = timt.tim.MatchId,
                                    NextTeam = timt.tim.NextTeam,
-                                   Team = t
+                                   TeamInTournament = t
                                }
                            }    
                        }).Where(m => m.TournamentId == tournamentId);
