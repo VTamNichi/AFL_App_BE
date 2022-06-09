@@ -153,7 +153,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="200">Returns success</response>
         /// <response code="400">Send mail fail</response>
         /// <response code="500">Internal Server</response>
-        [HttpPost("send-mail-register-recruit")]
+        [HttpPost("send-mail-accept-team-to-tournament")]
         [Produces("application/json")]
         public async Task<ActionResult> SendMailAcceptTeamToTournament([FromBody] SendMailAcceptTeamToTournament modelRR)
         {

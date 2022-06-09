@@ -34,4 +34,17 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public bool Status { get; set; }
 
     }
+
+    public class SendMailAcceptTeamToTournament
+    {
+        [Required]
+        public int TournamentId { get; set; }
+
+        [Required]
+        public int TeamId { get; set; }
+
+        public bool Status { get; set; }
+
+        public string? Reason { get; set; }
+    }
 }
