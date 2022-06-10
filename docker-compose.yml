@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  amateurfootballleague:
+    image: ${DOCKER_REGISTRY-}amateurfootballleague
+    build:
+      context: .
+      dockerfile: AmateurFootballLeague/Dockerfile
