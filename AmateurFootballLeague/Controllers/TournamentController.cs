@@ -168,17 +168,25 @@ namespace AmateurFootballLeague.Controllers
                               FootballPlayerMaxNumber= fpit.pitour.tpit.t.FootballPlayerMaxNumber,
                               GroupNumber= fpit.pitour.tpit.t.GroupNumber,
                               DateCreate= fpit.pitour.tpit.t.DateCreate,
-                              Status= fpit.pitour.tpit.t.Status
-                              
+                              Status= fpit.pitour.tpit.t.Status,
+                              TournamentTypeId = fpit.pitour.tpit.t.TournamentTypeId,
+                              FootballFieldTypeId = fpit.pitour.tpit.t.FootballFieldTypeId,
+                             
                           });
-                if (sort == SortTypeEnum.DESC)
-                {
+               if (sort == SortTypeEnum.DESC) {
                     listTournament = listTournament.OrderByDescending(t => t.Id);
+                
                 }
                 var tournamentListPagging = listTournament.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                List<TournamentVM> listTournamentVM = new List<TournamentVM>();
+                listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListPagging);
+                foreach (var tournamentVM in listTournamentVM)
+                {
+                    tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(tournamentVM.Id);
+                }
                 var tournamentListResponse = new TournamentListVM
                 {
-                    Tournaments = _mapper.Map<List<Tournament>, List<TournamentVM>>(tournamentListPagging),
+                    Tournaments = listTournamentVM,
                     CurrentPage = pageIndex,
                     Size = limit
                 };

@@ -20,9 +20,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamService _teamService;
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
+        private readonly IPlayerInTournamentService _playerInTournament;
 
         public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
-            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService)
+            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService,IPlayerInTournamentService playerInTournament)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -32,6 +33,7 @@ namespace AmateurFootballLeague.Controllers
             _teamService = teamService;
             _teamInTournamentService = teamInTournamentService;
             _playerInTeamService = playerInTeamService;
+            _playerInTournament = playerInTournament;
         }
 
         [HttpGet]
@@ -64,33 +66,36 @@ namespace AmateurFootballLeague.Controllers
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
                     Console.WriteLine($"Date Value: {nextDate}");
                     listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate>=fromDate&&m.m.MatchDate<fromDate2).
-                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTeamService.GetList(),
-                        tpit=> tpit.t.Id, pit=>pit.TeamId, (tpit, pit) => new
+                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
+                        tpit=> tpit.t.Id, pit=>pit.TeamInTournamentId, (tpit, pit) => new
                         {
                             tpit,pit
-                        }).Where(pit => pit.pit.FootballPlayerId == footballPlayerID).Select(m=> new Match
+                        }).Join(_playerInTeamService.GetList(), pitt=> pitt.pit.PlayerInTeam , piteam => piteam, (pitt, piteam) => new
                         {
-                            Id = m.tpit.timt.m.Id,
-                            MatchDate = m.tpit.timt.m.MatchDate,
-                            Status = m.tpit.timt.m.Status,
-                            TournamentId = m.tpit.timt.m.TournamentId,
-                            Round = m.tpit.timt.m.Round,
-                            Fight = m.tpit.timt.m.Fight,
-                            GroupFight = m.tpit.timt.m.GroupFight,
+                            pitt,piteam
+                        }).Where(pit => pit.piteam.FootballPlayerId == footballPlayerID).Select(m=> new Match
+                        {
+                            Id = m.pitt.tpit.timt.m.Id,
+                            MatchDate = m.pitt.tpit.timt.m.MatchDate,
+                            Status = m.pitt.tpit.timt.m.Status,
+                            TournamentId = m.pitt.tpit.timt.m.TournamentId,
+                            Round = m.pitt.tpit.timt.m.Round,
+                            Fight = m.pitt.tpit.timt.m.Fight,
+                            GroupFight = m.pitt.tpit.timt.m.GroupFight,
                             TeamInMatches = new List<TeamInMatch>
                            {
                                new TeamInMatch
                                {
-                                   Id = m.tpit.timt.tim.Id,
-                                   TeamScore = m.tpit.timt.tim.TeamScore,
-                                   YellowCardNumber = m.tpit.timt.tim.YellowCardNumber,
-                                   RedCardNumber = m.tpit.timt.tim.RedCardNumber,
-                                   Result = m.tpit.timt.tim.Result,
-                                   TeamName = m.tpit.timt.tim.TeamName,
-                                   TeamInTournamentId = m.tpit.t.Id,
-                                   MatchId = m.tpit.timt.tim.MatchId,
-                                   NextTeam = m.tpit.timt.tim.NextTeam,
-                                   TeamInTournament = m.tpit.t
+                                   Id = m.pitt.tpit.timt.tim.Id,
+                                   TeamScore = m.pitt.tpit.timt.tim.TeamScore,
+                                   YellowCardNumber = m.pitt.tpit.timt.tim.YellowCardNumber,
+                                   RedCardNumber = m.pitt.tpit.timt.tim.RedCardNumber,
+                                   Result = m.pitt.tpit.timt.tim.Result,
+                                   TeamName = m.pitt.tpit.timt.tim.TeamName,
+                                   TeamInTournamentId = m.pitt.tpit.t.Id,
+                                   MatchId = m.pitt.tpit.timt.tim.MatchId,
+                                   NextTeam = m.pitt.tpit.timt.tim.NextTeam,
+                                   TeamInTournament = m.pitt.tpit.t
                                }
                            }
                         });
