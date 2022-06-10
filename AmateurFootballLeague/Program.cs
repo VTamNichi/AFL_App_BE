@@ -17,6 +17,11 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using StackExchange.Redis.Extensions.Newtonsoft;
+using StackExchange.Redis.Extensions.Core.Configuration;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +50,17 @@ FirebaseApp.Create(new AppOptions
 });
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", pathToKey);
 
+builder.Services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>((options) =>
+{
+    return builder.Configuration.GetSection("Redis").Get<RedisConfiguration>();
+});
+
+builder.Services.AddHostedService<QuartzHostedService>();
+builder.Services.AddHostedService<BackgroundWork>();
+
+builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
+builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddSingleton<IJWTProvider, JWTProvider>();
@@ -53,6 +69,7 @@ builder.Services.AddSingleton<ISendEmailService, SendEmailService>();
 builder.Services.AddSingleton<IAgoraProvider, AgoraProvider>();
 builder.Services.AddSingleton<IRedisService, RedisService>();
 builder.Services.AddSingleton<IPushNotificationService, PushNotificationService>();
+builder.Services.AddSingleton<IWorker, Worker>();
 
 builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 builder.Services.AddTransient<IRoleService, RoleService>();
@@ -159,7 +176,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
-
 
 var app = builder.Build();
 

@@ -1,9 +1,11 @@
-﻿using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.ExternalService;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -17,14 +19,18 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITournamentService _tournamentService;
         private readonly ITeamService _teamService;
         private readonly IMapper _mapper;
+        private readonly IRedisService _redisService;
+        private readonly IPushNotificationService _pushNotificationService;
 
-        public NotificationController(INotificationService notificationService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, IMapper mapper)
+        public NotificationController(INotificationService notificationService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, IMapper mapper, IRedisService redisService, IPushNotificationService pushNotificationService)
         {
             _notificationService = notificationService;
             _userService = userService;
             _tournamentService = tournamentService;
             _teamService = teamService;
             _mapper = mapper;
+            _redisService = redisService;
+            _pushNotificationService = pushNotificationService;
         }
 
         /// <summary>Get list notification</summary>
@@ -219,6 +225,7 @@ namespace AmateurFootballLeague.Controllers
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)
                 {
+                    await _pushNotificationService.SendMessage("Bạn đã nhận được thông báo mới", notification.Content, user.Email, null);
                     return CreatedAtAction("GetNotificationById", new { id = notificationCreated.Id }, _mapper.Map<NotificationVM>(notificationCreated));
                 }
                 return BadRequest("Tạo thông báo mới thất bại");
@@ -279,6 +286,29 @@ namespace AmateurFootballLeague.Controllers
                     return Ok(_mapper.Map<NotificationVM>(notification));
                 }
                 return BadRequest("Cập nhật báo cáo thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost("connection")]
+        [Produces("application/json")]
+        [AllowAnonymous]
+        public async Task<ActionResult> MakeConnection([FromBody] NotificationConnection model)
+        {
+            try
+            {
+                bool isSuccess = await _redisService.Set("user:" + model.Email, model.Token, 1440);
+                if (isSuccess)
+                {
+                    return Ok(new
+                    {
+                        message = "Success"
+                    });
+                }
+                return BadRequest();
             }
             catch (Exception)
             {
