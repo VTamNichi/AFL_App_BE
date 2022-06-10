@@ -30,24 +30,28 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<TeamInMatchMT> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo, SortTypeEnum orderType)
+        public ActionResult<List<TeamInMatch>> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo, SortTypeEnum orderType)
         {
             try
             {
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                    .Join(_tournamentService.GetList(), timt => timt.m.Tournament, t => t, (timt, t) => new TeamInMatch
+                    .Join(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new TeamInMatch
                     {
-                        Id = timt.tim.Id,
-                        TeamScore = timt.tim.TeamScore,
-                        YellowCardNumber = timt.tim.YellowCardNumber,
-                        RedCardNumber = timt.tim.RedCardNumber,
-                        TeamInTournamentId = timt.tim.TeamInTournamentId,
-                        MatchId = timt.m.Id,
-                        Result = timt.tim.Result,
-                        NextTeam = timt.tim.NextTeam,
-                        TeamName = timt.tim.TeamName,
-                        Match = timt.m,
-                    }).Where(m => m.Match.TournamentId == tournamentId);
+                        Id = timm.tim.Id,
+                        TeamScore = timm.tim.TeamScore,
+                        YellowCardNumber = timm.tim.YellowCardNumber,
+                        RedCardNumber = timm.tim.RedCardNumber,
+                        TeamInTournamentId = timm.tim.TeamInTournamentId,
+                        TeamInTournament  = new TeamInTournament
+                        {
+                            Team = team
+                        },
+                        MatchId = timm.tim.MatchId,
+                        Result = timm.tim.Result,
+                        NextTeam = timm.tim.NextTeam,
+                        TeamName = timm.tim.TeamName,
+                        Match = timm.tim.Match,
+                    }).Where(t => t.Match.TournamentId == tournamentId);
                 if(fullInfo == true)
                 {
                     listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
@@ -82,7 +86,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamsInMatch = _mapper.Map<List<TeamInMatch>, List<TeamInMatchMT>>(temInMatch)
 
                     };
-                    return Ok(teamListResponse);
+                    return Ok(temInMatch);
 
                 }
 
@@ -247,7 +251,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut("update-team-in-match-to-tournament")]
         [Produces("application/json")]
-        public async Task<ActionResult<List<TeamInMatch>>> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
+        public async Task<ActionResult> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
         {
             try
             {
@@ -257,7 +261,7 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Không tìm thấy đội bóng trong trận đấu");
                 }
                 Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
-                int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId.Value) + 1;
+                int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId.Value);
 
                 IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
                     .Join(_teamInMatch.GetList().Where(tim => tim.TeamName == "Đội " + numberTeamInTournament), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
@@ -280,7 +284,6 @@ namespace AmateurFootballLeague.Controllers
                         {
                             tim.TeamName = team.TeamName;
                             tim.TeamInTournamentId = currentTeamInTournament.Id;
-                            tim.TeamInTournament!.Team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
                             await _teamInMatch.UpdateAsync(tim);
                         }
                     }
