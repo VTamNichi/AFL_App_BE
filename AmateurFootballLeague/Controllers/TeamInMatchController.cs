@@ -35,7 +35,6 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                    //.Join(_teamService.GetList(), ttim => ttim.tim.Team, te=>te,(ttim,te)=> new {ttim,te})
                     .Join(_tournamentService.GetList(), timt => timt.m.Tournament, t => t, (timt, t) => new TeamInMatch
                     {
                         Id = timt.tim.Id,
@@ -248,7 +247,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut("update-team-in-match-to-tournament")]
         [Produces("application/json")]
-        public async Task<ActionResult> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
+        public async Task<ActionResult<List<TeamInMatch>>> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
         {
             try
             {
@@ -281,12 +280,13 @@ namespace AmateurFootballLeague.Controllers
                         {
                             tim.TeamName = team.TeamName;
                             tim.TeamInTournamentId = currentTeamInTournament.Id;
+                            tim.TeamInTournament!.Team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
                             await _teamInMatch.UpdateAsync(tim);
                         }
                     }
                 }
 
-                return Ok("Thành Công");
+                return Ok("Thành công");
             }
             catch (Exception)
             {

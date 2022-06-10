@@ -16,12 +16,15 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMapper _mapper;
         private readonly IFootballPlayerService _footballPlayerService;
         private readonly ITeamService _teamService;
-        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer, ITeamService teamService)
+        private readonly IUserService _userService;
+
+        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer, ITeamService teamService, IUserService userService)
         {
             _playerInTeam = playerInTeamService;
             _mapper = mapper;
             _footballPlayerService = footballPlayer;
             _teamService = teamService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -41,7 +44,26 @@ namespace AmateurFootballLeague.Controllers
                         TeamId = pit.TeamId,
                         FootballPlayerId = p.Id,
                         FootballPlayer = p
-                    }).Where(p => p.TeamId == teamId);
+                    }).Where(p => p.TeamId == teamId).Join(_userService.GetList(), fp => fp.FootballPlayer.IdNavigation, u => u, (fp, u) => new PlayerInTeam
+                    {
+                        Id = fp.Id,
+                        Status = fp.Status,
+                        TeamId = fp.TeamId,
+                        FootballPlayerId = fp.FootballPlayerId,
+                        FootballPlayer = new FootballPlayer
+                        {
+                            Id = fp.FootballPlayer.Id,
+                            PlayerName = fp.FootballPlayer.PlayerName,
+                            PlayerAvatar = fp.FootballPlayer.PlayerAvatar,
+                            Position = fp.FootballPlayer.Position,
+                            Description = fp.FootballPlayer.Description,
+                            Status = fp.FootballPlayer.Status,
+                            DateCreate = fp.FootballPlayer.DateCreate,
+                            DateUpdate = fp.FootballPlayer.DateUpdate,
+                            DateDelete = fp.FootballPlayer.DateDelete,
+                            IdNavigation = u
+                        }
+                    });
                 }
                 if (!String.IsNullOrEmpty(footballPlayerId.ToString()) && String.IsNullOrEmpty(teamId.ToString()))
                 {
