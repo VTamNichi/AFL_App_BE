@@ -27,4 +27,10 @@
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
     }
+
+    public class NotificationConnection
+    {
+        public string Token { get; set; }
+        public string Email { get; set; }
+    }
 }
