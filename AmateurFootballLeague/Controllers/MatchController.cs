@@ -66,7 +66,7 @@ namespace AmateurFootballLeague.Controllers
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
                     Console.WriteLine($"Date Value: {nextDate}");
                     listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate>=fromDate&&m.m.MatchDate<fromDate2).
-                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
+                        Join(_teamService.GetList(), timt => timt.tim.TeamInTournament.Team, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
                         tpit=> tpit.t.Id, pit=>pit.TeamInTournamentId, (tpit, pit) => new
                         {
                             tpit,pit
@@ -95,7 +95,10 @@ namespace AmateurFootballLeague.Controllers
                                    TeamInTournamentId = m.pitt.tpit.t.Id,
                                    MatchId = m.pitt.tpit.timt.tim.MatchId,
                                    NextTeam = m.pitt.tpit.timt.tim.NextTeam,
-                                   TeamInTournament = m.pitt.tpit.t
+                                   TeamInTournament = new TeamInTournament
+                                   {
+                                       Team = m.pitt.tpit.t
+                                   }
                                }
                            }
                         });
@@ -104,7 +107,7 @@ namespace AmateurFootballLeague.Controllers
                     for (int i = 0; i < findMatch.Count; i++)
                     {
                         IQueryable<Match> aMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
-                       .Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new Match
+                       .Join(_teamService.GetList(), timt => timt.tim.TeamInTournament.Team, t => t, (timt, t) => new Match
                        {
                            Id = timt.m.Id,
                            MatchDate = timt.m.MatchDate,
@@ -126,7 +129,10 @@ namespace AmateurFootballLeague.Controllers
                                    TeamInTournamentId = t.Id,
                                    MatchId = timt.tim.MatchId,
                                    NextTeam = timt.tim.NextTeam,
-                                   TeamInTournament = t
+                                   TeamInTournament = new TeamInTournament
+                                   {
+                                       Team =t
+                                   }
                                }
                            }
                        }).Where(m => m.Id == findMatch[i].Id);

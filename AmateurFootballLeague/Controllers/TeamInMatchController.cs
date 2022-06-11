@@ -34,25 +34,47 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                //IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
+                //    .Join(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new TeamInMatch
+                //    {
+                //        Id = timm.tim.Id,
+                //        TeamScore = timm.tim.TeamScore,
+                //        YellowCardNumber = timm.tim.YellowCardNumber,
+                //        RedCardNumber = timm.tim.RedCardNumber,
+                //        TeamInTournamentId = timm.tim.TeamInTournamentId,
+                //        TeamInTournament  = new TeamInTournament
+                //        {
+                //            Team = team
+                //        },
+                //        MatchId = timm.tim.MatchId,
+                //        Result = timm.tim.Result,
+                //        NextTeam = timm.tim.NextTeam,
+                //        TeamName = timm.tim.TeamName,
+                //        Match = timm.tim.Match,
+                //    }).Where(t => t.Match.TournamentId == tournamentId);
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                    .Join(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new TeamInMatch
-                    {
-                        Id = timm.tim.Id,
-                        TeamScore = timm.tim.TeamScore,
-                        YellowCardNumber = timm.tim.YellowCardNumber,
-                        RedCardNumber = timm.tim.RedCardNumber,
-                        TeamInTournamentId = timm.tim.TeamInTournamentId,
-                        TeamInTournament  = new TeamInTournament
-                        {
-                            Team = team
-                        },
-                        MatchId = timm.tim.MatchId,
-                        Result = timm.tim.Result,
-                        NextTeam = timm.tim.NextTeam,
-                        TeamName = timm.tim.TeamName,
-                        Match = timm.tim.Match,
-                    }).Where(t => t.Match.TournamentId == tournamentId);
-                if(fullInfo == true)
+                    //.Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, tit => tit, (timt, tit) => new{timt,tit })
+    .GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new {timm,team})
+    .SelectMany(t => t.team.DefaultIfEmpty(),(t, temp) => new TeamInMatch
+    {
+        Id = t.timm.tim.Id,
+        TeamScore = t.timm.tim.TeamScore,
+        YellowCardNumber = t.timm.tim.YellowCardNumber,
+        RedCardNumber = t.timm.tim.RedCardNumber,
+        TeamInTournamentId = t.timm.tim.TeamInTournamentId,
+        TeamInTournament = new TeamInTournament
+        {
+
+            Team = temp
+        },
+        MatchId = t.timm.tim.MatchId,
+        Result = t.timm.tim.Result,
+        NextTeam = t.timm.tim.NextTeam,
+        TeamName = t.timm.tim.TeamName,
+        Match = t.timm.tim.Match,
+    }).Where(t => t.Match.TournamentId == tournamentId);
+                return Ok(listTeam);
+                if (fullInfo == true)
                 {
                     listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
                    .Join(_teamInTournamentService.GetList(), ttim => ttim.tim.TeamInTournament, te => te, (ttim, te) => new { ttim, te })
