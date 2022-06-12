@@ -37,6 +37,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public IFormFile? Avatar { get; set; }
         public string? Bio { get; set; }
         public string? IdentityCard { get; set; }
+        public DateTime? DateIssuance { get; set; }
         public string? PhoneBusiness { get; set; }
         public string? NameBusiness { get; set; }
         public string? TINBusiness { get; set; }
@@ -74,6 +75,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public IFormFile? Avatar { get; set; }
         public string? Bio { get; set; }
         public string? IdentityCard { get; set; }
+        public DateTime? DateIssuance { get; set; }
         public string? PhoneBusiness { get; set; }
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }

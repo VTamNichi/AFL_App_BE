@@ -590,6 +590,8 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.DateDelete).HasColumnType("datetime");
 
+                entity.Property(e => e.DateIssuance).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
 
                 entity.Property(e => e.DateUnban).HasColumnType("datetime");

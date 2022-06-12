@@ -275,7 +275,8 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.FlagReportComment = 0;
                 convertUser.FlagReportTeam = 0;
                 convertUser.FlagReportTournament = 0;
-                convertUser.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? "" : model.IdentityCard.Trim(); ;
+                convertUser.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? "" : model.IdentityCard.Trim();
+                convertUser.DateIssuance = String.IsNullOrEmpty(model.DateIssuance.ToString()) ? null : model.DateIssuance;
                 convertUser.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? "" : model.PhoneBusiness.Trim(); ;
                 convertUser.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? "" : model.NameBusiness.Trim(); ;
                 convertUser.Tinbusiness = String.IsNullOrEmpty(model.TINBusiness) ? "" : model.TINBusiness.Trim(); ;
@@ -419,6 +420,7 @@ namespace AmateurFootballLeague.Controllers
                 user.Phone = String.IsNullOrEmpty(model.Phone) ? user.Phone : model.Phone;
                 user.Bio = String.IsNullOrEmpty(model.Bio) ? user.Bio : model.Bio;
                 user.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? user.IdentityCard : model.IdentityCard;
+                user.DateIssuance = String.IsNullOrEmpty(model.DateIssuance.ToString()) ? user.DateIssuance : model.DateIssuance;
                 user.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? user.PhoneBusiness : model.PhoneBusiness;
                 user.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? user.NameBusiness : model.NameBusiness;
                 user.Tinbusiness = String.IsNullOrEmpty(model.Tinbusiness) ? user.Tinbusiness : model.Tinbusiness;
