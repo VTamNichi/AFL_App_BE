@@ -11,7 +11,7 @@
         public string Tinbusiness { get; set; }
         public string Status { get; set; }
         public string Reason { get; set; }
-        public DateTime DateCreate { get; set; }
+        public string DateCreate { get; set; }
         public int UserId { get; set; }
     }
     public class PromoteRequestListVM

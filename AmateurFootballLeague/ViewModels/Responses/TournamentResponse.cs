@@ -9,9 +9,9 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string Mode { get; set; }
         public string TournamentPhone { get; set; }
         public string TournamentGender { get; set; }
-        public DateTime RegisterEndDate { get; set; }
-        public DateTime TournamentStartDate { get; set; }
-        public DateTime TournamentEndDate { get; set; }
+        public string RegisterEndDate { get; set; }
+        public string TournamentStartDate { get; set; }
+        public string TournamentEndDate { get; set; }
         public string FootballFieldAddress { get; set; }
         public string TournamentAvatar { get; set; }
         public string Description { get; set; }
@@ -19,7 +19,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int FootballTeamNumber { get; set; }
         public int FootballPlayerMaxNumber { get; set; }
         public int GroupNumber { get; set; }
-        public DateTime DateCreate { get; set; }
+        public string DateCreate { get; set; }
         public bool Status { get; set; }
         public int UserId { get; set; }
         public int TournamentTypeId { get; set; }

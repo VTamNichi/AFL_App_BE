@@ -6,9 +6,9 @@ namespace AmateurFootballLeague.ViewModels.Responses
     {
         public int Id { get; set; }
         public string Content { get; set; }
-        public DateTime DateCreate { get; set; }
-        public DateTime DateDelete { get; set; }
-        public DateTime DateUpdate { get; set; }
+        public string DateCreate { get; set; }
+        public string DateDelete { get; set; }
+        public string DateUpdate { get; set; }
         public string Status { get; set; }
         public int TeamId { get; set; }
         public int TournamentId { get; set; }
