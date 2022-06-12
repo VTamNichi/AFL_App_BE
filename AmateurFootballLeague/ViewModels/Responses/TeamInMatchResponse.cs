@@ -21,13 +21,13 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int TeamScore { get; set; }
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
-        public int TeamInTournamentId { get; set; }
-        public int MatchId { get; set; }
         public string Result { get; set; }
         public string NextTeam { get; set; }
         public string TeamName { get; set; }
+        public int TeamInTournamentId { get; set; }
+        public int MatchId { get; set; }
         public virtual Match Match { get; set; }
-        public virtual Team Team { get; set; }
+        public virtual TeamInTournament TeamInTournament { get; set; }
     }
 
     public class TeamInMatchLV
