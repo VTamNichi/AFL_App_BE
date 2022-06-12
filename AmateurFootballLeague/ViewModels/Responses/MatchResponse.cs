@@ -5,7 +5,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class MatchVM
     {
         public int Id { get; set; }
-        public DateTime MatchDate { get; set; }
+        public string MatchDate { get; set; }
         public string Status { get; set; }
         public int TournamentId { get; set; }
         public string Round { get; set; }
@@ -17,7 +17,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class MatchFVM
     {
         public int Id { get; set; }
-        public DateTime MatchDate { get; set; }
+        public string MatchDate { get; set; }
         public string Status { get; set; }
         public int TournamentId { get; set; }
         public string Round { get; set; }
