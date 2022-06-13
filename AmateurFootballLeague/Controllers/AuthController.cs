@@ -46,7 +46,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Sai mật khẩu");
                 }
-                if (!user.Status.HasValue)
+                if (!user.Status.Value)
                 {
                     return BadRequest("Tài khoản đã bị khóa");
                 }
