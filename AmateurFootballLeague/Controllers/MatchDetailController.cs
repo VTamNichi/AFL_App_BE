@@ -15,13 +15,20 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMatchDetailService _matchDetail;
         private readonly IMapper _mapper;
         private readonly IPlayerInTournamentService _playerInTournament;
+        private readonly ITeamInTournamentService _teamInTournamentService;
+        private readonly IPlayerInTeamService _playerInTeamService;
+        private IFootballPlayerService _footballPlayerService;
 
-        public MatchDetailController (IMatchService match, IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament)
+        public MatchDetailController (IMatchService match, IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament, 
+            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService)
         {
             _match = match; 
             _matchDetail = matchDetail;
             _mapper = mapper;
             _playerInTournament = playerInTournament;
+            _teamInTournamentService = teamInTournamentService;
+            _playerInTeamService = playerInTeamService;
+            _footballPlayerService = footballPlayerService;
         }
 
         [HttpGet]
@@ -30,18 +37,42 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                IQueryable<MatchDetail> listDtMatch = _matchDetail.GetList().Join(_match.GetList(), md => md.Match, m => m, (md, m) => new { md, m })
-                    .Join(_playerInTournament.GetList(), mdp => mdp.md.PlayerInTournament, p => p, (mdp, p) => new MatchDetail
+                if(matchId == 0)
+                {
+                    IQueryable<MatchDetail> match = _matchDetail.GetList();
+                    return Ok (match);
+                }
+                IQueryable<MatchDetail> listDtMatch = _matchDetail.GetList().Join(_playerInTournament.GetList(), md => md.PlayerInTournament, pit => pit, (md, pit) => new { md, pit })
+                    .Join(_teamInTournamentService.GetList(), pitt => pitt.pit.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                    Join(_playerInTeamService.GetList(), pitp => pitp.pitt.pit.PlayerInTeam, piteam => piteam, (pitp, piteam) => new { pitp, piteam })
+                    .Join(_footballPlayerService.GetList(), pitf => pitf.piteam.FootballPlayer, f => f, (pitf, f) => new MatchDetail
                     {
-                        Id = mdp.md.Id,
-                        MatchScore = mdp.md.MatchScore,
-                        YellowCardNumber = mdp.md.YellowCardNumber,
-                        RedCardNumber = mdp.md.RedCardNumber,
-                        MatchId = mdp.m.Id,
-                        PlayerInTournamentId = p.Id,
-                        Match = mdp.m,
-                        PlayerInTournament = p
+                        Id = pitf.pitp.pitt.md.Id,
+                        MatchScore = pitf.pitp.pitt.md.MatchScore,
+                        YellowCardNumber = pitf.pitp.pitt.md.YellowCardNumber,
+                        RedCardNumber = pitf.pitp.pitt.md.RedCardNumber,
+                        MatchId = pitf.pitp.pitt.md.MatchId,
+                        PlayerInTournament = new PlayerInTournament
+                        {
+                            Id = pitf.pitp.pitt.pit.Id,
+                            Status = pitf.pitp.pitt.pit.Status,
+                            ClothesNumber = pitf.pitp.pitt.pit.ClothesNumber,
+                            PlayerInTeam = new PlayerInTeam
+                            {
+                                Id = pitf.piteam.Id,
+                                Status = pitf.piteam.Status,
+                                TeamId = pitf.pitp.tit.TeamId,
+                                FootballPlayer = new FootballPlayer
+                                {
+                                    Id = f.Id,
+                                    PlayerName = f.PlayerName,
+                                    PlayerAvatar = f.PlayerAvatar,
+                                    Position = f.Position
+                                }
+                            },
+                            
 
+                        }
                     }).Where(m => m.MatchId == matchId);
                 var matchDt = new List<MatchDetail>();
                 matchDt = listDtMatch.ToList();

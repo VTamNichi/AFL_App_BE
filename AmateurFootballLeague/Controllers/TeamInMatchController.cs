@@ -126,25 +126,30 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList() ,tim => tim.Match, m => m, (tim, m) => new  {tim , m}).
-                    GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new { timm, team })
-    .SelectMany(t => t.team.DefaultIfEmpty(), (t, temp) =>new TeamInMatch
-    {
-        Id = t.timm.tim.Id,
-        TeamScore = t.timm.tim.TeamScore,
-        YellowCardNumber = t.timm.tim.YellowCardNumber,
-        RedCardNumber = t.timm.tim.RedCardNumber,
-        TeamInTournamentId = t.timm.tim.TeamInTournamentId,
-        TeamInTournament = new TeamInTournament
-        {
-
-            Team = temp
-        },
-        MatchId = t.timm.tim.MatchId,
-        Result = t.timm.tim.Result,
-        NextTeam = t.timm.tim.NextTeam,
-        TeamName = t.timm.tim.TeamName,
-        Match = t.timm.tim.Match,
-    }).Where(m => m.MatchId == matchId);
+                    Join(_teamInTournamentService.GetList(), titm => titm.tim.TeamInTournament, tit=> tit , (titm, tit)=> new {titm, tit}).
+                    Join(_teamService.GetList(), timm => timm.tit.Team, team => team, (timm, team) => new TeamInMatch
+                    {
+                        Id = timm.titm.tim.Id,
+                        TeamScore = timm.titm.tim.TeamScore,
+                        YellowCardNumber = timm.titm.tim.YellowCardNumber,
+                        RedCardNumber = timm.titm.tim.RedCardNumber,
+                        TeamInTournamentId = timm.titm.tim.TeamInTournamentId,
+                        TeamInTournament = new TeamInTournament
+                        {
+                            Id = timm.tit.Id,
+                            Point = timm.tit.Point,
+                            DifferentPoint = timm.tit.DifferentPoint,
+                            Status = timm.tit.Status,
+                            TournamentId = timm.tit.TournamentId,
+                            Team = team
+                        },
+                        MatchId = timm.titm.tim.MatchId,
+                        Result =timm.titm.tim.Result,
+                        NextTeam = timm.titm.tim.NextTeam,
+                        TeamName = timm.titm.tim.TeamName,
+                        Match = timm.titm.tim.Match,
+                    }
+    ).Where(m => m.MatchId == matchId);
                 var temInMatch = new List<TeamInMatch>();
                 temInMatch = listTeam.ToList();
                 if (temInMatch.Count()>0)
