@@ -8,6 +8,7 @@
         public string Status { get; set; }
         public int TournamentId { get; set; }
         public int TeamId { get; set; }
+        public string StatusInTournament { get; set; }
     }
     public class TeamInTournamentListVM
     {

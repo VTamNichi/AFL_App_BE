@@ -158,24 +158,25 @@ namespace AmateurFootballLeague.Controllers
                               TournamentPhone = fpit.pitour.tpit.t.TournamentPhone,
                               TournamentGender = fpit.pitour.tpit.t.TournamentGender,
                               RegisterEndDate = fpit.pitour.tpit.t.RegisterEndDate,
-                              TournamentStartDate= fpit.pitour.tpit.t.TournamentStartDate,
-                              TournamentEndDate= fpit.pitour.tpit.t.TournamentEndDate,
+                              TournamentStartDate = fpit.pitour.tpit.t.TournamentStartDate,
+                              TournamentEndDate = fpit.pitour.tpit.t.TournamentEndDate,
                               FootballFieldAddress = fpit.pitour.tpit.t.FootballFieldAddress,
                               TournamentAvatar = fpit.pitour.tpit.t.TournamentAvatar,
                               Description = fpit.pitour.tpit.t.Description,
-                              MatchMinutes= fpit.pitour.tpit.t.MatchMinutes,
-                              FootballTeamNumber= fpit.pitour.tpit.t.FootballTeamNumber,
-                              FootballPlayerMaxNumber= fpit.pitour.tpit.t.FootballPlayerMaxNumber,
-                              GroupNumber= fpit.pitour.tpit.t.GroupNumber,
-                              DateCreate= fpit.pitour.tpit.t.DateCreate,
-                              Status= fpit.pitour.tpit.t.Status,
+                              MatchMinutes = fpit.pitour.tpit.t.MatchMinutes,
+                              FootballTeamNumber = fpit.pitour.tpit.t.FootballTeamNumber,
+                              FootballPlayerMaxNumber = fpit.pitour.tpit.t.FootballPlayerMaxNumber,
+                              GroupNumber = fpit.pitour.tpit.t.GroupNumber,
+                              DateCreate = fpit.pitour.tpit.t.DateCreate,
+                              Status = fpit.pitour.tpit.t.Status,
                               TournamentTypeId = fpit.pitour.tpit.t.TournamentTypeId,
                               FootballFieldTypeId = fpit.pitour.tpit.t.FootballFieldTypeId,
-                             
+
                           });
-               if (sort == SortTypeEnum.DESC) {
+                if (sort == SortTypeEnum.DESC)
+                {
                     listTournament = listTournament.OrderByDescending(t => t.Id);
-                
+
                 }
                 var tournamentListPagging = listTournament.Skip((pageIndex - 1) * limit).Take(limit).ToList();
                 List<TournamentVM> listTournamentVM = new List<TournamentVM>();
@@ -242,13 +243,29 @@ namespace AmateurFootballLeague.Controllers
             Tournament tournament = new Tournament();
             try
             {
-
+                DateTime date = DateTime.Now;
                 User user = await _userService.GetByIdAsync(model.UserId);
-                if(user.RoleId != 2)
+
+                if (user.RoleId != 2)
                 {
                     return BadRequest(new
                     {
                         message = "Người dùng không có vai trò chủ giải đấu"
+                    });
+                }
+
+                IQueryable<Tournament> checkTournament = _tournamentService.GetList().Join(_userService.GetList(), t => t.User, u => u, (t, u) => new Tournament
+                {
+                    Id = t.Id,
+                    TournamentName = t.TournamentName,
+                    TournamentEndDate = t.TournamentEndDate
+                }).Where(t => t.TournamentEndDate > date && t.Status == true);
+
+                if (checkTournament.Count() > 0)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Bạn đang có một giải đấu đang diễn ra , không thể tạo thêm giải trong thời gian này."
                     });
                 }
 
@@ -274,9 +291,16 @@ namespace AmateurFootballLeague.Controllers
                         tournament.TournamentAvatar = fileUrl;
                     }
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
                     tournament.TournamentAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
+                }
+                if (model.RegisterEndDate > model.TournamentStartDate)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
+                    });
                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
                 tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
