@@ -97,14 +97,14 @@ namespace AmateurFootballLeague.Controllers
                     });
 
                 }
-                PlayerInTournament checkPlayerFromAnotherTeam = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId != player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
-                if(checkPlayerFromAnotherTeam != null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Cầu thủ đang trong một đội bóng khác"
-                    });
-                }
+                //PlayerInTournament checkPlayerFromAnotherTeam = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId != player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
+                //if(checkPlayerFromAnotherTeam != null)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        message = "Cầu thủ đang trong một đội bóng khác"
+                //    });
+                //}
                 playerCreate.TeamInTournamentId = player.TeamInTournamentId;
                 playerCreate.PlayerInTeamId = player.PlayerInTeamId;
                 playerCreate.ClothesNumber = String.IsNullOrEmpty(player.ClothesNumber.ToString()) ? 0 : player.ClothesNumber; 

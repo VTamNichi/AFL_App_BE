@@ -17,4 +17,9 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public IFormFile? File { get; set; }
         public int? TournamentId { get; set; }
     }
+
+    public class TestImage
+    {
+        public IFormFile File { get; set; }
+    }
 }
