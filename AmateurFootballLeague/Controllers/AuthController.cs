@@ -18,13 +18,17 @@ namespace AmateurFootballLeague.Controllers
         private readonly IJWTProvider _jwtProvider;
         private readonly ISendEmailService _sendEmailService;
         private readonly IMapper _mapper;
-        public AuthController(IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
+
+        private readonly IUploadFileService _uploadFileService;
+        public AuthController(IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper, IUploadFileService uploadFileService)
         {
             _userService = userService;
             _verifyCodeService = verifyCodeService;
             _jwtProvider = jwtProvider;
             _sendEmailService = sendEmailService;
             _mapper = mapper;
+
+            _uploadFileService = uploadFileService;
         }
 
         /// <summary>Login with email and password</summary>
@@ -272,6 +276,23 @@ namespace AmateurFootballLeague.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Test firebase by upload image</summary>
+        /// <response code="201">Success</response>
+        /// <response code="500">Failed</response>
+        [HttpPost("upload-image")]
+        public async Task<ActionResult> UploadImage([FromForm] TestImage model)
+        {
+            try
+            {
+                string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
+                return Ok("Success" + fileUrl);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Fail");
             }
         }
     }

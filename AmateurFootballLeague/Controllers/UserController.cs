@@ -315,6 +315,14 @@ namespace AmateurFootballLeague.Controllers
                         message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
+                User userCheckPhone = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                if (currentUser != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Số điện thoại này đã tồn tại trong hệ thống"
+                    });
+                }
                 Role currenRole = await _roleService.GetByIdAsync(model.RoleId);
                 if (currenRole == null)
                 {
@@ -383,7 +391,65 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-                
+
+                if (!String.IsNullOrEmpty(model.Phone) && !model.Phone.Equals(user.Phone))
+                {
+                    User currentUser = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                    if (currentUser != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Số điện thoại này đã tồn tại trong hệ thống"
+                        });
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(model.IdentityCard) && !model.IdentityCard.Equals(user.IdentityCard))
+                {
+                    User currentUser = _userService.GetList().Where(s => s.IdentityCard.Trim().ToUpper().Equals(model.IdentityCard.Trim().ToUpper())).FirstOrDefault();
+                    if (currentUser != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Số CMND này đã tồn tại trong hệ thống"
+                        });
+                    }
+                }
+                if (!String.IsNullOrEmpty(model.NameBusiness) && !model.NameBusiness.Equals(user.NameBusiness))
+                {
+                    User currentUser = _userService.GetList().Where(s => s.NameBusiness.Trim().ToUpper().Equals(model.NameBusiness.Trim().ToUpper())).FirstOrDefault();
+                    if (currentUser != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Tên doanh nghiệp này đã tồn tại trong hệ thống"
+                        });
+                    }
+                }
+                if (!String.IsNullOrEmpty(model.Tinbusiness) && !model.Tinbusiness.Equals(user.Tinbusiness))
+                {
+                    User currentUser = _userService.GetList().Where(s => s.Tinbusiness.Trim().ToUpper().Equals(model.Tinbusiness.Trim().ToUpper())).FirstOrDefault();
+                    if (currentUser != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Mã số thuế doanh nghiệp này đã tồn tại trong hệ thống"
+                        });
+                    }
+                }
+                if (!String.IsNullOrEmpty(model.PhoneBusiness) && !model.PhoneBusiness.Equals(user.PhoneBusiness))
+                {
+                    User currentUser = _userService.GetList().Where(s => s.PhoneBusiness.Trim().ToUpper().Equals(model.PhoneBusiness.Trim().ToUpper())).FirstOrDefault();
+                    if (currentUser != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Số điện thoại doanh nghiệp này đã tồn tại trong hệ thống"
+                        });
+                    }
+                }
+
+
                 if (!String.IsNullOrEmpty(model.RoleId.ToString()))
                 {
                     Role currenRole = await _roleService.GetByIdAsync((int)model.RoleId);

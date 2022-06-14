@@ -10,7 +10,7 @@ namespace AmateurFootballLeague.Repositories
 
         public int CountTeamInATournament(int tournamentId)
         {
-            return GetList().Where(tit => tit.TournamentId == tournamentId).Count();
+            return GetList().Where(tit => tit.TournamentId == tournamentId && tit.Status == "Tham gia").Count();
         }
     }
 }
