@@ -258,8 +258,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     Id = t.Id,
                     TournamentName = t.TournamentName,
-                    TournamentEndDate = t.TournamentEndDate
-                }).Where(t => t.TournamentEndDate > date && t.Status == true);
+                    TournamentEndDate = t.TournamentEndDate,
+                    Status = t.Status,
+                    UserId = u.Id
+                }).Where(t => t.TournamentEndDate > date && t.Status == true && t.UserId == user.Id);
 
                 if (checkTournament.Count() > 0)
                 {
