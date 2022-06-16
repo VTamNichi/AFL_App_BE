@@ -267,7 +267,7 @@ namespace AmateurFootballLeague.Controllers
 
                 convertUser.Username = String.IsNullOrEmpty(model.Username) ? "" : model.Username.Trim();
                 convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : model.Gender == UserGenderEnum.Female ? "Female" : "All";
-                convertUser.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? DateTime.Now.AddYears(-20) : model.DateOfBirth;
+                convertUser.DateOfBirth = String.IsNullOrEmpty(model.DateOfBirth.ToString()) ? DateTime.Now.AddHours(7).AddYears(-20) : model.DateOfBirth;
                 convertUser.Address = String.IsNullOrEmpty(model.Address) ? "" : model.Address.Trim();
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
                 convertUser.Bio = String.IsNullOrEmpty(model.Bio) ? "" : model.Bio.Trim();
@@ -282,7 +282,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.Tinbusiness = String.IsNullOrEmpty(model.TINBusiness) ? "" : model.TINBusiness.Trim(); ;
                 convertUser.Tinbusiness = String.IsNullOrEmpty(model.TINBusiness) ? "" : model.TINBusiness.Trim(); ;
                 convertUser.Status = true;
-                convertUser.DateCreate = DateTime.Now;
+                convertUser.DateCreate = DateTime.Now.AddHours(7);
                 convertUser.RoleId = model.RoleId;
 
                 User userCreated = await _userService.AddAsync(convertUser);
@@ -349,7 +349,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.FlagReportTeam = 0;
                 convertUser.FlagReportTournament = 0;
                 convertUser.Status = true;
-                convertUser.DateCreate = DateTime.Now;
+                convertUser.DateCreate = DateTime.Now.AddHours(7);
                 convertUser.RoleId = model.RoleId;
 
                 User userCreated = await _userService.AddAsync(convertUser);
@@ -490,7 +490,7 @@ namespace AmateurFootballLeague.Controllers
                 user.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? user.PhoneBusiness : model.PhoneBusiness;
                 user.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? user.NameBusiness : model.NameBusiness;
                 user.Tinbusiness = String.IsNullOrEmpty(model.Tinbusiness) ? user.Tinbusiness : model.Tinbusiness;
-                user.DateUpdate = DateTime.Now;
+                user.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdate = await _userService.UpdateAsync(user);
                 if (isUpdate)
@@ -557,7 +557,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 user.Status = false;
-                user.DateDelete = DateTime.Now;
+                user.DateDelete = DateTime.Now.AddHours(7);
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
                 {
@@ -594,7 +594,7 @@ namespace AmateurFootballLeague.Controllers
                 List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
-                user.DateUpdate = DateTime.Now;
+                user.DateUpdate = DateTime.Now.AddHours(7);
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
                 {
@@ -628,7 +628,7 @@ namespace AmateurFootballLeague.Controllers
                 List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
-                user.DateUpdate = DateTime.Now;
+                user.DateUpdate = DateTime.Now.AddHours(7);
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
                 {

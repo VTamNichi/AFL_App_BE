@@ -229,7 +229,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 report.UserId = user.Id;
                 report.Reason = String.IsNullOrEmpty(model.Reason) ? "" : model.Reason;
-                report.DateReport = DateTime.Now;
+                report.DateReport = DateTime.Now.AddHours(7);
                 Report reportCreated = await _reportService.AddAsync(report);
                 if (reportCreated != null)
                 {

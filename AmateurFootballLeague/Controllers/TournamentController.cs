@@ -230,7 +230,6 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-
         /// <summary>Create a new tournament</summary>
         /// <response code="201">Created new tournament successfull</response>
         /// <response code="400">Field is not matched or duplicated</response>
@@ -251,7 +250,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Người dùng không có vai trò chủ giải đấu"
                     });
                 }
-
+                
                 bool isDuplicated = _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
@@ -259,6 +258,31 @@ namespace AmateurFootballLeague.Controllers
                     {
                         message = "Tên giải đấu đã tồn tại"
                     });
+                }
+                if (model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất là 3 và nhiều nhất là 16");
+                    }
+                }
+                else if (model.TournamentTypeEnum == TournamentTypeEnum.CircleStage)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 8)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất là 3 và nhiều nhất là 8");
+                    }
+                }
+                else
+                {
+                    if (model.FootballTeamNumber < 6 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất là 6 và nhiều nhất là 16");
+                    }
+                    if(model.FootballTeamNumber < 12 && model.GroupNumber > 2)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất hơn 12 chỉ có thể chia 2 bảng đấu");
+                    } 
                 }
                 tournament.TournamentName = model.TournamentName;
                 tournament.Mode = "PUBLIC";
@@ -280,9 +304,9 @@ namespace AmateurFootballLeague.Controllers
                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
                 tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
-                tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now : model.RegisterEndDate;
-                tournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? DateTime.Now : model.TournamentStartDate;
-                tournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? DateTime.Now : model.TournamentEndDate;
+                tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.RegisterEndDate;
+                tournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? DateTime.Now.AddHours(7) : model.TournamentStartDate;
+                tournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.TournamentEndDate;
                 tournament.FootballFieldAddress = String.IsNullOrEmpty(model.FootballFieldAddress) ? "" : model.FootballFieldAddress;
                 tournament.Description = String.IsNullOrEmpty(model.Description) ? "" : model.Description.Trim();
                 tournament.MatchMinutes = model.MatchMinutes;
@@ -292,7 +316,7 @@ namespace AmateurFootballLeague.Controllers
                 tournament.UserId = model.UserId;
                 tournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : 3;
                 tournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : 3;
-                tournament.DateCreate = DateTime.Now;
+                tournament.DateCreate = DateTime.Now.AddHours(7);
                 tournament.Status = true;
                 tournament.StatusTnm = "";
 
@@ -318,23 +342,23 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<TournamentVM>> UpdateTournament([FromForm] TournamentUM model)
         {
-            Tournament currentTournament = await _tournamentService.GetByIdAsync(model.Id);
-            if (currentTournament == null)
-            {
-                return NotFound("Không tìm thấy giải đấu với id là " + model.Id);
-            }
-            if (!String.IsNullOrEmpty(model.TournamentName))
-            {
-                if (!currentTournament.TournamentName.ToUpper().Equals(model.TournamentName.ToUpper()) && _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Tên giải đấu đã tồn tại"
-                    });
-                }
-            }
             try
             {
+                Tournament currentTournament = await _tournamentService.GetByIdAsync(model.Id);
+                if (currentTournament == null)
+                {
+                    return NotFound("Không tìm thấy giải đấu với id là " + model.Id);
+                }
+                if (!String.IsNullOrEmpty(model.TournamentName))
+                {
+                    if (!currentTournament.TournamentName.ToUpper().Equals(model.TournamentName.ToUpper()) && _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null)
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Tên giải đấu đã tồn tại"
+                        });
+                    }
+                }
                 try
                 {
                     if (!String.IsNullOrEmpty(model.TournamentAvatar.ToString()))
@@ -344,6 +368,36 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
                 catch (Exception) { }
+                int count = _teamInTournamentService.CountTeamInATournament(model.Id);
+                if(model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage &&  currentTournament.TournamentTypeId != 1)
+                {
+
+                }
+                if (model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 16");
+                    }
+                }
+                else if (model.TournamentTypeEnum == TournamentTypeEnum.CircleStage)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 8)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 8");
+                    }
+                }
+                else
+                {
+                    if (model.FootballTeamNumber < 6 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 6 và nhiều nhất là 16");
+                    }
+                    if (model.FootballTeamNumber < 12 && model.GroupNumber > 2)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất hơn 12 chỉ có thể chia 2 bảng đấu");
+                    }
+                }
 
                 currentTournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? currentTournament.TournamentPhone : model.TournamentPhone.Trim();
                 currentTournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : currentTournament.TournamentGender;
@@ -360,7 +414,7 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.FootballPlayerMaxNumber = String.IsNullOrEmpty(model.FootballPlayerMaxNumber.ToString()) ? currentTournament.FootballPlayerMaxNumber : model.FootballPlayerMaxNumber;
                 currentTournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : model.TournamentTypeEnum == TournamentTypeEnum.GroupStage ? 3 : currentTournament.TournamentTypeId;
                 currentTournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field11 ? 3 : currentTournament.FootballFieldTypeId;
-                currentTournament.DateUpdate = DateTime.Now;
+                currentTournament.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _tournamentService.UpdateAsync(currentTournament);
                 if (isUpdated)
@@ -431,7 +485,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 currentTournament.Status = false;
-                currentTournament.DateDelete = DateTime.Now;
+                currentTournament.DateDelete = DateTime.Now.AddHours(7);
                 bool isDeleted = await _tournamentService.UpdateAsync(currentTournament);
                 if (isDeleted)
                 {

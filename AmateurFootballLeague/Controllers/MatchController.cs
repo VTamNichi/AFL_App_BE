@@ -60,8 +60,8 @@ namespace AmateurFootballLeague.Controllers
 
                 if(footballPlayerID>0)
                 {
-                    DateTime fromDate = DateTime.Now.Date;
-                    var date = DateTime.Now.AddDays(+1).ToShortDateString().Split("/");
+                    DateTime fromDate = DateTime.Now.AddHours(7).Date;
+                    var date = DateTime.Now.AddHours(7).AddDays(+1).ToShortDateString().Split("/");
                     string nextDate = date[2]+"-"+date[1]+"-"+date[0];
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
                     Console.WriteLine($"Date Value: {nextDate}");

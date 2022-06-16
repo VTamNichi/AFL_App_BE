@@ -238,8 +238,8 @@ namespace AmateurFootballLeague.Controllers
                 verifyCode.Email = model.ToEmail;
                 verifyCode.Code = code.ToString();
                 verifyCode.Status = true;
-                verifyCode.DateCreate = DateTime.Now;
-                verifyCode.DateExpire = DateTime.Now.AddMinutes(2);
+                verifyCode.DateCreate = DateTime.Now.AddHours(7);
+                verifyCode.DateExpire = DateTime.Now.AddHours(7).AddMinutes(2);
 
                 await _verifyCodeService.AddAsync(verifyCode);
 
@@ -266,7 +266,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Xác nhận thất bại");
                 }
-                if (DateTime.Compare(checkVerifyCode.DateExpire ?? DateTime.Now.AddMinutes(-1), DateTime.Now) < 0) {
+                if (DateTime.Compare(checkVerifyCode.DateExpire ?? DateTime.Now.AddHours(7).AddMinutes(-1), DateTime.Now.AddHours(7)) < 0) {
                     return BadRequest("Mã xác nhận đã hết hạn");
                 }
                 
@@ -288,7 +288,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
-                return Ok("Success" + fileUrl);
+                return Ok("Success" + DateTime.Now.AddHours(7).AddHours(7));
             }
             catch (Exception e)
             {

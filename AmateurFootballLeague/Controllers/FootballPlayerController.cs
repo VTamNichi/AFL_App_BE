@@ -192,7 +192,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 footballPlayer.Position = model.Position;
                 footballPlayer.Description = model.Description;
-                footballPlayer.DateCreate = DateTime.Now;
+                footballPlayer.DateCreate = DateTime.Now.AddHours(7);
                 footballPlayer.Status = true;
 
                 FootballPlayer footballPlayerCreated = await _footballPlayerService.AddAsync(footballPlayer);
@@ -241,7 +241,7 @@ namespace AmateurFootballLeague.Controllers
                 currentFootballPlayer.PlayerName = String.IsNullOrEmpty(model.PlayerName) ? currentFootballPlayer.PlayerName : model.PlayerName.Trim();
                 currentFootballPlayer.Position = String.IsNullOrEmpty(model.Position) ? currentFootballPlayer.Position : model.Position.Trim();
                 currentFootballPlayer.Description = String.IsNullOrEmpty(model.Description) ? currentFootballPlayer.Description : model.Description.Trim();
-                currentFootballPlayer.DateUpdate = DateTime.Now;
+                currentFootballPlayer.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _footballPlayerService.UpdateAsync(currentFootballPlayer);
                 if (isUpdated)
@@ -314,7 +314,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 currentFootballPlayer.Status = false;
-                currentFootballPlayer.DateDelete = DateTime.Now;
+                currentFootballPlayer.DateDelete = DateTime.Now.AddHours(7);
                 bool isDeleted = await _footballPlayerService.UpdateAsync(currentFootballPlayer);
                 if (isDeleted)
                 {

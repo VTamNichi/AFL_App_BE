@@ -124,7 +124,7 @@ namespace AmateurFootballLeague.Controllers
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
                 image.ImageUrl = fileUrl;
                 image.Status = true;
-                image.DateCreate = DateTime.Now;
+                image.DateCreate = DateTime.Now.AddHours(7);
                 image.TournamentId = model.TournamentId;
 
                 Image imageCreated = await _imageService.AddAsync(image);
@@ -169,7 +169,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     image.TournamentId = model.TournamentId;
                 }
-                image.DateUpdate = DateTime.Now;
+                image.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _imageService.UpdateAsync(image);
                 if (isUpdated)
@@ -240,7 +240,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 currentImage.Status = false;
-                currentImage.DateDelete = DateTime.Now;
+                currentImage.DateDelete = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _imageService.UpdateAsync(currentImage);
                 if (isUpdated)
