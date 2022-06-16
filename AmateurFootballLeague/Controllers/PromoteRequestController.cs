@@ -192,7 +192,7 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Không tìm thấy người dùng");
                 }
                 PromoteRequest promoteRequest = _mapper.Map<PromoteRequest>(model);
-                promoteRequest.DateCreate = DateTime.Now;
+                promoteRequest.DateCreate = DateTime.Now.AddHours(7);
                 promoteRequest.Status = "Chưa duyệt";
                 promoteRequest.Reason = "";
 

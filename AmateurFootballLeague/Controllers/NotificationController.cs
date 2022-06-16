@@ -220,7 +220,7 @@ namespace AmateurFootballLeague.Controllers
                 notification.Content = String.IsNullOrEmpty(model.Content) ? "" : model.Content;
                 notification.IsActive = true;
                 notification.IsSeen = false;
-                notification.DateCreate = DateTime.Now;
+                notification.DateCreate = DateTime.Now.AddHours(7);
 
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)

@@ -121,7 +121,7 @@ namespace AmateurFootballLeague.Controllers
 
 
                 comment.Content = model.Content.Trim();
-                comment.DateCreate = DateTime.Now;
+                comment.DateCreate = DateTime.Now.AddHours(7);
                 comment.Status = "";
                 comment.UserId = model.UserId;
                 Comment commentCreated = await _commentService.AddAsync(comment);
@@ -148,7 +148,7 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Bình luận không tồn tại");
                 }
                 currentComment.Content = model.Content.Trim();
-                currentComment.DateUpdate = DateTime.Now;
+                currentComment.DateUpdate = DateTime.Now.AddHours(7);
                 bool isUpdated = await _commentService.UpdateAsync(currentComment);
                 if (isUpdated)
                 {

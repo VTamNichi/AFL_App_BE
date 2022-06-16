@@ -195,7 +195,7 @@ namespace AmateurFootballLeague.Controllers
                 team.TeamPhone = String.IsNullOrEmpty(model.TeamPhone) ? "" : model.TeamPhone.Trim();
                 team.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : "Female";
                 team.Description = String.IsNullOrEmpty(model.Description) ? "" : model.Description.Trim();
-                team.DateCreate = DateTime.Now;
+                team.DateCreate = DateTime.Now.AddHours(7);
                 team.Status = true;
                 team.Id = model.Id;
 
@@ -253,7 +253,7 @@ namespace AmateurFootballLeague.Controllers
                 currentTeam.TeamPhone = String.IsNullOrEmpty(model.TeamPhone) ? currentTeam.TeamPhone : model.TeamPhone.Trim();
                 currentTeam.TeamGender = model.TeamGender == TeamGenderEnum.Male ? "Male" : model.TeamGender == TeamGenderEnum.Female ? "Female" : currentTeam.TeamGender;
                 currentTeam.Description = String.IsNullOrEmpty(model.Description) ? currentTeam.Description : model.Description.Trim();
-                currentTeam.DateUpdate = DateTime.Now;
+                currentTeam.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _teamService.UpdateAsync(currentTeam);
                 if (isUpdated)
@@ -324,7 +324,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 currentTeam.Status = false;
-                currentTeam.DateDelete = DateTime.Now;
+                currentTeam.DateDelete = DateTime.Now.AddHours(7);
                 bool isDeleted = await _teamService.UpdateAsync(currentTeam);
                 if (isDeleted)
                 {

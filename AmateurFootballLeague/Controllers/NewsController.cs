@@ -151,7 +151,7 @@ namespace AmateurFootballLeague.Controllers
                 news.TournamentId = model.TournamentId;
                 news.Content = model.Content;
                 news.Status = true;
-                news.DateCreate = DateTime.Now;
+                news.DateCreate = DateTime.Now.AddHours(7);
 
                 News newsCreated = await _newsService.AddAsync(news);
                 if (newsCreated != null)
@@ -205,7 +205,7 @@ namespace AmateurFootballLeague.Controllers
                 catch (Exception) {}
 
                 oldNews.Content = String.IsNullOrEmpty(model.Content) ? oldNews.Content : model.Content;
-                oldNews.DateUpdate = DateTime.Now;
+                oldNews.DateUpdate = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _newsService.UpdateAsync(oldNews);
                 if (isUpdated)
@@ -276,7 +276,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 currentNews.Status = false;
-                currentNews.DateDelete = DateTime.Now;
+                currentNews.DateDelete = DateTime.Now.AddHours(7);
 
                 bool isUpdated = await _newsService.UpdateAsync(currentNews);
                 if (isUpdated)
