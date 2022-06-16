@@ -288,7 +288,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
-                return Ok("Success " + DateTime.Now.AddHours(7));
+                return Ok("Success" + DateTime.Now.AddHours(7));
             }
             catch (Exception e)
             {
