@@ -228,7 +228,7 @@ namespace AmateurFootballLeague.Controllers
                         teamInTournament.TeamId = model.TeamId;
                     }
                 }
-                DateTime date = DateTime.Now;
+                DateTime date = DateTime.Now.AddHours(7);
                 IQueryable<TeamInTournament> checkTeam = _teamInTournamentService.GetList().Join(_tournamentService.GetList(), tit => tit.Tournament, t => t, (tit, t) => new { tit, t })
                     .Where(t => t.t.TournamentEndDate > date)
                     .Join(_teamService.GetList(), titt => titt.tit.Team, team => team, (titt, team) => new TeamInTournament
