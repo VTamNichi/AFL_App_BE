@@ -33,7 +33,7 @@ namespace AmateurFootballLeague.ExternalService
                         Data = additionalDatas,
                     };
                     string format = "Mddyyyyhhmmsstt";
-                    string key = string.Format("{0}", DateTime.Now.ToString(format));
+                    string key = string.Format("{0}", DateTime.Now.AddHours(7).ToString(format));
                     System.Diagnostics.Debug.WriteLine(key);
                     return await _redisService.Set<Message>("notification:" + key, message, 60);
                 }
