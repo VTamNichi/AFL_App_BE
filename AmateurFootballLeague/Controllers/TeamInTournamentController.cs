@@ -174,7 +174,7 @@ namespace AmateurFootballLeague.Controllers
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
                 teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) ? 0 : model.DifferentPoint;
                 teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? "" : model.Status;
-
+                teamInTournament.StatusInTournament = "Trong giải";
                 TeamInTournament teamInTournamentCreated = await _teamInTournamentService.AddAsync(teamInTournament);
                 if (teamInTournamentCreated != null)
                 {
@@ -210,7 +210,7 @@ namespace AmateurFootballLeague.Controllers
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
-                    } 
+                    }
                     else
                     {
                         teamInTournament.TournamentId = model.TournamentId;
@@ -228,12 +228,29 @@ namespace AmateurFootballLeague.Controllers
                         teamInTournament.TeamId = model.TeamId;
                     }
                 }
-                
+                DateTime date = DateTime.Now;
+                IQueryable<TeamInTournament> checkTeam = _teamInTournamentService.GetList().Join(_tournamentService.GetList(), tit => tit.Tournament, t => t, (tit, t) => new { tit, t })
+                    .Where(t => t.t.TournamentEndDate > date)
+                    .Join(_teamService.GetList(), titt => titt.tit.Team, team => team, (titt, team) => new TeamInTournament
+                    {
+                        Id = titt.tit.Id,
+                        Status = titt.tit.Status,
+                        StatusInTournament = titt.tit.StatusInTournament
+                    }).Where(tit => tit.StatusInTournament != "Bị loại");
+
+                if (checkTeam.Count() > 0)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Đội của bạn đang tham gia một giải đấu khác"
+                    });
+                }
+
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) && model.Point != 0 ? teamInTournament.Point : model.Point;
                 teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) && model.DifferentPoint != 0 ? teamInTournament.DifferentPoint : model.DifferentPoint;
                 teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? teamInTournament.Status : model.Status;
-
-                 bool isUpdate = await _teamInTournamentService.UpdateAsync(teamInTournament);
+                teamInTournament.StatusInTournament = String.IsNullOrEmpty(model.StatusInTournament) ? teamInTournament.StatusInTournament : model.StatusInTournament;
+                bool isUpdate = await _teamInTournamentService.UpdateAsync(teamInTournament);
                 if (isUpdate)
                 {
                     return CreatedAtAction("GetTeamInTournamentById", new { id = teamInTournament.Id }, _mapper.Map<TeamInTournamentVM>(teamInTournament));
