@@ -274,7 +274,7 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Update a team in match to tournament</summary>
+        /// <summary>Update auto team in match to tournament</summary>
         /// <response code="200">Success</response>
         /// <response code="404">Not Found</response>
         /// <response code="400">Field is not matched</response>
@@ -293,7 +293,9 @@ namespace AmateurFootballLeague.Controllers
                 Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
                 int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId.Value);
 
-                IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
+                if (model.TypeUpdate)
+                {
+                    IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
                     .Join(_teamInMatch.GetList().Where(tim => tim.TeamName == "Đội " + numberTeamInTournament), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
                     {
                         Id = m.Id,
@@ -306,20 +308,73 @@ namespace AmateurFootballLeague.Controllers
                         TeamInMatches = m.TeamInMatches
                     });
 
-                foreach (Match match in listMatchInTournament.ToList())
-                {
-                    foreach(TeamInMatch tim in match.TeamInMatches)
+                    foreach (Match match in listMatchInTournament.ToList())
                     {
-                        if(tim.TeamName == "Đội " + numberTeamInTournament)
+                        foreach (TeamInMatch tim in match.TeamInMatches)
                         {
-                            tim.TeamName = team.TeamName;
-                            tim.TeamInTournamentId = currentTeamInTournament.Id;
-                            await _teamInMatch.UpdateAsync(tim);
+                            if (tim.TeamName == "Đội " + numberTeamInTournament)
+                            {
+                                tim.TeamName = team.TeamName;
+                                tim.TeamInTournamentId = currentTeamInTournament.Id;
+                                await _teamInMatch.UpdateAsync(tim);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
+                    .Join(_teamInMatch.GetList().Where(tim => tim.TeamName == team.TeamName), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                    {
+                        Id = m.Id,
+                        MatchDate = m.MatchDate,
+                        Status = m.Status,
+                        TournamentId = m.TournamentId,
+                        Round = m.Round,
+                        Fight = m.Fight,
+                        GroupFight = m.GroupFight,
+                        TeamInMatches = m.TeamInMatches
+                    });
+
+                    foreach (Match match in listMatchInTournament.ToList())
+                    {
+                        foreach (TeamInMatch tim in match.TeamInMatches)
+                        {
+                            if (tim.TeamName == team.TeamName)
+                            {
+                                tim.TeamName = "Đội " + numberTeamInTournament;
+                                tim.TeamInTournamentId = null;
+                                await _teamInMatch.UpdateAsync(tim);
+                            }
                         }
                     }
                 }
 
                 return Ok("Thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Delete team in match By Tournament Id</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal server error</response>
+        [HttpDelete("delete-by-tournament-id")]
+        [Produces("application/json")]
+        public async Task<ActionResult> DeleteTeamByTournamrntId(int tournamentId)
+        {
+            try
+            {
+                List<TeamInMatch> listTeamInMatch = _teamInMatch.GetList().Where(t => t.Match.TournamentId == tournamentId).ToList();
+                foreach (TeamInMatch teamInMatch in listTeamInMatch)
+                {
+                    await _teamInMatch.DeleteAsync(teamInMatch);
+                }
+                return BadRequest("Xóa đội bóng trong trận đấu thành công");
             }
             catch (Exception)
             {

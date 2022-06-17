@@ -258,7 +258,9 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _teamService.UpdateAsync(currentTeam);
                 if (isUpdated)
                 {
-                    return CreatedAtAction("GetTeamById", new { id = currentTeam.Id }, _mapper.Map<TeamVM>(currentTeam));
+                    TeamVM teamVM = _mapper.Map<TeamVM>(currentTeam);
+                    teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam(currentTeam.Id);
+                    return Ok(teamVM);
                 }
                 return BadRequest("Cập nhật đội bóng thất bại");
             }

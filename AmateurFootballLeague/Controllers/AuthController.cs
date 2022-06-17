@@ -18,8 +18,8 @@ namespace AmateurFootballLeague.Controllers
         private readonly IJWTProvider _jwtProvider;
         private readonly ISendEmailService _sendEmailService;
         private readonly IMapper _mapper;
-
         private readonly IUploadFileService _uploadFileService;
+
         public AuthController(IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper, IUploadFileService uploadFileService)
         {
             _userService = userService;
@@ -27,7 +27,6 @@ namespace AmateurFootballLeague.Controllers
             _jwtProvider = jwtProvider;
             _sendEmailService = sendEmailService;
             _mapper = mapper;
-
             _uploadFileService = uploadFileService;
         }
 
@@ -227,7 +226,7 @@ namespace AmateurFootballLeague.Controllers
 
                 EmailForm model = new EmailForm();
                 model.ToEmail = email;
-                model.Subject = "Mã xác nhận tài khoản A-Football-League";
+                model.Subject = "Mã Xác Nhận Tài Khoản A-Football-League";
                 model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào <a href='mailto:" + email + "'>" + email + "</a>,</p><p style='font-size: 18px'>Chúng tôi đã nhận yêu cầu gửi mã xác thực cho tài khoản A-Football-League của bạn.</p><p style='font-size: 18px'>Mã xác thực của bạn là: " + code.ToString() + "</p><p style='font-size: 18px'>Nếu không yêu cầu mã này thì bạn có thể bỏ qua email này một cách an toàn. Có thể ai đó khác đã nhập địa chỉ email của bạn do nhầm lẫn.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
 
                 if (!await _sendEmailService.SendEmail(model))

@@ -113,4 +113,24 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         public TournamentFootballFieldTypeEnum? TournamentFootballFieldTypeEnum { get; set; }
     }
+
+    public enum TournamentMailEnum
+    {
+        CancelTournament,
+        ChangeInformationTournament
+    }
+
+    public class SendMailToAllTeamInTournament
+    {
+        [Required(AllowEmptyStrings = false)]
+        public int TournamentId { get; set; }
+
+        [Required(AllowEmptyStrings = false)]
+        public TournamentMailEnum TypeMail { get; set; }
+
+        public string? Reason { get; set; }
+
+        public string? Content { get; set; }
+
+    }
 }

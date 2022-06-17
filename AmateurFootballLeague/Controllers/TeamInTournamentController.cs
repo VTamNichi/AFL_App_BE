@@ -298,5 +298,29 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        /// <summary>Delete team in tournament By Tournament Id</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal server error</response>
+        [HttpDelete("delete-by-tournament-id")]
+        [Produces("application/json")]
+        public async Task<ActionResult> DeleteByTournamrntId(int tournamentId)
+        {
+            try
+            {
+                List<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(t => t.TournamentId == tournamentId).ToList();
+                foreach (TeamInTournament teamInTournament in listTeamInTournament)
+                {
+                    await _teamInTournamentService.DeleteAsync(teamInTournament);
+                }
+                return BadRequest("Xóa đội bóng trong giải đấu thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
