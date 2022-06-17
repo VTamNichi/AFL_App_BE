@@ -14,11 +14,20 @@ namespace AmateurFootballLeague.Controllers
     public class PlayerInTournamentController : ControllerBase
     {
         private readonly IPlayerInTournamentService _playerInTournament;
+        private readonly ITournamentService _tournamentService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
+        private readonly IPlayerInTeamService _playerInTeamService;
+        private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMapper _mapper;
-        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament, IMapper mapper)
+        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament, IMapper mapper, ITournamentService tournamentService,
+            ITeamInTournamentService teamInTournamentService, IFootballPlayerService footballPlayerService, IPlayerInTeamService playerInTeamService)
         {
             _playerInTournament = playerInTournament;
             _mapper = mapper;
+            _tournamentService = tournamentService;
+            _teamInTournamentService = teamInTournamentService;
+            _footballPlayerService = footballPlayerService;
+            _playerInTeamService = playerInTeamService;
         }
 
         [HttpGet]
@@ -83,11 +92,12 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<PlayerInTournamentVM>> CreatePlayerInTournament(PlayerInTournamentCM player)
+        public async Task<ActionResult<PlayerInTournamentVM>> CreatePlayerInTournament(PlayerInTournamentCM player, int footballPlayerId)
         {
             PlayerInTournament playerCreate = new PlayerInTournament();
             try
             {
+                DateTime date = DateTime.Now.AddHours(7);
                 PlayerInTournament checkPlayer = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId == player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
                 if(checkPlayer != null)
                 {
@@ -97,14 +107,24 @@ namespace AmateurFootballLeague.Controllers
                     });
 
                 }
-                //PlayerInTournament checkPlayerFromAnotherTeam = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId != player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
-                //if(checkPlayerFromAnotherTeam != null)
-                //{
-                //    return BadRequest(new
-                //    {
-                //        message = "Cầu thủ đang trong một đội bóng khác"
-                //    });
-                //}
+                IQueryable<PlayerInTournament> checkPlayerFromAnotherTeam = _playerInTournament.GetList().Join(_playerInTeamService.GetList(), ptour => ptour.PlayerInTeam, pteam => pteam,
+                    (ptour, pteam) => new { ptour, pteam }).Where(pit => pit.pteam.FootballPlayerId == footballPlayerId).Join(_footballPlayerService.GetList(), ptf => ptf.pteam.FootballPlayer, f => f, (ptf, f) => new { ptf, f })
+                    .Join(_teamInTournamentService.GetList(), ptt => ptt.ptf.ptour.TeamInTournament, titour => titour, (ptt, titour) => new { ptt, titour })
+                    .Join(_tournamentService.GetList(), titt => titt.titour.Tournament, t => t, (titt, t) => new { titt, t }).Where(t => t.t.TournamentEndDate > date && t.t.Status == true)
+                    .Select(p => new PlayerInTournament
+                    {
+                        Id = p.titt.ptt.ptf.ptour.Id,
+                        Status = p.titt.ptt.ptf.ptour.Status,
+                        ClothesNumber = p.titt.ptt.ptf.ptour.ClothesNumber                     
+                    });
+                FootballPlayer footballPlayer =await _footballPlayerService.GetByIdAsync(footballPlayerId);
+                if (checkPlayerFromAnotherTeam != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Cầu thủ" +footballPlayer.PlayerName +"đang thi đấu trong một giải đấu khác"
+                    });
+                }
                 playerCreate.TeamInTournamentId = player.TeamInTournamentId;
                 playerCreate.PlayerInTeamId = player.PlayerInTeamId;
                 playerCreate.ClothesNumber = String.IsNullOrEmpty(player.ClothesNumber.ToString()) ? 0 : player.ClothesNumber; 

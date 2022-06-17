@@ -268,13 +268,13 @@ namespace AmateurFootballLeague.Controllers
                     UserId = u.Id
                 }).Where(t => t.TournamentEndDate > date && t.Status == true && t.UserId == user.Id);
 
-                if (checkTournament.Count() > 0)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Bạn đang có một giải đấu đang diễn ra , không thể tạo thêm giải trong thời gian này."
-                    });
-                }
+                ////if (checkTournament.Count() > 0)
+                ////{
+                ////    return BadRequest(new
+                ////    {
+                ////        message = "Bạn đang có một giải đấu đang diễn ra , không thể tạo thêm giải trong thời gian này."
+                ////    });
+                ////}
 
                 bool isDuplicated = _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
@@ -327,7 +327,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     tournament.TournamentAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
-                if (model.RegisterEndDate > model.TournamentStartDate)
+                if (model.RegisterEndDate < model.TournamentStartDate)
                 {
                     return BadRequest(new
                     {
@@ -404,7 +404,7 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.TournamentName = String.IsNullOrEmpty(model.TournamentName) ? currentTournament.TournamentName : model.TournamentName.Trim();
                 currentTournament.Description = String.IsNullOrEmpty(model.Description) ? currentTournament.Description : model.Description.Trim();
                 currentTournament.Mode = model.Mode == TournamentModeEnum.PUBLIC ? "PUBLIC" : model.Mode == TournamentModeEnum.PRIVATE ? "PRIVATE" : currentTournament.Mode;
-                if (model.RegisterEndDate > currentTournament.TournamentStartDate)
+                if (model.RegisterEndDate < currentTournament.TournamentStartDate)
                 {
                     return BadRequest(new
                     {

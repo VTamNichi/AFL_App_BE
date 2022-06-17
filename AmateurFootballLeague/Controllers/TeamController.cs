@@ -20,8 +20,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IUploadFileService _uploadFileService;
         private readonly IMapper _mapper;
-
-        public TeamController(ITeamService teamService, IUserService userService, ITeamInTournamentService teamInTournamentService, ITournamentResultService tournamentResultService, IPlayerInTeamService playerInTeamService, IUploadFileService uploadFileService, IMapper mapper)
+        private readonly ITournamentService _tournamentService;
+        public TeamController(ITeamService teamService, IUserService userService, ITeamInTournamentService teamInTournamentService, 
+            ITournamentResultService tournamentResultService, IPlayerInTeamService playerInTeamService, IUploadFileService uploadFileService, IMapper mapper,
+            ITournamentService tournamentService)
         {
             _teamService = teamService;
             _userService = userService;
@@ -30,6 +32,7 @@ namespace AmateurFootballLeague.Controllers
             _playerInTeamService = playerInTeamService;
             _uploadFileService = uploadFileService;
             _mapper = mapper;
+            _tournamentService = tournamentService; 
         }
 
         /// <summary>Get list team</summary>
@@ -225,6 +228,23 @@ namespace AmateurFootballLeague.Controllers
             if (currentTeam == null)
             {
                 return NotFound("Không tìm thấy đội bóng với id là " + model.Id);
+            }
+            DateTime date = DateTime.Now.AddHours(7);
+            IQueryable<Team> teamInTour = _teamService.GetList().Join(_teamInTournamentService.GetList(), t => t.Id, tit => tit.TeamId, (t, tit) => new { t, tit }).
+                Where(tit => tit.tit.StatusInTournament != "Bị loại")
+                .Join(_tournamentService.GetList(), titt => titt.tit.Tournament, tour => tour, (titt, tour) => new { titt, tour }).
+                Where(t => t.tour.TournamentEndDate > date && t.tour.Status == true).
+                Select(t => new Team
+                {
+                    Id = t.titt.t.Id,
+                    TeamName = t.titt.t.TeamName
+                });
+            if (teamInTour.Count() > 0)
+            {
+                return BadRequest(new
+                {
+                    message = "Team của bạn đang trong một giải đấu nên không thể thay đổi thông tin lúc này"
+                });
             }
             if (!String.IsNullOrEmpty(model.TeamName))
             {

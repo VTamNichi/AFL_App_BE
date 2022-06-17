@@ -17,18 +17,25 @@ namespace AmateurFootballLeague.Controllers
         private readonly IFootballPlayerService _footballPlayerService;
         private readonly ITeamService _teamService;
         private readonly IUserService _userService;
+        private readonly IPlayerInTournamentService _playerInTournament;
+        private readonly ITournamentService _tournamentService;
+        private readonly ITeamInTournamentService _teamInTournamentService;
 
-        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer, ITeamService teamService, IUserService userService)
+        public PlayerInTeamController(IPlayerInTeamService playerInTeamService, IMapper mapper , IFootballPlayerService footballPlayer, ITeamService teamService, IUserService userService
+            ,IPlayerInTournamentService playerInTournamentService, ITournamentService tournamentService, ITeamInTournamentService teamInTournamentService)
         {
             _playerInTeam = playerInTeamService;
             _mapper = mapper;
             _footballPlayerService = footballPlayer;
             _teamService = teamService;
             _userService = userService;
+            _playerInTournament = playerInTournamentService;
+            _tournamentService = tournamentService;
+            _teamInTournamentService = teamInTournamentService;
         }
 
         [HttpGet]
-        public ActionResult<PlayerInTeamLFV> GetAllPlayerInTeam(int? teamId,int? footballPlayerId, string? name,string? status, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
+        public ActionResult<PlayerInTeamLFV> GetAllPlayerInTeam(int? teamId,int? footballPlayerId, string? name,string? status,string? busy, SortTypeEnum orderType, int pageIndex= 1, int limit = 5)
         {
             try
             {
@@ -65,6 +72,8 @@ namespace AmateurFootballLeague.Controllers
                         }
                     });
                 }
+                DateTime date = DateTime.Now.AddHours(7);
+                
                 if (!String.IsNullOrEmpty(footballPlayerId.ToString()) && String.IsNullOrEmpty(teamId.ToString()))
                 {
                     playerList = playerList.Join(_teamService.GetList(), pit => pit.Team, p => p, (pit, p) => new PlayerInTeam
@@ -90,12 +99,60 @@ namespace AmateurFootballLeague.Controllers
                 {
                     playerList = playerList.Where(p => p.Status.ToLower() == status.ToLower());
                 }
+                var playerBusy = new List<PlayerInTeam>();
+                var playerListFree = new List<PlayerInTeam>();
+                var checkList = playerList.ToList();
+                if (!String.IsNullOrEmpty(teamId.ToString()) && busy == "busy" && !String.IsNullOrEmpty(status))
+                {
+                    
+                   
+                    for (int i = 0; i < checkList.Count(); i++)
+                    {
+                        IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == checkList[i].FootballPlayerId).
+                            Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
+                            .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                            Join(_tournamentService.GetList(), tit => tit.tit.Tournament, t => t, (tit, t) => new { tit, t }).Where(p => p.t.TournamentEndDate > date && p.t.Status == true).
+                            Join(_userService.GetList(), p => p.tit.pitt.pitt.p.IdNavigation, u => u, (p, u) => new PlayerInTeam
+                            {
+                                Id = p.tit.pitt.pitt.pit.Id,
+                                Status = p.tit.pitt.pitt.pit.Status,
+                                TeamId = p.tit.pitt.pitt.pit.TeamId,
+                                FootballPlayerId = p.tit.pitt.pitt.pit.FootballPlayerId,
+                                FootballPlayer = new FootballPlayer
+                                {
+                                    Id = p.tit.pitt.pitt.p.Id,
+                                    PlayerName = p.tit.pitt.pitt.p.PlayerName,
+                                    PlayerAvatar = p.tit.pitt.pitt.p.PlayerAvatar,
+                                    Position = p.tit.pitt.pitt.p.Position,
+                                    Description = p.tit.pitt.pitt.p.Description,
+                                    Status = p.tit.pitt.pitt.p.Status,
+                                    DateCreate = p.tit.pitt.pitt.p.DateCreate,
+                                    DateUpdate = p.tit.pitt.pitt.p.DateUpdate,
+                                    DateDelete = p.tit.pitt.pitt.p.DateDelete,
+                                    IdNavigation = u
+                                },
+
+                            });
+                        if (busyList.Count() > 0)
+                        {
+                            playerBusy.Add(checkList[i]);
+                        }
+                    }
+                        
+
+                    var playerListBusy = new PlayerInTeamLFV
+                    {
+                        PlayerInTeamsFull = _mapper.Map<List<PlayerInTeam>, List<PlayerInTeamFVM>>(playerBusy),
+                    };
+                    return Ok(playerListBusy);
+                }
+
                     //else
                     //{
                     //    playerList = playerList.Where(p => (int)p.TeamId == teamId);
                     //}
-                    
-                if (orderType == SortTypeEnum.DESC)
+
+                    if (orderType == SortTypeEnum.DESC)
                 {
                     playerList = playerList.OrderByDescending(p => p.Id);
                 }
