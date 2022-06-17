@@ -177,7 +177,7 @@ namespace AmateurFootballLeague.Controllers
                 if (modelRR.Status)
                 {
                     model.ToEmail = userTeam.Email;
-                    model.Subject = "Thông báo chấp nhận tham gia giải đấu";
+                    model.Subject = "Thông Báo Chấp Nhận Tham Gia Giải Đấu";
                     model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã chấp nhận yêu cầu tham gia của đội bạn. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
 
                 }
@@ -190,7 +190,7 @@ namespace AmateurFootballLeague.Controllers
 
                     }
                     model.ToEmail = userTeam.Email;
-                    model.Subject = "Thông báo từ chối tham gia giải đấu";
+                    model.Subject = "Thông Báo Từ Chối Tham Gia Giải Đấu";
                     model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã từ chối yêu cầu tham gia của đội bạn.</p>" + reason + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                 }
 

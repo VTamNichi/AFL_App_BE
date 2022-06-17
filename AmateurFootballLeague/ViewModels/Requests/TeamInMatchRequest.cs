@@ -33,5 +33,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
     public class TeamInMatchToTournamentUM
     {
         public int TeamInTournamentId { get; set; }
+        public bool TypeUpdate { get; set; }
     }
 }

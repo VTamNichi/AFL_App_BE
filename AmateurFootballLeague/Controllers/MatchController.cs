@@ -1150,5 +1150,29 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        /// <summary>Delete match By Tournament Id</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="500">Internal server error</response>
+        [HttpDelete("delete-match-by-tournament-id")]
+        [Produces("application/json")]
+        public async Task<ActionResult> DeleteMatchByTournamrntId(int tournamentId)
+        {
+            try
+            {
+                List<Match> listMatch = _matchService.GetList().Where(t => t.TournamentId == tournamentId).ToList();
+                foreach (Match match in listMatch)
+                {
+                    await _matchService.DeleteAsync(match);
+                }
+                return BadRequest("Xóa trận đấu trong giải đấu thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
