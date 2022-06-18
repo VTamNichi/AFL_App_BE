@@ -50,15 +50,15 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<FootballPlayer> footballPlayerList = _footballPlayerService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    footballPlayerList = footballPlayerList.Where(s => s.PlayerName.ToUpper().Contains(name.Trim().ToUpper()));
+                    footballPlayerList = footballPlayerList.Where(s => s.PlayerName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(gender))
                 {
-                    footballPlayerList = footballPlayerList.Where(s => s.IdNavigation.Gender.ToUpper() == gender.ToUpper());
+                    footballPlayerList = footballPlayerList.Where(s => s.IdNavigation.Gender!.ToUpper() == gender.ToUpper());
                 }
                 if (!String.IsNullOrEmpty(position))
                 {
-                    footballPlayerList = footballPlayerList.Where(s => s.Position.ToUpper().Contains(position.Trim().ToUpper()));
+                    footballPlayerList = footballPlayerList.Where(s => s.Position!.ToUpper().Contains(position.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(status.ToString()))
                 {
@@ -170,7 +170,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Cầu thủ đã tồn tại");
                 }
-                FootballPlayer footballPlayer = new FootballPlayer();
+                FootballPlayer footballPlayer = new();
                 User user = await _userService.GetByIdAsync(model.Id);
                 if(user == null)
                 {
@@ -180,7 +180,7 @@ namespace AmateurFootballLeague.Controllers
                 footballPlayer.PlayerName = model.PlayerName;
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.PlayerAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
                         footballPlayer.PlayerAvatar = fileUrl;
@@ -228,7 +228,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.PlayerAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.PlayerAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.PlayerAvatar, "images", "image-url");
                         currentFootballPlayer.PlayerAvatar = fileUrl;

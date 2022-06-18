@@ -12,6 +12,6 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(16)]
-        public string RoleName { get; set; }
+        public string? RoleName { get; set; }
     }
 }

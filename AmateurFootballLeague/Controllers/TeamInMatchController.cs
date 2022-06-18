@@ -54,7 +54,7 @@ namespace AmateurFootballLeague.Controllers
                 //    }).Where(t => t.Match.TournamentId == tournamentId);
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
                     //.Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, tit => tit, (timt, tit) => new{timt,tit })
-    .GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament.Team, team => team, (timm, team) => new {timm,team})
+    .GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament!.Team, team => team, (timm, team) => new {timm,team})
     .SelectMany(t => t.team.DefaultIfEmpty(),(t, temp) => new TeamInMatch
     {
         Id = t.timm.tim.Id,
@@ -72,7 +72,7 @@ namespace AmateurFootballLeague.Controllers
         NextTeam = t.timm.tim.NextTeam,
         TeamName = t.timm.tim.TeamName,
         Match = t.timm.tim.Match,
-    }).Where(t => t.Match.TournamentId == tournamentId);
+    }).Where(t => t.Match!.TournamentId == tournamentId);
                 if (fullInfo == true)
                 {
                     listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
@@ -90,7 +90,7 @@ namespace AmateurFootballLeague.Controllers
                        TeamName = timt.ttim.tim.TeamName,
                        Match = timt.ttim.m,
                        TeamInTournament = timt.te
-                   }).Where(m => m.Match.TournamentId == tournamentId);
+                   }).Where(m => m.Match!.TournamentId == tournamentId);
                 }
                 if(orderType == SortTypeEnum.DESC)
                 {
@@ -98,7 +98,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 var temInMatch = new List<TeamInMatch>();
                 temInMatch = listTeam.ToList();
-                if (temInMatch.Count() > 0)
+                if (temInMatch.Count > 0)
                 {
 
                     var teamListResponse = new TeamInMatchMTLV
@@ -152,7 +152,7 @@ namespace AmateurFootballLeague.Controllers
     ).Where(m => m.MatchId == matchId);
                 var temInMatch = new List<TeamInMatch>();
                 temInMatch = listTeam.ToList();
-                if (temInMatch.Count()>0)
+                if (temInMatch.Count > 0)
                 {
 
                     var teamListResponse = new TeamInMatchMTLV
@@ -168,7 +168,7 @@ namespace AmateurFootballLeague.Controllers
                 return NotFound("Không tìm thấy đội bóng trong trận đấu");
 
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
 
@@ -199,7 +199,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<TeamInMatchVM>> CreateTeamInMatch(TeamInMatchCM teamInMatch)
         {
-            TeamInMatch team = new TeamInMatch();
+            TeamInMatch team = new();
             try
             {
                 var checkTeam = _teamInMatch.GetList().Where(t=> t.MatchId == teamInMatch.MatchId && t.TeamInTournamentId == teamInMatch.TeamInTournamentId);
@@ -290,8 +290,8 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy đội bóng trong trận đấu");
                 }
-                Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId.Value);
-                int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId.Value);
+                Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId!.Value);
+                int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId!.Value);
 
                 if (model.TypeUpdate)
                 {
@@ -369,7 +369,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                List<TeamInMatch> listTeamInMatch = _teamInMatch.GetList().Where(t => t.Match.TournamentId == tournamentId).ToList();
+                List<TeamInMatch> listTeamInMatch = _teamInMatch.GetList().Where(t => t.Match!.TournamentId == tournamentId).ToList();
                 foreach (TeamInMatch teamInMatch in listTeamInMatch)
                 {
                     await _teamInMatch.DeleteAsync(teamInMatch);

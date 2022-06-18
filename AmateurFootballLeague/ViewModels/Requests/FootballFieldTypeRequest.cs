@@ -12,7 +12,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string FootballFieldTypeName { get; set; }
+        public string? FootballFieldTypeName { get; set; }
 
         [StringLength(256)]
         public string? Description { get; set; }

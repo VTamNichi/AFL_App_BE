@@ -3,11 +3,11 @@
     public class ImageVM
     {
         public int Id { get; set; }
-        public string ImageURL { get; set; }
-        public string Status { get; set; }
-        public string DateCreate { get; set; }
-        public string DateUpdate { get; set; }
-        public string DateDelete { get; set; }
+        public string? ImageURL { get; set; }
+        public string? Status { get; set; }
+        public string? DateCreate { get; set; }
+        public string? DateUpdate { get; set; }
+        public string? DateDelete { get; set; }
         public int TournamentId { get; set; }
     }
     public class ImageListVM

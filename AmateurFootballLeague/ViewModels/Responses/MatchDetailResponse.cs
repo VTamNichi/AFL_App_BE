@@ -22,8 +22,8 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int MatchId { get; set; }
         public int PlayerInTeamId { get; set; }
 
-        public virtual Match Match { get; set; }
-        public virtual PlayerInTeam PlayerInTeam { get; set; }
+        public virtual Match? Match { get; set; }
+        public virtual PlayerInTeam? PlayerInTeam { get; set; }
     }
 
     public class MatchDetailFLV

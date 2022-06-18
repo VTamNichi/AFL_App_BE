@@ -19,13 +19,13 @@ namespace AmateurFootballLeague.AgoraIO.Utils
         public static byte[] pack(PrivilegeMessage packableEx)
         {
             ByteBuf buffer = new ByteBuf();
-            packableEx.marshal(buffer);
+            packableEx.Marshal(buffer);
             return buffer.asBytes();
         }
         public static byte[] pack(IPackable packableEx)
         {
             ByteBuf buffer = new ByteBuf();
-            packableEx.marshal(buffer);
+            packableEx.Marshal(buffer);
             return buffer.asBytes();
         }
 

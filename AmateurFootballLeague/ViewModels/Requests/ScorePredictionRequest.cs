@@ -8,7 +8,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int TeamAscore { get; set; }
         [Required]
         public int TeamBscore { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         [Required]
         public int TeamInMatchAid { get; set; }
         [Required]
@@ -25,7 +25,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int Id { get; set; }
         public int TeamAscore { get; set; }
         public int TeamBscore { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         public int TeamInMatchAid { get; set; }
         public int TeamInMatchBid { get; set; }
         public int UserId { get; set; }

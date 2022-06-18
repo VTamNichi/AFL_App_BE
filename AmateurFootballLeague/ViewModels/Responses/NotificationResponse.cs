@@ -3,8 +3,8 @@
     public class NotificationVM
     {
         public int Id { get; set; }
-        public string Content { get; set; }
-        public string DateCreate { get; set; }
+        public string? Content { get; set; }
+        public string? DateCreate { get; set; }
         public bool IsSeen { get; set; }
         public bool IsActive { get; set; }
         public int UserId { get; set; }

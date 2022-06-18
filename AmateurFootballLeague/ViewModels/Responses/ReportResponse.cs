@@ -3,8 +3,8 @@
     public class ReportVM
     {
         public int Id { get; set; }
-        public string Reason { get; set; }
-        public string DateReport { get; set; }
+        public string? Reason { get; set; }
+        public string? DateReport { get; set; }
         public int UserId { get; set; }
         public int CommentId { get; set; }
         public int TeamId { get; set; }

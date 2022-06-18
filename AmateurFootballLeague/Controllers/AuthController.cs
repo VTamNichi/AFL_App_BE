@@ -40,21 +40,21 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                User user = _userService.GetUserByEmail(model.Email);
+                User user = _userService.GetUserByEmail(model.Email!);
                 if (user == null)
                 {
                     return NotFound("Tài khoản không tồn tại");
                 }
-                if (!_userService.CheckPassword(model.Password, user.PasswordHash, user.PasswordSalt))
+                if (!_userService.CheckPassword(model.Password!, user.PasswordHash!, user.PasswordSalt!))
                 {
                     return BadRequest("Sai mật khẩu");
                 }
-                if (!user.Status.Value)
+                if (!user.Status!.Value)
                 {
                     return BadRequest("Tài khoản đã bị khóa");
                 }
                 UserVM userVM = _mapper.Map<UserVM>(user);
-                UserLVM userLEPVM = new UserLVM
+                UserLVM userLEPVM = new()
                 {
                     UserVM = userVM,
                     AccessToken = await _jwtProvider.GenerationToken(user)
@@ -62,7 +62,7 @@ namespace AmateurFootballLeague.Controllers
 
                 return Ok(userLEPVM);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
@@ -107,7 +107,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 UserVM userVM = _mapper.Map<UserVM>(user);
-                UserLVM userLEPVM = new UserLVM
+                UserLVM userLEPVM = new()
                 {
                     UserVM = userVM,
                     AccessToken = await _jwtProvider.GenerationToken(user)
@@ -157,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 UserVM userVM = _mapper.Map<UserVM>(user);
-                UserLVM userLEPVM = new UserLVM
+                UserLVM userLEPVM = new()
                 {
                     UserVM = userVM,
                     AccessToken = await _jwtProvider.GenerationToken(user)
@@ -176,14 +176,14 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult> Logout([FromBody] UserLOM model)
         {
-            User user = _userService.GetUserByEmail(model.Email);
+            User user = _userService.GetUserByEmail(model.Email!);
             if (user == null)
             {
                 return BadRequest("Tài khoản không tồn tại");
             }
             try
             {
-                var response = await FirebaseAdmin.Messaging.FirebaseMessaging.DefaultInstance.UnsubscribeFromTopicAsync(new List<string>() { model.Token }, "/topics/" + user.Id);
+                var response = await FirebaseAdmin.Messaging.FirebaseMessaging.DefaultInstance.UnsubscribeFromTopicAsync(new List<string>() { model.Token! }, "/topics/" + user.Id);
                 if (response.SuccessCount > 0)
                 {
                     return Ok(new { Message = "Đăng xuất thành công" });
@@ -221,10 +221,10 @@ namespace AmateurFootballLeague.Controllers
                         return NotFound("Tài khoản không tồn tại");
                     }
                 }
-                Random rd = new Random();
+                Random rd = new();
                 int code = rd.Next(100000, 999999);
 
-                EmailForm model = new EmailForm();
+                EmailForm model = new();
                 model.ToEmail = email;
                 model.Subject = "Mã Xác Nhận Tài Khoản A-Football-League";
                 model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào <a href='mailto:" + email + "'>" + email + "</a>,</p><p style='font-size: 18px'>Chúng tôi đã nhận yêu cầu gửi mã xác thực cho tài khoản A-Football-League của bạn.</p><p style='font-size: 18px'>Mã xác thực của bạn là: " + code.ToString() + "</p><p style='font-size: 18px'>Nếu không yêu cầu mã này thì bạn có thể bỏ qua email này một cách an toàn. Có thể ai đó khác đã nhập địa chỉ email của bạn do nhầm lẫn.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
@@ -233,7 +233,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Gửi thất bại");
                 }
-                VerifyCode verifyCode = new VerifyCode();
+                VerifyCode verifyCode = new();
                 verifyCode.Email = model.ToEmail;
                 verifyCode.Code = code.ToString();
                 verifyCode.Status = true;
@@ -256,11 +256,11 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal Server</response>
         [HttpPost("check-verify-code")]
         [Produces("application/json")]
-        public async Task<ActionResult> CheckVerifyCode(String email, String code)
+        public ActionResult CheckVerifyCode(String email, String code)
         {
             try
             {
-                VerifyCode checkVerifyCode = _verifyCodeService.GetList().Where(vc => vc.Email == email && vc.Code == code).OrderByDescending(vco => vco.DateCreate).Take(1).FirstOrDefault();
+                VerifyCode checkVerifyCode = _verifyCodeService.GetList().Where(vc => vc.Email == email && vc.Code == code).OrderByDescending(vco => vco.DateCreate).Take(1).FirstOrDefault()!;
                 if (checkVerifyCode == null)
                 {
                     return BadRequest("Xác nhận thất bại");
@@ -286,10 +286,10 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
+                string fileUrl = await _uploadFileService.UploadFile(model.File!, "images", "image-url");
                 return Ok("Success " + fileUrl);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest("Fail");
             }

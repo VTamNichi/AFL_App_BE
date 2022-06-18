@@ -85,10 +85,10 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<PlayerInTournamentVM>> CreatePlayerInTournament(PlayerInTournamentCM player)
         {
-            PlayerInTournament playerCreate = new PlayerInTournament();
+            PlayerInTournament playerCreate = new();
             try
             {
-                PlayerInTournament checkPlayer = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId == player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
+                PlayerInTournament checkPlayer = _playerInTournament.GetList().Where(p => p.TeamInTournamentId == player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault()!;
                 if(checkPlayer != null)
                 {
                     return BadRequest(new

@@ -44,7 +44,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamId = pit.TeamId,
                         FootballPlayerId = p.Id,
                         FootballPlayer = p
-                    }).Where(p => p.TeamId == teamId).Join(_userService.GetList(), fp => fp.FootballPlayer.IdNavigation, u => u, (fp, u) => new PlayerInTeam
+                    }).Where(p => p.TeamId == teamId).Join(_userService.GetList(), fp => fp.FootballPlayer!.IdNavigation, u => u, (fp, u) => new PlayerInTeam
                     {
                         Id = fp.Id,
                         Status = fp.Status,
@@ -52,7 +52,7 @@ namespace AmateurFootballLeague.Controllers
                         FootballPlayerId = fp.FootballPlayerId,
                         FootballPlayer = new FootballPlayer
                         {
-                            Id = fp.FootballPlayer.Id,
+                            Id = fp.FootballPlayer!.Id,
                             PlayerName = fp.FootballPlayer.PlayerName,
                             PlayerAvatar = fp.FootballPlayer.PlayerAvatar,
                             Position = fp.FootballPlayer.Position,
@@ -83,12 +83,12 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(name))
                 {
-                    playerList = playerList.Where(p => p.FootballPlayer.PlayerName.ToLower().Contains(name.Trim().ToLower()));
+                    playerList = playerList.Where(p => p.FootballPlayer!.PlayerName!.ToLower().Contains(name.Trim().ToLower()));
                 }
 
                 if (!String.IsNullOrEmpty(status))
                 {
-                    playerList = playerList.Where(p => p.Status.ToLower() == status.ToLower());
+                    playerList = playerList.Where(p => p.Status!.ToLower() == status.ToLower());
                 }
                     //else
                     //{
@@ -132,10 +132,10 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<PlayerInTeamVM>> AddPlayerToTeam(PlayerInTeamCM player)
         {
-            PlayerInTeam pInTeam = new PlayerInTeam();
+            PlayerInTeam pInTeam = new();
             try
             {
-                PlayerInTeam checkPlayer = _playerInTeam.GetList().Where(p => (int)p.TeamId == player.TeamId && p.FootballPlayerId == player.FootballPlayerId).FirstOrDefault();
+                PlayerInTeam checkPlayer = _playerInTeam.GetList().Where(p => p.TeamId!.Value == player.TeamId && p.FootballPlayerId == player.FootballPlayerId).FirstOrDefault()!;
                 if (checkPlayer != null)
                 {
                     return BadRequest(new
@@ -179,11 +179,11 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> changeStatusPlayerInTeam(int Id, string status)
+        public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id, string status)
         {
             try
             {
-                PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault();
+                PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault()!;
                 if(player != null)
                 {
                     player.Status = status;

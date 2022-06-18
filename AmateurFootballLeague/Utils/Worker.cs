@@ -8,8 +8,6 @@ namespace AmateurFootballLeague.Utils
     }
     public class Worker : IWorker
     {
-        private int number = 0;
-
         private readonly IRedisService _redisService;
 
         public Worker(IRedisService redisService)

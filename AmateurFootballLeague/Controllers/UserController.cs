@@ -54,7 +54,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<User> userList = _userService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    userList = userList.Where(s => s.Username.ToUpper().Contains(name.Trim().ToUpper()));
+                    userList = userList.Where(s => s.Username!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 if(gender == UserGenderEnum.Male)
                 {
@@ -65,20 +65,20 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if(!String.IsNullOrEmpty(startDOB.ToString()))
                 {
-                    userList = userList.Where(s => s.DateOfBirth.Value.CompareTo(startDOB.Value) >= 0);
+                    userList = userList.Where(s => s.DateOfBirth!.Value.CompareTo(startDOB!.Value) >= 0);
                 }
                 if (!String.IsNullOrEmpty(endDOB.ToString()))
                 {
-                    userList = userList.Where(s => s.DateOfBirth.Value.CompareTo(endDOB.Value) <= 0);
+                    userList = userList.Where(s => s.DateOfBirth!.Value.CompareTo(endDOB!.Value) <= 0);
                 }
 
                 if (!String.IsNullOrEmpty(address))
                 {
-                    userList = userList.Where(s => s.Address.ToUpper().Contains(address.Trim().ToUpper()));
+                    userList = userList.Where(s => s.Address!.ToUpper().Contains(address.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(phone))
                 {
-                    userList = userList.Where(s => s.Phone.ToUpper().Contains(phone.Trim().ToUpper()));
+                    userList = userList.Where(s => s.Phone!.ToUpper().Contains(phone.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(roleId.ToString()))
                 {
@@ -171,7 +171,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                User user = null;
+                User user = new();
                 if (searchType == UserSearchType.Id)
                 {
                     try
@@ -210,7 +210,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                User currentUser = _userService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
+                User currentUser = _userService.GetList().Where(s => s.Email!.Trim().ToUpper().Equals(model.Email!.Trim().ToUpper())).FirstOrDefault()!;
                 if (currentUser != null)
                 {
                     return BadRequest(new
@@ -218,7 +218,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
-                User userCheckPhone = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                User userCheckPhone = _userService.GetList().Where(s => s.Phone!.Trim().ToUpper().Equals(model.Phone!.Trim().ToUpper())).FirstOrDefault()!;
                 if (currentUser != null)
                 {
                     return BadRequest(new
@@ -236,7 +236,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 User convertUser = _mapper.Map<User>(model);
-                convertUser.Email = model.Email.Trim().ToLower();
+                convertUser.Email = model.Email!.Trim().ToLower();
 
                 if (!String.IsNullOrEmpty(model.Password))
                 {
@@ -246,7 +246,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else 
                 {
-                    Guid pass = new Guid();
+                    Guid pass = new();
                     List<byte[]> listPassword = _userService.EncriptPassword(pass.ToString());
                     convertUser.PasswordHash = listPassword[0];
                     convertUser.PasswordSalt = listPassword[1];
@@ -254,7 +254,7 @@ namespace AmateurFootballLeague.Controllers
 
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.Avatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "images", "image-url");
                         convertUser.Avatar = fileUrl;
@@ -307,7 +307,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                User currentUser = _userService.GetList().Where(s => s.Email.Trim().ToUpper().Equals(model.Email.Trim().ToUpper())).FirstOrDefault();
+                User currentUser = _userService.GetList().Where(s => s.Email!.Trim().ToUpper().Equals(model.Email!.Trim().ToUpper())).FirstOrDefault()!;
                 if (currentUser != null)
                 {
                     return BadRequest(new
@@ -315,7 +315,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Email này đã tồn tại trong hệ thống"
                     });
                 }
-                User userCheckPhone = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                User userCheckPhone = _userService.GetList().Where(s => s.Phone!.Trim().ToUpper().Equals(model.Phone!.Trim().ToUpper())).FirstOrDefault()!;
                 if (currentUser != null)
                 {
                     return BadRequest(new
@@ -333,15 +333,15 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 User convertUser = _mapper.Map<User>(model);
-                convertUser.Email = model.Email.Trim().ToLower();
-                Guid pass = new Guid();
+                convertUser.Email = model.Email!.Trim().ToLower();
+                Guid pass = new();
                 List<byte[]> listPassword = _userService.EncriptPassword(pass.ToString());
                 convertUser.PasswordHash = listPassword[0];
                 convertUser.PasswordSalt = listPassword[1];
 
                 convertUser.Avatar = String.IsNullOrEmpty(model.Avatar) ? "" : model.Avatar;
 
-                convertUser.Username = model.Username.Trim();
+                convertUser.Username = model.Username!.Trim();
                 convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
                 convertUser.StatusBan = "NO BANNED";
@@ -356,9 +356,9 @@ namespace AmateurFootballLeague.Controllers
                 if (userCreated != null)
                 {
        
-                    User user = _userService.GetUserByEmail(userCreated.Email);
+                    User user = _userService.GetUserByEmail(userCreated.Email!);
                     UserVM userVM = _mapper.Map<UserVM>(user);
-                    UserLVM userLEPVM = new UserLVM
+                    UserLVM userLEPVM = new()
                     {
                         UserVM = userVM,
                         AccessToken = await _jwtProvider.GenerationToken(user)
@@ -394,7 +394,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.Phone) && !model.Phone.Equals(user.Phone))
                 {
-                    User currentUser = _userService.GetList().Where(s => s.Phone.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault();
+                    User currentUser = _userService.GetList().Where(s => s.Phone!.Trim().ToUpper().Equals(model.Phone.Trim().ToUpper())).FirstOrDefault()!;
                     if (currentUser != null)
                     {
                         return BadRequest(new
@@ -406,7 +406,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.IdentityCard) && !model.IdentityCard.Equals(user.IdentityCard))
                 {
-                    User currentUser = _userService.GetList().Where(s => s.IdentityCard.Trim().ToUpper().Equals(model.IdentityCard.Trim().ToUpper())).FirstOrDefault();
+                    User currentUser = _userService.GetList().Where(s => s.IdentityCard!.Trim().ToUpper().Equals(model.IdentityCard.Trim().ToUpper())).FirstOrDefault()!;
                     if (currentUser != null)
                     {
                         return BadRequest(new
@@ -417,7 +417,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.NameBusiness) && !model.NameBusiness.Equals(user.NameBusiness))
                 {
-                    User currentUser = _userService.GetList().Where(s => s.NameBusiness.Trim().ToUpper().Equals(model.NameBusiness.Trim().ToUpper())).FirstOrDefault();
+                    User currentUser = _userService.GetList().Where(s => s.NameBusiness!.Trim().ToUpper().Equals(model.NameBusiness.Trim().ToUpper())).FirstOrDefault()!;
                     if (currentUser != null)
                     {
                         return BadRequest(new
@@ -428,7 +428,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.Tinbusiness) && !model.Tinbusiness.Equals(user.Tinbusiness))
                 {
-                    User currentUser = _userService.GetList().Where(s => s.Tinbusiness.Trim().ToUpper().Equals(model.Tinbusiness.Trim().ToUpper())).FirstOrDefault();
+                    User currentUser = _userService.GetList().Where(s => s.Tinbusiness!.Trim().ToUpper().Equals(model.Tinbusiness.Trim().ToUpper())).FirstOrDefault()!;
                     if (currentUser != null)
                     {
                         return BadRequest(new
@@ -439,7 +439,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.PhoneBusiness) && !model.PhoneBusiness.Equals(user.PhoneBusiness))
                 {
-                    User currentUser = _userService.GetList().Where(s => s.PhoneBusiness.Trim().ToUpper().Equals(model.PhoneBusiness.Trim().ToUpper())).FirstOrDefault();
+                    User currentUser = _userService.GetList().Where(s => s.PhoneBusiness!.Trim().ToUpper().Equals(model.PhoneBusiness.Trim().ToUpper())).FirstOrDefault()!;
                     if (currentUser != null)
                     {
                         return BadRequest(new
@@ -452,7 +452,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.RoleId.ToString()))
                 {
-                    Role currenRole = await _roleService.GetByIdAsync((int)model.RoleId);
+                    Role currenRole = await _roleService.GetByIdAsync(model.RoleId!.Value);
                     if (currenRole == null)
                     {
                         return NotFound(new
@@ -470,7 +470,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.Avatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.Avatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.Avatar, "images", "image-url");
                         user.Avatar = fileUrl;
@@ -587,11 +587,11 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-                if (!_userService.CheckPassword(model.CurrentPassword, user.PasswordHash, user.PasswordSalt))
+                if (!_userService.CheckPassword(model.CurrentPassword!, user.PasswordHash!, user.PasswordSalt!))
                 {
                     return BadRequest("Sai mật khẩu");
                 }
-                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
+                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword!);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
                 user.DateUpdate = DateTime.Now.AddHours(7);
@@ -619,13 +619,13 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                User user = _userService.GetUserByEmail(model.Email);
+                User user = _userService.GetUserByEmail(model.Email!);
                 if (user == null)
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
 
-                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword);
+                List<byte[]> listPassword = _userService.EncriptPassword(model.NewPassword!);
                 user.PasswordHash = listPassword[0];
                 user.PasswordSalt = listPassword[1];
                 user.DateUpdate = DateTime.Now.AddHours(7);

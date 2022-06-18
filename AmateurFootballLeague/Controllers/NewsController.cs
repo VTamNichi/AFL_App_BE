@@ -48,7 +48,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<News> newsList = _newsService.GetList();
                 if (!String.IsNullOrEmpty(content))
                 {
-                    newsList = newsList.Where(s => s.Content.ToUpper().Contains(content.Trim().ToUpper()));
+                    newsList = newsList.Where(s => s.Content!.ToUpper().Contains(content.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(tourId.ToString()))
                 {
@@ -128,7 +128,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<NewsVM>> CreateNews([FromForm] NewsCM model)
         {
-            News news = new News();
+            News news = new();
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
@@ -138,7 +138,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.NewsImage.ToString()))
+                    if (!String.IsNullOrEmpty(model.NewsImage!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.NewsImage, "images", "image-url");
                         news.NewsImage = fileUrl;
@@ -184,7 +184,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()))
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
@@ -196,7 +196,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.NewsImage.ToString()))
+                    if (!String.IsNullOrEmpty(model.NewsImage!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.NewsImage, "images", "image-url");
                         oldNews.NewsImage = fileUrl;

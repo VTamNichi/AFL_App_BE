@@ -11,18 +11,16 @@ namespace AmateurFootballLeague.Controllers
     [ApiController]
     public class MatchDetailController : ControllerBase
     {
-        private readonly IMatchService _match;
         private readonly IMatchDetailService _matchDetail;
         private readonly IMapper _mapper;
         private readonly IPlayerInTournamentService _playerInTournament;
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
-        private IFootballPlayerService _footballPlayerService;
+        private readonly IFootballPlayerService _footballPlayerService;
 
-        public MatchDetailController (IMatchService match, IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament, 
+        public MatchDetailController (IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament, 
             ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService)
         {
-            _match = match; 
             _matchDetail = matchDetail;
             _mapper = mapper;
             _playerInTournament = playerInTournament;
@@ -76,7 +74,7 @@ namespace AmateurFootballLeague.Controllers
                     }).Where(m => m.MatchId == matchId);
                 var matchDt = new List<MatchDetail>();
                 matchDt = listDtMatch.ToList();
-                if (matchDt.Count() > 0)
+                if (matchDt.Count > 0)
                 {
 
                     var matchDtListResponse = new MatchDetailFLV
@@ -92,7 +90,7 @@ namespace AmateurFootballLeague.Controllers
                 return NotFound("Không tìm thấy chi tiết trận đấu");
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
 
@@ -120,7 +118,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match)
         {
-            MatchDetail matchDetail = new MatchDetail();
+            MatchDetail matchDetail = new();
             try { 
                
                     matchDetail.MatchScore = match.MatchScore;

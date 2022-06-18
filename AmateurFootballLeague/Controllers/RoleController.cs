@@ -42,7 +42,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<Role> roleList = _roleService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    roleList = roleList.Where(s => s.RoleName.ToUpper().Contains(name.Trim().ToUpper()));
+                    roleList = roleList.Where(s => s.RoleName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 var roleListPaging = roleList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
@@ -115,7 +115,7 @@ namespace AmateurFootballLeague.Controllers
             Role role = _mapper.Map<Role>(model);
             try
             {
-                bool isDuplicated = _roleService.GetList().Where(s => s.RoleName.Trim().ToUpper().Equals(model.RoleName.Trim().ToUpper())).FirstOrDefault() != null;
+                bool isDuplicated = _roleService.GetList().Where(s => s.RoleName!.Trim().ToUpper().Equals(model.RoleName!.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
                     return BadRequest(new
@@ -123,7 +123,7 @@ namespace AmateurFootballLeague.Controllers
                         message = "Tên vai trò đã tồn tại"
                     });
                 }
-                role.RoleName = role.RoleName.ToUpper();
+                role.RoleName = role.RoleName!.ToUpper();
                 Role roleCreated = await _roleService.AddAsync(role);
                 if (roleCreated != null)
                 {
@@ -153,7 +153,7 @@ namespace AmateurFootballLeague.Controllers
             }
             if (!String.IsNullOrEmpty(roleName))
             {
-                if (!currentRole.RoleName.ToUpper().Equals(roleName.ToUpper()) && _roleService.GetList().Where(s => s.RoleName.Trim().ToUpper().Equals(roleName.Trim().ToUpper())).FirstOrDefault() != null)
+                if (!currentRole.RoleName!.ToUpper().Equals(roleName.ToUpper()) && _roleService.GetList().Where(s => s.RoleName!.Trim().ToUpper().Equals(roleName.Trim().ToUpper())).FirstOrDefault() != null)
                 {
                     return BadRequest(new
                     {

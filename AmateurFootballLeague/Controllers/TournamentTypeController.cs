@@ -42,7 +42,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<TournamentType> tournamentTypeList = _tournamentTypeService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    tournamentTypeList = tournamentTypeList.Where(s => s.TournamentTypeName.ToUpper().Contains(name.Trim().ToUpper()));
+                    tournamentTypeList = tournamentTypeList.Where(s => s.TournamentTypeName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 var tournamentTypeListPaging = tournamentTypeList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
@@ -115,7 +115,7 @@ namespace AmateurFootballLeague.Controllers
             TournamentType tournamentType = _mapper.Map<TournamentType>(model);
             try
             {
-                bool isDuplicated = _tournamentTypeService.GetList().Where(s => s.TournamentTypeName.Trim().ToUpper().Equals(model.TournamentTypeName.Trim().ToUpper())).FirstOrDefault() != null;
+                bool isDuplicated = _tournamentTypeService.GetList().Where(s => s.TournamentTypeName!.Trim().ToUpper().Equals(model.TournamentTypeName!.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
                     return BadRequest(new
@@ -153,7 +153,7 @@ namespace AmateurFootballLeague.Controllers
             }
             if (!String.IsNullOrEmpty(tournamentTypeName))
             {
-                if (!currentTournamentType.TournamentTypeName.ToUpper().Equals(tournamentTypeName.ToUpper()) && _tournamentTypeService.GetList().Where(s => s.TournamentTypeName.Trim().ToUpper().Equals(tournamentTypeName.Trim().ToUpper())).FirstOrDefault() != null)
+                if (!currentTournamentType.TournamentTypeName!.ToUpper().Equals(tournamentTypeName.ToUpper()) && _tournamentTypeService.GetList().Where(s => s.TournamentTypeName!.Trim().ToUpper().Equals(tournamentTypeName.Trim().ToUpper())).FirstOrDefault() != null)
                 {
                     return BadRequest(new
                     {

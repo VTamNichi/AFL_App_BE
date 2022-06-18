@@ -35,7 +35,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string TournamentName { get; set; }
+        public string? TournamentName { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         public TournamentModeEnum Mode { get; set; } = TournamentModeEnum.PUBLIC;

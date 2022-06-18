@@ -18,7 +18,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     public class MatchCM
     {
         public DateTime MatchDate { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         public int TournamentId { get; set; }
         public string? Round { get; set; }
         public string? Fight { get; set; }

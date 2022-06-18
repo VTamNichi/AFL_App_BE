@@ -2,6 +2,6 @@
 {
     public interface IPackable
     {
-        ByteBuf marshal(ByteBuf outBuf);
+        ByteBuf Marshal(ByteBuf outBuf);
     }
 }

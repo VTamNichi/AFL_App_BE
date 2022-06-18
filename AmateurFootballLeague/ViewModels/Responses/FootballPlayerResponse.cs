@@ -5,34 +5,34 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class FootballPlayerVM
     {
         public int Id { get; set; }
-        public string PlayerName { get; set; }
+        public string? PlayerName { get; set; }
 
-        public string PlayerAvatar { get; set; }
+        public string? PlayerAvatar { get; set; }
 
-        public string Position { get; set; }
-        public string Description { get; set; }
+        public string? Position { get; set; }
+        public string? Description { get; set; }
         public bool Status { get; set; }
-        public string DateCreate { get; set; }
-        public string DateUpdate { get; set; }
-        public string DateDelete { get; set; }
-        public UserVM UserVM { get; set; }
+        public string? DateCreate { get; set; }
+        public string? DateUpdate { get; set; }
+        public string? DateDelete { get; set; }
+        public UserVM? UserVM { get; set; }
     }
 
     public class FootballPlayerFVM
     {
         public int Id { get; set; }
-        public string PlayerName { get; set; }
+        public string? PlayerName { get; set; }
 
-        public string PlayerAvatar { get; set; }
+        public string? PlayerAvatar { get; set; }
 
-        public string Position { get; set; }
-        public string Description { get; set; }
+        public string? Position { get; set; }
+        public string? Description { get; set; }
         public bool Status { get; set; }
-        public string DateCreate { get; set; }
-        public string DateUpdate { get; set; }
-        public string DateDelete { get; set; }
-        public UserVM UserVM { get; set; }
-        public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
+        public string? DateCreate { get; set; }
+        public string? DateUpdate { get; set; }
+        public string? DateDelete { get; set; }
+        public UserVM? UserVM { get; set; }
+        public virtual ICollection<PlayerInTeam>? PlayerInTeams { get; set; }
     }
 
     public class FootballPlayerListVM
