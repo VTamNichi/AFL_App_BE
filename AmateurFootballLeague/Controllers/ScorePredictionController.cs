@@ -17,11 +17,27 @@ namespace AmateurFootballLeague.Controllers
         private readonly IScorePredictionService _scorePrediction;
         private readonly IMapper _mapper;
         private readonly IMatchService _matchService;
-        public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService)
+        private readonly ITeamInMatchService _teamService;
+        private readonly ITournamentService _tournamentService;
+        private readonly IUserService _userService;
+        private readonly ITeamService _teamService1;
+        private readonly ITeamInTournamentService _teamInTournamentService;
+        private readonly IPlayerInTeamService _playerInTeamService;
+        private readonly IPlayerInTournamentService _playerInTournamentService;
+        public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService, ITeamInMatchService teamService,
+            ITournamentService tournamentService, IUserService userService, ITeamService teamService1, ITeamInTournamentService teamInTournamentService,
+            IPlayerInTournamentService playerInTournamentService, IPlayerInTeamService playerInTeamService)
         {
             _scorePrediction = scorePrediction; 
             _mapper = mapper;
             _matchService = matchService;
+            _teamService = teamService;
+            _tournamentService = tournamentService;
+            _userService = userService;
+            _teamService1 = teamService1;
+            _teamInTournamentService= teamInTournamentService;
+            _playerInTeamService = playerInTeamService;
+            _playerInTournamentService = playerInTournamentService;
         }
 
         [HttpGet]
@@ -88,6 +104,71 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 var check =  _scorePrediction.GetList().Where(s => s.UserId == model.UserId && s.MatchId == model.MatchId);
+                Tournament checkTour = _tournamentService.GetList().Join(_matchService.GetList(), t => t.Id, m => m.TournamentId, (t, m) => new { t, m }).
+                    Where(t => t.m.Id == model.MatchId).Select(t => new Tournament
+                    {
+                        Id = t.t.Id,
+                        Status = t.t.Status,
+                        UserId = t.t.UserId
+
+                    }).FirstOrDefault();
+                Tournament checkHost = _tournamentService.GetList().Where(t => t.UserId == model.UserId).FirstOrDefault();
+                if(checkHost != null)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Bạn không thể dự đoán giải đấu của mình"
+                    });
+                }
+
+                Team chekcTeam = _teamService1.GetList().Join(_teamInTournamentService.GetList(), t => t.Id, tit => tit.TeamId, (t, tit) => new { t, tit })
+                    .Where(t => t.t.Id == model.UserId && t.tit.TournamentId == checkTour.Id ).Select(t=> new Team
+                    {
+                        Id =t.t.Id,
+                        TeamName = t.t.TeamName
+                    }).FirstOrDefault();
+
+                if(chekcTeam != null)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Bạn không thể dự đoán giải đang tham dự"
+                    });
+                }
+
+                PlayerInTeam checkPlayer = _playerInTeamService.GetList().Join(_playerInTournamentService.GetList(), pit => pit.Id, pitour => pitour.PlayerInTeamId, (pit, pitour) => new { pit, pitour }).
+                Where(p => p.pit.FootballPlayerId == model.UserId)
+                    .Join(_teamInTournamentService.GetList(), pt => pt.pitour.TeamInTournament, tit => tit, (pt, tit) => new { pt, tit }).Where(t => t.tit.TournamentId == checkTour.Id).
+                    Select(t => new PlayerInTeam
+                    {
+                        Id = t.pt.pit.Id,
+                        TeamId = t.pt.pit.TeamId,
+                        FootballPlayerId = t.pt.pit.FootballPlayerId
+                    }).FirstOrDefault();
+
+                if(checkPlayer != null)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Bạn không thể dự đoán giải đấu đang tham dự"
+                    });
+                }
+                Match checkMatch =await _matchService.GetByIdAsync(model.MatchId);
+                if(checkMatch == null)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Trận đấu không tồn tại"
+                    });
+                }
+                DateTime date = DateTime.Now.AddHours(7);
+                if (checkMatch.MatchDate < date)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Trận đấu đã bắt đầu"
+                    });
+                }
                 if(check == null  || check.Count() == 0)
                 {
                     scorePrediction.TeamAscore = model.TeamAscore;
@@ -126,6 +207,23 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 ScorePrediction scorePrediction = await _scorePrediction.GetByIdAsync(model.Id);
+                var check = _scorePrediction.GetList().Where(s => s.UserId == model.UserId && s.MatchId == model.MatchId);
+                Match checkMatch = await _matchService.GetByIdAsync(model.MatchId);
+                if (checkMatch == null)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Trận đấu không tồn tại"
+                    });
+                }
+                DateTime date = DateTime.Now.AddHours(7);
+                if (checkMatch.MatchDate < date)
+                {
+                    return BadRequest(new
+                    {
+                        messgae = "Trận đấu đã bắt đầu"
+                    });
+                }
                 if (scorePrediction != null)
                 {
                     scorePrediction.TeamAscore = model.TeamAscore;
