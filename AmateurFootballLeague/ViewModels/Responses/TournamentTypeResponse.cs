@@ -3,8 +3,8 @@
     public class TournamentTypeVM
     {
         public int Id { get; set; }
-        public string TournamentTypeName { get; set; }
-        public string Description { get; set; }
+        public string? TournamentTypeName { get; set; }
+        public string? Description { get; set; }
     }
     public class TournamentTypeListVM
     {

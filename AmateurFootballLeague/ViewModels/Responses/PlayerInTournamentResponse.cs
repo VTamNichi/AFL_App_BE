@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int TeamInTournamentId { get; set; }
         public int PlayerInTeamId { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         public int ClothesNumber { get; set; }
     }
     public class PlayerInTournamentLV

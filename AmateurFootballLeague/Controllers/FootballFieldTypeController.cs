@@ -42,7 +42,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<FootballFieldType> footballFieldTypeList = _footballFieldTypeService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    footballFieldTypeList = footballFieldTypeList.Where(s => s.FootballFieldTypeName.ToUpper().Contains(name.Trim().ToUpper()));
+                    footballFieldTypeList = footballFieldTypeList.Where(s => s.FootballFieldTypeName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 var footballFieldTypeListPaging = footballFieldTypeList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
@@ -115,7 +115,7 @@ namespace AmateurFootballLeague.Controllers
             FootballFieldType footballFieldType = _mapper.Map<FootballFieldType>(model);
             try
             {
-                bool isDuplicated = _footballFieldTypeService.GetList().Where(s => s.FootballFieldTypeName.Trim().ToUpper().Equals(model.FootballFieldTypeName.Trim().ToUpper())).FirstOrDefault() != null;
+                bool isDuplicated = _footballFieldTypeService.GetList().Where(s => s.FootballFieldTypeName!.Trim().ToUpper().Equals(model.FootballFieldTypeName!.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
                     return BadRequest(new
@@ -153,7 +153,7 @@ namespace AmateurFootballLeague.Controllers
             }
             if (!String.IsNullOrEmpty(footballFieldTypeName))
             {
-                if (!currentFootballFieldType.FootballFieldTypeName.ToUpper().Equals(footballFieldTypeName.ToUpper()) && _footballFieldTypeService.GetList().Where(s => s.FootballFieldTypeName.Trim().ToUpper().Equals(footballFieldTypeName.Trim().ToUpper())).FirstOrDefault() != null)
+                if (!currentFootballFieldType.FootballFieldTypeName!.ToUpper().Equals(footballFieldTypeName.ToUpper()) && _footballFieldTypeService.GetList().Where(s => s.FootballFieldTypeName!.Trim().ToUpper().Equals(footballFieldTypeName.Trim().ToUpper())).FirstOrDefault() != null)
                 {
                     return BadRequest(new
                     {

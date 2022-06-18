@@ -52,7 +52,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<Report> reportList = _reportService.GetList();
                 if (!String.IsNullOrEmpty(reason))
                 {
-                    reportList = reportList.Where(s => s.Reason.ToUpper().Contains(reason.Trim().ToUpper()));
+                    reportList = reportList.Where(s => s.Reason!.ToUpper().Contains(reason.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(userId.ToString()))
                 {
@@ -132,7 +132,7 @@ namespace AmateurFootballLeague.Controllers
 
                 List<Report> reportListPaging = reportList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
-                ReportListVM reportListResponse = new ReportListVM
+                ReportListVM reportListResponse = new()
                 {
                     Reports = _mapper.Map<List<ReportVM>>(reportListPaging),
                     CountList = countList,
@@ -183,7 +183,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                Report report = new Report();
+                Report report = new();
 
                 User user = await _userService.GetByIdAsync(model.UserId);
                 if(user == null)
@@ -193,7 +193,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.CommentId.ToString()) && model.CommentId != 0)
                 {
-                    Comment comment = await _commentService.GetByIdAsync(model.CommentId.Value);
+                    Comment comment = await _commentService.GetByIdAsync(model.CommentId!.Value);
                     if(comment == null)
                     {
                         return NotFound("Không tìm thấy bình luận");
@@ -205,7 +205,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
-                    Team team = await _teamService.GetByIdAsync(model.TeamId.Value);
+                    Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
                     if (team == null)
                     {
                         return NotFound("Không tìm thấy đội bóng");
@@ -217,7 +217,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId.Value);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament == null)
                     {
                         return NotFound("Không tìm thấy giải đấu");
@@ -262,7 +262,7 @@ namespace AmateurFootballLeague.Controllers
                 report.Reason = String.IsNullOrEmpty(model.Reason) ? report.Reason : model.Reason;
                 if (!String.IsNullOrEmpty(model.UserId.ToString()) && model.UserId != 0)
                 {
-                    User user = await _userService.GetByIdAsync(model.UserId.Value);
+                    User user = await _userService.GetByIdAsync(model.UserId!.Value);
                     if (user != null)
                     {
                         report.UserId = user.Id;
@@ -270,7 +270,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.CommentId.ToString()) && model.CommentId != 0)
                 {
-                    Comment comment = await _commentService.GetByIdAsync(model.CommentId.Value);
+                    Comment comment = await _commentService.GetByIdAsync(model.CommentId!.Value);
                     if (comment != null)
                     {
                         report.CommentId = comment.Id;
@@ -278,7 +278,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
-                    Team team = await _teamService.GetByIdAsync(model.TeamId.Value);
+                    Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
                     if (team != null)
                     {
                         report.TeamId = team.Id;
@@ -286,7 +286,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId.Value);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament != null)
                     {
                         report.TournamentId = tournament.Id;

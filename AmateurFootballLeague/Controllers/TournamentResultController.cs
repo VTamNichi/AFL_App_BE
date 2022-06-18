@@ -44,7 +44,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<TournamentResult> tournamentResultList = _tournamentResultService.GetList();
                 if (!String.IsNullOrEmpty(prize))
                 {
-                    tournamentResultList = tournamentResultList.Where(s => s.Prize.ToUpper().Contains(prize.Trim().ToUpper()));
+                    tournamentResultList = tournamentResultList.Where(s => s.Prize!.ToUpper().Contains(prize.Trim().ToUpper()));
                 }
 
                 var tournamentResultListPaging = tournamentResultList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
@@ -129,7 +129,7 @@ namespace AmateurFootballLeague.Controllers
                     return BadRequest("Đội bóng trong giải đấu không tồn tại");
                 }
 
-                tournamentResult.Prize = model.Prize.Trim();
+                tournamentResult.Prize = model.Prize!.Trim();
                 tournamentResult.Description = String.IsNullOrEmpty(model.Description) ? "" : model.Description.Trim();
                 tournamentResult.TeamInTournamentId = model.TeamInTournamentId;
                 tournamentResult.TournamentId = model.TournamentId;
@@ -165,7 +165,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 if(!String.IsNullOrEmpty(model.TournamentId.ToString()))
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
@@ -174,7 +174,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if(!String.IsNullOrEmpty(model.TeamInTournamentId.ToString()))
                 {
-                    TeamInTournament teamInTournament = await _teamInTournamentService.GetByIdAsync((int)model.TeamInTournamentId);
+                    TeamInTournament teamInTournament = await _teamInTournamentService.GetByIdAsync(model.TeamInTournamentId!.Value);
                     if (teamInTournament == null)
                     {
                         return BadRequest("Đội bóng trong giải đấu không tồn tại");

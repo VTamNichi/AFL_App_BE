@@ -49,23 +49,23 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<PromoteRequest> promoteRequestList = _promoteRequestService.GetList();
                 if (!String.IsNullOrEmpty(content))
                 {
-                    promoteRequestList = promoteRequestList.Where(s => s.RequestContent.ToUpper().Contains(content.Trim().ToUpper()));
+                    promoteRequestList = promoteRequestList.Where(s => s.RequestContent!.ToUpper().Contains(content.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(identityCard))
                 {
-                    promoteRequestList = promoteRequestList.Where(s => s.IdentityCard.ToUpper().Contains(identityCard.Trim().ToUpper()));
+                    promoteRequestList = promoteRequestList.Where(s => s.IdentityCard!.ToUpper().Contains(identityCard.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(phoneBusiness))
                 {
-                    promoteRequestList = promoteRequestList.Where(s => s.PhoneBusiness.ToUpper().Contains(phoneBusiness.Trim().ToUpper()));
+                    promoteRequestList = promoteRequestList.Where(s => s.PhoneBusiness!.ToUpper().Contains(phoneBusiness.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(nameBusiness))
                 {
-                    promoteRequestList = promoteRequestList.Where(s => s.NameBusiness.ToUpper().Contains(nameBusiness.Trim().ToUpper()));
+                    promoteRequestList = promoteRequestList.Where(s => s.NameBusiness!.ToUpper().Contains(nameBusiness.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(tinBusiness))
                 {
-                    promoteRequestList = promoteRequestList.Where(s => s.Tinbusiness.ToUpper().Contains(tinBusiness.Trim().ToUpper()));
+                    promoteRequestList = promoteRequestList.Where(s => s.Tinbusiness!.ToUpper().Contains(tinBusiness.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(status))
                 {

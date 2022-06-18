@@ -112,7 +112,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<ImageVM>> CreateImage([FromForm] ImageCM model)
         {
-            Image image = new Image();
+            Image image = new();
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
@@ -121,7 +121,7 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Giải đấu không tồn tại");
                 }
 
-                string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
+                string fileUrl = await _uploadFileService.UploadFile(model.File!, "images", "image-url");
                 image.ImageUrl = fileUrl;
                 image.Status = true;
                 image.DateCreate = DateTime.Now.AddHours(7);
@@ -158,7 +158,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.File.ToString()))
+                    if (!String.IsNullOrEmpty(model.File!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.File, "images", "image-url");
                         image.ImageUrl = fileUrl;

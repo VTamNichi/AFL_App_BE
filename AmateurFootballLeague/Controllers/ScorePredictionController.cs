@@ -77,7 +77,7 @@ namespace AmateurFootballLeague.Controllers
                         UserId = s.UserId,
                         MatchId = m.Id,
                         Match = m
-                    }).Where(s => s.UserId == userId && s.Match.TournamentId == tournamentId);
+                    }).Where(s => s.UserId == userId && s.Match!.TournamentId == tournamentId);
                 if (orderType == SortTypeEnum.DESC)
                 {
                     listPredict = listPredict.OrderByDescending(s => s.Id);
@@ -100,7 +100,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<ScorePredictionVM>> CreateScorePrediction(ScorePredictionCM model)
         {
-            ScorePrediction scorePrediction = new ScorePrediction();
+            ScorePrediction scorePrediction = new();
             try
             {
                 var check =  _scorePrediction.GetList().Where(s => s.UserId == model.UserId && s.MatchId == model.MatchId);

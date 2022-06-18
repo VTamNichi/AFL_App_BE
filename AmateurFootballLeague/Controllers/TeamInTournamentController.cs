@@ -156,7 +156,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<TeamInTournamentVM>> CreateTeamInTournament([FromBody] TeamInTournamentCM model)
         {
-            TeamInTournament teamInTournament = new TeamInTournament();
+            TeamInTournament teamInTournament = new();
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
@@ -206,7 +206,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync((int)model.TournamentId);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
@@ -218,7 +218,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
-                    Team team = await _teamService.GetByIdAsync((int)model.TeamId);
+                    Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
                     if (team == null)
                     {
                         return BadRequest("Đội bóng không tồn tại");

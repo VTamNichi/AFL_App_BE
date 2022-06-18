@@ -86,7 +86,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentVM>> CreateComment(int? tournamentID, int? teamID, CommentCM model)
         {
-            Comment comment = new Comment();
+            Comment comment = new();
             try
             {
                 User user = await _userService.GetByIdAsync(model.UserId);
@@ -120,7 +120,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
 
-                comment.Content = model.Content.Trim();
+                comment.Content = model.Content!.Trim();
                 comment.DateCreate = DateTime.Now.AddHours(7);
                 comment.Status = "";
                 comment.UserId = model.UserId;
@@ -147,7 +147,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Bình luận không tồn tại");
                 }
-                currentComment.Content = model.Content.Trim();
+                currentComment.Content = model.Content!.Trim();
                 currentComment.DateUpdate = DateTime.Now.AddHours(7);
                 bool isUpdated = await _commentService.UpdateAsync(currentComment);
                 if (isUpdated)

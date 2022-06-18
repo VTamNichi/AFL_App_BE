@@ -39,7 +39,7 @@ namespace AmateurFootballLeague.ExternalService
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await Scheduler?.Shutdown(cancellationToken);
+            await Scheduler!.Shutdown(cancellationToken);
         }
 
         private static IJobDetail CreateJob(JobSchedule schedule)
@@ -47,7 +47,7 @@ namespace AmateurFootballLeague.ExternalService
             var jobType = schedule.JobType;
             return JobBuilder
                 .Create(jobType)
-                .WithIdentity(jobType.FullName)
+                .WithIdentity(jobType.FullName!)
                 .WithDescription(jobType.Name)
                 .Build();
         }

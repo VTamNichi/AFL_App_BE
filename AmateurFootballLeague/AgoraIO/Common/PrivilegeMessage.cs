@@ -12,12 +12,12 @@
             this.messages = new Dictionary<ushort, uint>();
         }
 
-        public ByteBuf marshal(ByteBuf outBuf)
+        public ByteBuf Marshal(ByteBuf outBuf)
         {
             return outBuf.put(salt).put(ts).putIntMap(messages);
         }
 
-        public void unmarshal(ByteBuf inBuf)
+        public void Unmarshal(ByteBuf inBuf)
         {
             this.salt = inBuf.readInt();
             this.ts = inBuf.readInt();

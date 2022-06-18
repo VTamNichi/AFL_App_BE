@@ -57,15 +57,15 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<Team> teamList = _teamService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    teamList = teamList.Where(s => s.TeamName.ToUpper().Contains(name.Trim().ToUpper()));
+                    teamList = teamList.Where(s => s.TeamName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(area))
                 {
-                    teamList = teamList.Where(s => s.TeamArea.ToUpper().Contains(area.Trim().ToUpper()));
+                    teamList = teamList.Where(s => s.TeamArea!.ToUpper().Contains(area.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(gender.ToString()))
                 {
-                    teamList = teamList.Where(s => s.TeamGender.ToUpper().Equals(gender.ToString().Trim().ToUpper()));
+                    teamList = teamList.Where(s => s.TeamGender!.ToUpper().Equals(gender.ToString()!.Trim().ToUpper()));
                 }
 
                 teamList = teamList.Where(s => s.Status == true);
@@ -91,7 +91,7 @@ namespace AmateurFootballLeague.Controllers
 
                 var teamListVM = teamList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
-                List<TeamVM> listTeamVM = new List<TeamVM>();
+                List<TeamVM> listTeamVM = new();
                 listTeamVM = _mapper.Map<List<TeamVM>>(teamListVM);
                 foreach (var teamVM in listTeamVM)
                 {
@@ -153,7 +153,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<TeamVM>> CreateTeam([FromForm] TeamCM model)
         {
-            Team team = new Team();
+            Team team = new();
             try
             {
                 Team teamExist = await _teamService.GetByIdAsync(model.Id);
@@ -173,7 +173,7 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
 
-                bool isDuplicated = _teamService.GetList().Where(s => s.TeamName.Trim().ToUpper().Equals(model.TeamName.Trim().ToUpper())).FirstOrDefault() != null;
+                bool isDuplicated = _teamService.GetList().Where(s => s.TeamName!.Trim().ToUpper().Equals(model.TeamName!.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
                     return BadRequest(new
@@ -183,7 +183,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.TeamAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.TeamAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.TeamAvatar, "images", "image-url");
                         team.TeamAvatar = fileUrl;
@@ -248,7 +248,7 @@ namespace AmateurFootballLeague.Controllers
             }
             if (!String.IsNullOrEmpty(model.TeamName))
             {
-                if (!currentTeam.TeamName.ToUpper().Equals(model.TeamName.ToUpper()) && _teamService.GetList().Where(s => s.TeamName.Trim().ToUpper().Equals(model.TeamName.Trim().ToUpper())).FirstOrDefault() != null)
+                if (!currentTeam.TeamName!.ToUpper().Equals(model.TeamName.ToUpper()) && _teamService.GetList().Where(s => s.TeamName!.Trim().ToUpper().Equals(model.TeamName.Trim().ToUpper())).FirstOrDefault() != null)
                 {
                     return BadRequest(new
                     {
@@ -260,7 +260,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.TeamAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.TeamAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.TeamAvatar, "images", "image-url");
                         currentTeam.TeamAvatar = fileUrl;
@@ -369,7 +369,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpGet("count")]
         [Produces("application/json")]
-        public async Task<ActionResult<int>> GetCountAllTeam()
+        public ActionResult<int> GetCountAllTeam()
         {
             try
             {
@@ -400,10 +400,10 @@ namespace AmateurFootballLeague.Controllers
 
                 var top4ID = _teamInTournamentService.GetList().Join(_tournamentResultService.GetList(), tit => tit.Id, ts => ts.TeamInTournamentId, (tit, ts) => new { tit.TeamId })
                           .GroupBy(t => t.TeamId).Select(g => new { teamId = g.Key, count = g.Count()}).OrderByDescending(t => t.count).Take(4).ToList();
-                List<TeamVM> listTeamVM = new List<TeamVM>();
+                List<TeamVM> listTeamVM = new();
                 foreach (var tid in top4ID)
                 {
-                    TeamVM teamVM = _mapper.Map<TeamVM>(await _teamService.GetByIdAsync((int) tid.teamId));
+                    TeamVM teamVM = _mapper.Map<TeamVM>(await _teamService.GetByIdAsync(tid.teamId!.Value));
                     teamVM.NumberPlayerInTeam = _playerInTeamService.CountPlayerInATeam((int)tid.teamId);
                     listTeamVM.Add(teamVM);
                 }

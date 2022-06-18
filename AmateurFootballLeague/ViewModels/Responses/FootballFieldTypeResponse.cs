@@ -3,8 +3,8 @@
     public class FootballFieldTypeVM
     {
         public int Id { get; set; }
-        public string FootballFieldTypeName { get; set; }
-        public string Description { get; set; }
+        public string? FootballFieldTypeName { get; set; }
+        public string? Description { get; set; }
     }
     public class FootballFieldTypeListVM
     {

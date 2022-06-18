@@ -16,7 +16,7 @@
         private const int MAX_LENGTH = 1024;
 
         //固定长度的中间数组
-        private byte[] TEMP_BYTE_ARRAY = new byte[MAX_LENGTH];
+        private readonly byte[] TEMP_BYTE_ARRAY = new byte[MAX_LENGTH];
 
         //当前数组长度
         private int CURRENT_LENGTH = 0;
@@ -214,7 +214,7 @@
             //溢出
             if (CURRENT_POSITION + Length > CURRENT_LENGTH)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             byte[] ret = new byte[Length];
             Array.Copy(TEMP_BYTE_ARRAY, CURRENT_POSITION, ret, 0, Length);
@@ -228,7 +228,7 @@
             //溢出
             if (CURRENT_POSITION <= Length)
             {
-                return new byte[0];
+                return Array.Empty<byte>();
             }
             byte[] ret = new byte[Length];
             Array.Copy(TEMP_BYTE_ARRAY, CURRENT_POSITION - Length, ret, 0, Length);

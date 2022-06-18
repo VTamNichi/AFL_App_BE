@@ -66,7 +66,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<Tournament> tournamentList = _tournamentService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    tournamentList = tournamentList.Where(s => s.TournamentName.ToUpper().Contains(name.Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.TournamentName!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
                 if (userId != null)
                 {
@@ -74,23 +74,23 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(area))
                 {
-                    tournamentList = tournamentList.Where(s => s.FootballFieldAddress.ToUpper().Contains(area.Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.FootballFieldAddress!.ToUpper().Contains(area.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(mode.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.Mode.ToUpper().Equals(mode.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.Mode!.ToUpper().Equals(mode.ToString()!.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(type.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.TournamentType.TournamentTypeName.ToUpper().Contains(type.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.TournamentType!.TournamentTypeName!.ToUpper().Contains(type.ToString()!.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(gender.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.TournamentGender.ToUpper().Equals(gender.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.TournamentGender!.ToUpper().Equals(gender.ToString()!.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(footballType.ToString()))
                 {
-                    tournamentList = tournamentList.Where(s => s.FootballFieldType.FootballFieldTypeName.ToUpper().Contains(footballType.ToString().Trim().ToUpper()));
+                    tournamentList = tournamentList.Where(s => s.FootballFieldType!.FootballFieldTypeName!.ToUpper().Contains(footballType.ToString()!.Trim().ToUpper()));
                 }
                 tournamentList = tournamentList.Where(s => s.Status == true);
 
@@ -123,7 +123,7 @@ namespace AmateurFootballLeague.Controllers
 
                 var tournamentListVM = tournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
-                List<TournamentVM> listTournamentVM = new List<TournamentVM>();
+                List<TournamentVM> listTournamentVM = new();
                 listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListVM);
                 foreach (var tournamentVM in listTournamentVM)
                 {
@@ -147,7 +147,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet("FootballPlayerID")]
-        public async Task<ActionResult<TournamentListVM>> getAllTournamentOfFootballPlayer(int footballPlayerID, SortTypeEnum sort, int pageIndex = 1, int limit = 5)
+        public ActionResult<TournamentListVM> GetAllTournamentOfFootballPlayer(int footballPlayerID, SortTypeEnum sort, int pageIndex = 1, int limit = 5)
         {
             try
             {
@@ -183,7 +183,7 @@ namespace AmateurFootballLeague.Controllers
 
                 }
                 var tournamentListPagging = listTournament.Skip((pageIndex - 1) * limit).Take(limit).ToList();
-                List<TournamentVM> listTournamentVM = new List<TournamentVM>();
+                List<TournamentVM> listTournamentVM = new();
                 listTournamentVM = _mapper.Map<List<TournamentVM>>(tournamentListPagging);
                 foreach (var tournamentVM in listTournamentVM)
                 {
@@ -216,7 +216,6 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                Console.WriteLine("aaaaaaaaaaaa: " + id);
                 Tournament currentTournament = await _tournamentService.GetByIdAsync(id);
                 if (currentTournament == null)
                 {
@@ -224,7 +223,6 @@ namespace AmateurFootballLeague.Controllers
                 }
                 TournamentVM tournamentVM = _mapper.Map<TournamentVM>(currentTournament);
                 tournamentVM.NumberTeamInTournament = _teamInTournamentService.CountTeamInATournament(id);
-                Console.WriteLine("bbbbbbbbbbbbb: " + tournamentVM.NumberTeamInTournament);
                 if (currentTournament != null)
                 {
                     return Ok(tournamentVM);
@@ -245,7 +243,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult<TournamentVM>> CreateTournament([FromForm] TournamentCM model)
         {
-            Tournament tournament = new Tournament();
+            Tournament tournament = new();
             try
             {
                 DateTime date = DateTime.Now.AddHours(7);
@@ -268,15 +266,15 @@ namespace AmateurFootballLeague.Controllers
                     UserId = u.Id
                 }).Where(t => t.TournamentEndDate > date && t.Status == true && t.UserId == user.Id);
 
-                ////if (checkTournament.Count() > 0)
-                ////{
-                ////    return BadRequest(new
-                ////    {
-                ////        message = "Bạn đang có một giải đấu đang diễn ra , không thể tạo thêm giải trong thời gian này."
-                ////    });
-                ////}
+                //if (checkTournament.Count() > 0)
+                //{
+                //    return BadRequest(new
+                //    {
+                //        message = "Bạn đang có một giải đấu đang diễn ra , không thể tạo thêm giải trong thời gian này."
+                //    });
+                //}
 
-                bool isDuplicated = _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null;
+                bool isDuplicated = _tournamentService.GetList().Where(s => s.TournamentName!.Trim().ToUpper().Equals(model.TournamentName!.Trim().ToUpper())).FirstOrDefault() != null;
                 if (isDuplicated)
                 {
                     return BadRequest(new
@@ -317,7 +315,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.TournamentAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.TournamentAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.TournamentAvatar, "images", "image-url");
                         tournament.TournamentAvatar = fileUrl;
@@ -383,7 +381,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentName))
                 {
-                    if (!currentTournament.TournamentName.ToUpper().Equals(model.TournamentName.ToUpper()) && _tournamentService.GetList().Where(s => s.TournamentName.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null)
+                    if (!currentTournament.TournamentName!.ToUpper().Equals(model.TournamentName.ToUpper()) && _tournamentService.GetList().Where(s => s.TournamentName!.Trim().ToUpper().Equals(model.TournamentName.Trim().ToUpper())).FirstOrDefault() != null)
                     {
                         return BadRequest(new
                         {
@@ -393,7 +391,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 try
                 {
-                    if (!String.IsNullOrEmpty(model.TournamentAvatar.ToString()))
+                    if (!String.IsNullOrEmpty(model.TournamentAvatar!.ToString()))
                     {
                         string fileUrl = await _uploadFileService.UploadFile(model.TournamentAvatar, "images", "image-url");
                         currentTournament.TournamentAvatar = fileUrl;
@@ -555,7 +553,7 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
                 int countTeamInTournament = _teamInTournamentService.CountTeamInATournament(id);
-                if (countTeamInTournament < currentTournament.FootballTeamNumber && currentTournament.RegisterEndDate.Value.CompareTo(DateTime.Now.AddHours(7)) >= 0)
+                if (countTeamInTournament < currentTournament.FootballTeamNumber && currentTournament.RegisterEndDate!.Value.CompareTo(DateTime.Now.AddHours(7)) >= 0)
                 {
                     currentTournament.Status = false;
                     currentTournament.DateDelete = DateTime.Now.AddHours(7);
@@ -582,7 +580,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpGet("count")]
         [Produces("application/json")]
-        public async Task<ActionResult<int>> GetCountAllTournament()
+        public ActionResult<int> GetCountAllTournament()
         {
             try
             {
@@ -611,16 +609,16 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Giải đấu không tồn tại");
                 }
                 List<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(t => t.TournamentId == modelRR.TournamentId && t.Status == "Tham gia").ToList();
-                if(listTeamInTournament.Count() == 0)
+                if(listTeamInTournament.Count == 0)
                 {
                     return NotFound("Giải đấu chưa có đội");
                 }
                 foreach(TeamInTournament teamInTournament in listTeamInTournament)
                 {
-                    Team team = await _teamService.GetByIdAsync(teamInTournament.TeamId.Value);
+                    Team team = await _teamService.GetByIdAsync(teamInTournament.TeamId!.Value);
                     User userTeam = await _userService.GetByIdAsync(teamInTournament.TeamId.Value);
 
-                    EmailForm model = new EmailForm();
+                    EmailForm model = new();
                     if (modelRR.TypeMail == TournamentMailEnum.CancelTournament)
                     {
                         string reason = "";
@@ -629,7 +627,7 @@ namespace AmateurFootballLeague.Controllers
                             reason = "<p>Lý do: " + modelRR.Reason + "</p>";
 
                         }
-                        model.ToEmail = userTeam.Email;
+                        model.ToEmail = userTeam.Email!;
                         model.Subject = "Thông Báo Giải Đấu Bị Hủy";
                         model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " mà đội bạn đang tham gia đã bị hủy.</p>" + reason + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
 
@@ -642,7 +640,7 @@ namespace AmateurFootballLeague.Controllers
                             content = "<p>Nội dung thay đổi: " + modelRR.Content + "</p>";
 
                         }
-                        model.ToEmail = userTeam.Email;
+                        model.ToEmail = userTeam.Email!;
                         model.Subject = "Thông Báo Thay Đổi Thông Tin Giải Đấu";
                         model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " mà đội bạn đang tham gia đã thay đổi môt số thông tin.</p>" + content + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
                     }

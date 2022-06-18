@@ -12,11 +12,9 @@ namespace AmateurFootballLeague.ExternalService
     }
     public class UploadFileService : IUploadFileService
     {
-        private readonly IConfiguration _configuration;
 
-        public UploadFileService(IConfiguration configuration)
+        public UploadFileService()
         {
-            _configuration = configuration;
         }
 
         public async Task<string> UploadFile(IFormFile file, string bucket, string directory)
@@ -26,7 +24,7 @@ namespace AmateurFootballLeague.ExternalService
             using var imageStream = new MemoryStream();
             resized.Save(imageStream, ImageFormat.Png);
             var imageBytes = imageStream.ToArray();
-            MemoryStream memoryStream = new MemoryStream(imageBytes);
+            MemoryStream memoryStream = new(imageBytes);
             var auth = new FirebaseAuthProvider(new FirebaseConfig(FireBaseAppSetting.FirebaseApiKey));
             var a = await auth.SignInWithEmailAndPasswordAsync(FireBaseAppSetting.FirebaseAuthEmail, FireBaseAppSetting.FirebaseAuthPassword);
             var task = new FirebaseStorage(

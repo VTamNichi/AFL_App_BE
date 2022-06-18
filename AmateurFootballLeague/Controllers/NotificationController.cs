@@ -57,7 +57,7 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<Notification> notificationList = _notificationService.GetList();
                 if (!String.IsNullOrEmpty(content))
                 {
-                    notificationList = notificationList.Where(s => s.Content.ToUpper().Contains(content.Trim().ToUpper()));
+                    notificationList = notificationList.Where(s => s.Content!.ToUpper().Contains(content.Trim().ToUpper()));
                 }
                 if (!String.IsNullOrEmpty(isSeen.ToString()))
                 {
@@ -133,7 +133,7 @@ namespace AmateurFootballLeague.Controllers
 
                 List<Notification> notificationListPaging = notificationList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
-                NotificationListVM notificationListResponse = new NotificationListVM
+                NotificationListVM notificationListResponse = new()
                 {
                     Notifications = _mapper.Map<List<NotificationVM>>(notificationListPaging),
                     CountList = countList,
@@ -184,7 +184,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                Notification notification = new Notification();
+                Notification notification = new();
 
                 User user = await _userService.GetByIdAsync(model.UserId);
                 if (user == null)
@@ -194,7 +194,7 @@ namespace AmateurFootballLeague.Controllers
 
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
-                    Team team = await _teamService.GetByIdAsync(model.TeamId.Value);
+                    Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
                     if (team == null)
                     {
                         return NotFound("Không tìm thấy đội bóng");
@@ -206,7 +206,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId.Value);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament == null)
                     {
                         return NotFound("Không tìm thấy giải đấu");
@@ -225,7 +225,7 @@ namespace AmateurFootballLeague.Controllers
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)
                 {
-                    await _pushNotificationService.SendMessage("Bạn đã nhận được thông báo mới", notification.Content, user.Email, null);
+                    _ = await _pushNotificationService.SendMessage("Bạn đã nhận được thông báo mới", notification.Content, user.Email!, new());
                     return CreatedAtAction("GetNotificationById", new { id = notificationCreated.Id }, _mapper.Map<NotificationVM>(notificationCreated));
                 }
                 return BadRequest("Tạo thông báo mới thất bại");
@@ -255,7 +255,7 @@ namespace AmateurFootballLeague.Controllers
                 notification.Content = String.IsNullOrEmpty(model.Content) ? notification.Content : model.Content;
                 if (!String.IsNullOrEmpty(model.UserId.ToString()) && model.UserId != 0)
                 {
-                    User user = await _userService.GetByIdAsync(model.UserId.Value);
+                    User user = await _userService.GetByIdAsync(model.UserId!.Value);
                     if (user != null)
                     {
                         notification.UserId = user.Id;
@@ -263,7 +263,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
-                    Team team = await _teamService.GetByIdAsync(model.TeamId.Value);
+                    Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
                     if (team != null)
                     {
                         notification.TeamId = team.Id;
@@ -271,7 +271,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
-                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId.Value);
+                    Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId!.Value);
                     if (tournament != null)
                     {
                         notification.TournamentId = tournament.Id;

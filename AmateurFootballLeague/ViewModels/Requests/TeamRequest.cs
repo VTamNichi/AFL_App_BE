@@ -19,7 +19,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string TeamName { get; set; }
+        public string? TeamName { get; set; }
 
         public IFormFile? TeamAvatar { get; set; }
 

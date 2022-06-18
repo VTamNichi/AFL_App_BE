@@ -26,12 +26,12 @@ namespace AmateurFootballLeague.ExternalService
 
             MailMessage msg = new MailMessage();
             msg.From = new MailAddress("afootballleague14@gmail.com", "A-Football-League");
-            msg.To.Add(new MailAddress(model.ToEmail));
+            msg.To.Add(new MailAddress(model.ToEmail!));
             msg.Priority = MailPriority.High;
 
             msg.Subject = model.Subject;
             msg.IsBodyHtml = true;
-            msg.Body = string.Format(model.Message);
+            msg.Body = string.Format(model.Message!);
 
             try
             {

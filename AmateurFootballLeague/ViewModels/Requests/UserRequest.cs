@@ -25,7 +25,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(64)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         public string? Password { get; set; }
 
@@ -50,10 +50,10 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required(AllowEmptyStrings = false)]
         [StringLength(64)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string Username { get; set; }
+        public string? Username { get; set; }
         public string? Avatar { get; set; }
 
         [Required(AllowEmptyStrings = false)]
@@ -84,17 +84,17 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
     public class UserLEPM
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string? Email { get; set; }
+        public string? Password { get; set; }
     }
     public class UserLM
     {
-        public string TokenId { get; set; }
+        public string? TokenId { get; set; }
     }
     public class UserLOM
     {
-        public string Token { get; set; }
-        public string Email { get; set; }
+        public string? Token { get; set; }
+        public string? Email { get; set; }
     }
     public class UserCPM
     {
@@ -103,11 +103,11 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string CurrentPassword { get; set; }
+        public string? CurrentPassword { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 
     public class UserRPM
@@ -115,10 +115,10 @@ namespace AmateurFootballLeague.ViewModels.Requests
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [StringLength(128)]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 }
