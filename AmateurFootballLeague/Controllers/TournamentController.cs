@@ -402,13 +402,13 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.TournamentName = String.IsNullOrEmpty(model.TournamentName) ? currentTournament.TournamentName : model.TournamentName.Trim();
                 currentTournament.Description = String.IsNullOrEmpty(model.Description) ? currentTournament.Description : model.Description.Trim();
                 currentTournament.Mode = model.Mode == TournamentModeEnum.PUBLIC ? "PUBLIC" : model.Mode == TournamentModeEnum.PRIVATE ? "PRIVATE" : currentTournament.Mode;
-                if (model.RegisterEndDate < currentTournament.TournamentStartDate)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
-                    });
-                }
+//                 if (model.RegisterEndDate < currentTournament.TournamentStartDate)
+//                 {
+//                     return BadRequest(new
+//                     {
+//                         message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
+//                     });
+//                 }
                 currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
 
                 int countTeamInTournament = _teamInTournamentService.CountTeamInATournament(model.Id);
