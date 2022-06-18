@@ -325,13 +325,13 @@ namespace AmateurFootballLeague.Controllers
                 {
                     tournament.TournamentAvatar = "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
                 }
-                if (model.RegisterEndDate < model.TournamentStartDate)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
-                    });
-                }
+//                 if (model.RegisterEndDate < model.TournamentStartDate)
+//                 {
+//                     return BadRequest(new
+//                     {
+//                         message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
+//                     });
+//                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
                 tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
                 tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.RegisterEndDate;
