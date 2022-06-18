@@ -109,24 +109,24 @@ namespace AmateurFootballLeague.Controllers
                     });
 
                 }
-                IQueryable<PlayerInTournament> checkPlayerFromAnotherTeam = _playerInTournament.GetList().Join(_playerInTeamService.GetList(), ptour => ptour.PlayerInTeam, pteam => pteam,
-                    (ptour, pteam) => new { ptour, pteam }).Where(pit => pit.pteam.FootballPlayerId == footballPlayerId).Join(_footballPlayerService.GetList(), ptf => ptf.pteam.FootballPlayer, f => f, (ptf, f) => new { ptf, f })
-                    .Join(_teamInTournamentService.GetList(), ptt => ptt.ptf.ptour.TeamInTournament, titour => titour, (ptt, titour) => new { ptt, titour })
-                    .Join(_tournamentService.GetList(), titt => titt.titour.Tournament, t => t, (titt, t) => new { titt, t }).Where(t => t.t.TournamentEndDate > date && t.t.Status == true)
-                    .Select(p => new PlayerInTournament
-                    {
-                        Id = p.titt.ptt.ptf.ptour.Id,
-                        Status = p.titt.ptt.ptf.ptour.Status,
-                        ClothesNumber = p.titt.ptt.ptf.ptour.ClothesNumber                     
-                    });
-                FootballPlayer footballPlayer =await _footballPlayerService.GetByIdAsync(footballPlayerId);
-                if (checkPlayerFromAnotherTeam != null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Cầu thủ" +footballPlayer.PlayerName +"đang thi đấu trong một giải đấu khác"
-                    });
-                }
+//                 IQueryable<PlayerInTournament> checkPlayerFromAnotherTeam = _playerInTournament.GetList().Join(_playerInTeamService.GetList(), ptour => ptour.PlayerInTeam, pteam => pteam,
+//                     (ptour, pteam) => new { ptour, pteam }).Where(pit => pit.pteam.FootballPlayerId == footballPlayerId).Join(_footballPlayerService.GetList(), ptf => ptf.pteam.FootballPlayer, f => f, (ptf, f) => new { ptf, f })
+//                     .Join(_teamInTournamentService.GetList(), ptt => ptt.ptf.ptour.TeamInTournament, titour => titour, (ptt, titour) => new { ptt, titour })
+//                     .Join(_tournamentService.GetList(), titt => titt.titour.Tournament, t => t, (titt, t) => new { titt, t }).Where(t => t.t.TournamentEndDate > date && t.t.Status == true)
+//                     .Select(p => new PlayerInTournament
+//                     {
+//                         Id = p.titt.ptt.ptf.ptour.Id,
+//                         Status = p.titt.ptt.ptf.ptour.Status,
+//                         ClothesNumber = p.titt.ptt.ptf.ptour.ClothesNumber                     
+//                     });
+//                 FootballPlayer footballPlayer =await _footballPlayerService.GetByIdAsync(footballPlayerId);
+//                 if (checkPlayerFromAnotherTeam != null)
+//                 {
+//                     return BadRequest(new
+//                     {
+//                         message = "Cầu thủ" +footballPlayer.PlayerName +"đang thi đấu trong một giải đấu khác"
+//                     });
+//                 }
                 playerCreate.TeamInTournamentId = player.TeamInTournamentId;
                 playerCreate.PlayerInTeamId = player.PlayerInTeamId;
                 playerCreate.ClothesNumber = String.IsNullOrEmpty(player.ClothesNumber.ToString()) ? 0 : player.ClothesNumber; 
