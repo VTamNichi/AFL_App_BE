@@ -44,7 +44,7 @@ namespace AmateurFootballLeague.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=asl.crurou7dzdf4.ap-southeast-1.rds.amazonaws.com;Initial Catalog=AmateurFootballLeague;Persist Security Info=True;User ID=ktat;Password=KhoaTuAnhTam");
+                optionsBuilder.UseSqlServer("Data Source=afl.c88bvbswfyiv.ap-southeast-1.rds.amazonaws.com;Initial Catalog=AmateurFootballLeague;Persist Security Info=True;User ID=ktat;Password=KhoaTuAnhTam");
             }
         }
 
@@ -176,6 +176,10 @@ namespace AmateurFootballLeague.Models
             modelBuilder.Entity<MatchDetail>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ActionMinute)
+                    .HasMaxLength(16)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
 
@@ -575,7 +579,7 @@ namespace AmateurFootballLeague.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ__Users__A9D1053442FC5C46")
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534AB2A4446")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");

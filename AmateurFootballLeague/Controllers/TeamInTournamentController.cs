@@ -172,7 +172,11 @@ namespace AmateurFootballLeague.Controllers
                 teamInTournament.TournamentId = model.TournamentId;
                 teamInTournament.TeamId = model.TeamId;
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
-                teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) ? 0 : model.DifferentPoint;
+                teamInTournament.WinScoreNumber = String.IsNullOrEmpty(model.WinScoreNumber.ToString()) ? 0 : model.WinScoreNumber;
+                teamInTournament.LoseScoreNumber = String.IsNullOrEmpty(model.LoseScoreNumber.ToString()) ? 0 : model.LoseScoreNumber;
+                teamInTournament.DifferentPoint = teamInTournament.WinScoreNumber - teamInTournament.LoseScoreNumber;
+                teamInTournament.TotalYellowCard = String.IsNullOrEmpty(model.TotalYellowCard.ToString()) ? 0 : model.TotalYellowCard;
+                teamInTournament.TotalRedCard = String.IsNullOrEmpty(model.TotalRedCard.ToString()) ? 0 : model.TotalRedCard;
                 teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? "" : model.Status;
                 teamInTournament.StatusInTournament = "Trong giải";
                 TeamInTournament teamInTournamentCreated = await _teamInTournamentService.AddAsync(teamInTournament);
@@ -247,7 +251,11 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) && model.Point != 0 ? teamInTournament.Point : model.Point;
-                teamInTournament.DifferentPoint = String.IsNullOrEmpty(model.DifferentPoint.ToString()) && model.DifferentPoint != 0 ? teamInTournament.DifferentPoint : model.DifferentPoint;
+                teamInTournament.WinScoreNumber = String.IsNullOrEmpty(model.WinScoreNumber.ToString()) || model.WinScoreNumber == 0 ? teamInTournament.WinScoreNumber : model.WinScoreNumber;
+                teamInTournament.LoseScoreNumber = String.IsNullOrEmpty(model.LoseScoreNumber.ToString()) || model.LoseScoreNumber == 0 ? teamInTournament.LoseScoreNumber : model.LoseScoreNumber;
+                teamInTournament.DifferentPoint = teamInTournament.WinScoreNumber - teamInTournament.LoseScoreNumber;
+                teamInTournament.TotalYellowCard = String.IsNullOrEmpty(model.TotalYellowCard.ToString()) || model.TotalYellowCard == 0 ? teamInTournament.TotalYellowCard : model.TotalYellowCard;
+                teamInTournament.TotalRedCard = String.IsNullOrEmpty(model.TotalRedCard.ToString()) || model.TotalRedCard == 0 ? teamInTournament.TotalRedCard : model.TotalRedCard;
                 teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? teamInTournament.Status : model.Status;
                 teamInTournament.StatusInTournament = String.IsNullOrEmpty(model.StatusInTournament) ? teamInTournament.StatusInTournament : model.StatusInTournament;
                 bool isUpdate = await _teamInTournamentService.UpdateAsync(teamInTournament);

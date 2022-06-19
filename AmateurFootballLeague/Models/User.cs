@@ -33,6 +33,7 @@ namespace AmateurFootballLeague.Models
         public int? FlagReportTeam { get; set; }
         public int? FlagReportTournament { get; set; }
         public string? IdentityCard { get; set; }
+        public DateTime? DateIssuance { get; set; }
         public string? PhoneBusiness { get; set; }
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
@@ -41,7 +42,6 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateUpdate { get; set; }
         public DateTime? DateDelete { get; set; }
         public int? RoleId { get; set; }
-        public DateTime? DateIssuance { get; set; }
 
         public virtual Role? Role { get; set; }
         public virtual FootballPlayer FootballPlayer { get; set; } = null!;

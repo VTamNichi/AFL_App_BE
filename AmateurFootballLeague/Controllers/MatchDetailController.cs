@@ -124,6 +124,7 @@ namespace AmateurFootballLeague.Controllers
                     matchDetail.MatchScore = match.MatchScore;
                     matchDetail.YellowCardNumber = match.YellowCardNumber;
                     matchDetail.RedCardNumber = match.RedCardNumber;
+                    matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                     matchDetail.MatchId = match.MatchId;
                     matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
                     MatchDetail created =await _matchDetail.AddAsync(matchDetail);
@@ -151,6 +152,7 @@ namespace AmateurFootballLeague.Controllers
                     matchDetail.MatchScore = match.MatchScore;
                     matchDetail.YellowCardNumber = match.YellowCardNumber;
                     matchDetail.RedCardNumber = match.RedCardNumber;
+                    matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                     bool isUpdated = await _matchDetail.UpdateAsync(matchDetail);
                     if (isUpdated)
                     {
