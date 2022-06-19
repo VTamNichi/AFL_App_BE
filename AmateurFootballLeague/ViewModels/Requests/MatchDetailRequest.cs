@@ -7,6 +7,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int MatchScore { get; set; }
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
+        public string? ActionMinute { get; set; }
         [Required]
         public int MatchId { get; set; }
         [Required]
@@ -19,6 +20,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int MatchScore { get; set; }
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
+        public string? ActionMinute { get; set; }
         public int MatchId { get; set; }
         public int PlayerInTournamentId { get; set; }
     }
