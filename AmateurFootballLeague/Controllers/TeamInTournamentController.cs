@@ -235,13 +235,14 @@ namespace AmateurFootballLeague.Controllers
                 DateTime date = DateTime.Now.AddHours(7);
                 IQueryable<TeamInTournament> checkTeam = _teamInTournamentService.GetList().Join(_tournamentService.GetList(), tit => tit.Tournament, t => t, (tit, t) => new { tit, t })
                     .Where(t => t.t.TournamentEndDate > date)
-                    .Join(_teamService.GetList(), titt => titt.tit.Team, team => team, (titt, team) => new TeamInTournament
+                    .Join(_teamService.GetList(), titt => titt.tit.Team, team => team, (titt, team) =>new {titt,team})
+                    .Where(t=> t.team.Id == model.TeamId).Select(t => new TeamInTournament
                     {
-                        Id = titt.tit.Id,
-                        Status = titt.tit.Status,
-                        StatusInTournament = titt.tit.StatusInTournament
-                    }).Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
-
+                        Id = t.titt.tit.Id,
+                        Status = t.titt.tit.Status,
+                        StatusInTournament = t.titt.tit.StatusInTournament
+                    })
+                    .Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
                 if (checkTeam.Count() > 0)
                 {
                     return BadRequest(new
