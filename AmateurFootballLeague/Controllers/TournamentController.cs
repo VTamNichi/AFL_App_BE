@@ -455,23 +455,38 @@ namespace AmateurFootballLeague.Controllers
                 {
                     if(currentTournament.TournamentTypeId == 2)
                     {
-                        if (model.FootballTeamNumber < currentTournament.FootballTeamNumber || model.FootballTeamNumber > 8)
+                        if (model.FootballTeamNumber > 8)
                         {
-                            return BadRequest("Số đội tham gia giải it nhất là " + currentTournament.FootballTeamNumber + " và nhiều nhất là 8");
+                            int minTeam = countTeamInTournament;
+                            if(minTeam < 3)
+                            {
+                                minTeam = 3;
+                            }
+                            return BadRequest("Số đội tham gia giải it nhất là " + minTeam + " và nhiều nhất là 8");
                         }
                     }
                     else if (currentTournament.TournamentTypeId == 1)
                     {
-                        if (model.FootballTeamNumber < currentTournament.FootballTeamNumber || model.FootballTeamNumber > 16)
+                        if (model.FootballTeamNumber > 16)
                         {
-                            return BadRequest("Số đội tham gia giải it nhất là " + currentTournament.FootballTeamNumber + " và nhiều nhất là 16");
+                            int minTeam = countTeamInTournament;
+                            if (minTeam < 3)
+                            {
+                                minTeam = 3;
+                            }
+                            return BadRequest("Số đội tham gia giải it nhất là " + minTeam + " và nhiều nhất là 16");
                         }
                     }
                     else
                     {
-                        if (model.FootballTeamNumber < currentTournament.FootballTeamNumber || model.FootballTeamNumber > 16)
+                        if (model.FootballTeamNumber > 16)
                         {
-                            return BadRequest("Số đội tham gia giải it nhất là" + currentTournament.FootballTeamNumber + "và nhiều nhất là 16");
+                            int minTeam = countTeamInTournament;
+                            if (minTeam < 6)
+                            {
+                                minTeam = 6;
+                            }
+                            return BadRequest("Số đội tham gia giải it nhất là" + minTeam + "và nhiều nhất là 16");
                         }
                         if(model.FootballTeamNumber < 12)
                         {

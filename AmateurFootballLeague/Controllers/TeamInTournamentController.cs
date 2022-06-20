@@ -240,7 +240,7 @@ namespace AmateurFootballLeague.Controllers
                         Id = titt.tit.Id,
                         Status = titt.tit.Status,
                         StatusInTournament = titt.tit.StatusInTournament
-                    }).Where(tit => tit.StatusInTournament != "Bị loại");
+                    }).Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
 
                 if (checkTeam.Count() > 0)
                 {
