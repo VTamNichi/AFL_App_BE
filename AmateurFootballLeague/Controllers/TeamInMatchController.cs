@@ -374,7 +374,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     await _teamInMatch.DeleteAsync(teamInMatch);
                 }
-                return BadRequest("Xóa đội bóng trong trận đấu thành công");
+                return Ok("Xóa đội bóng trong trận đấu thành công");
             }
             catch (Exception)
             {
