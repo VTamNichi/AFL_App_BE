@@ -111,9 +111,9 @@ namespace AmateurFootballLeague.Controllers
                         Status = t.t.Status,
                         UserId = t.t.UserId
 
-                    }).FirstOrDefault();
+                    }).Where(t=> t.UserId == model.UserId).FirstOrDefault();
                 Tournament checkHost = _tournamentService.GetList().Where(t => t.UserId == model.UserId).FirstOrDefault();
-                if(checkHost != null)
+                if(checkTour != null)
                 {
                     return BadRequest(new
                     {
