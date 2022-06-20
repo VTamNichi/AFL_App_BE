@@ -182,7 +182,7 @@ namespace AmateurFootballLeague.Controllers
                 if(fullInfo == true)
                 {
                     listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
-                       .Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new Match
+                       .Join(_teamService.GetList(), timt => timt.tim.TeamInTournament.Team, t => t, (timt, t) => new Match
                        {
                            Id = timt.m.Id,
                            MatchDate = timt.m.MatchDate,
@@ -204,7 +204,10 @@ namespace AmateurFootballLeague.Controllers
                                    TeamInTournamentId = t.Id,
                                    MatchId = timt.tim.MatchId,
                                    NextTeam = timt.tim.NextTeam,
-                                   TeamInTournament = t
+                                   TeamInTournament = new TeamInTournament
+                                   {
+                                       Team = t
+                                   }
                                }
                            }    
                        }).Where(m => m.TournamentId == tournamentId);

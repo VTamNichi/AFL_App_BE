@@ -238,7 +238,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     Id = t.titt.t.Id,
                     TeamName = t.titt.t.TeamName
-                });
+                }).Where(t=> t.Id == model.Id);
             if (teamInTour.Count() > 0)
             {
                 return BadRequest(new
