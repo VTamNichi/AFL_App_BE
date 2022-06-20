@@ -112,7 +112,14 @@ namespace AmateurFootballLeague.Controllers
                         UserId = t.t.UserId
 
                     }).Where(t=> t.UserId == model.UserId).FirstOrDefault();
-                Tournament checkHost = _tournamentService.GetList().Where(t => t.UserId == model.UserId).FirstOrDefault();
+                Tournament findTour = _tournamentService.GetList().Join(_matchService.GetList(), t => t.Id, m => m.TournamentId, (t, m) => new { t, m }).
+                    Where(t => t.m.Id == model.MatchId).Select(t => new Tournament
+                    {
+                        Id = t.t.Id,
+                        Status = t.t.Status,
+                        UserId = t.t.UserId
+
+                    }).FirstOrDefault();
                 if(checkTour != null)
                 {
                     return BadRequest(new
@@ -122,7 +129,7 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 Team chekcTeam = _teamService1.GetList().Join(_teamInTournamentService.GetList(), t => t.Id, tit => tit.TeamId, (t, tit) => new { t, tit })
-                    .Where(t => t.t.Id == model.UserId && t.tit.TournamentId == checkTour.Id ).Select(t=> new Team
+                    .Where(t => t.t.Id == model.UserId && t.tit.TournamentId == findTour.Id ).Select(t=> new Team
                     {
                         Id =t.t.Id,
                         TeamName = t.t.TeamName
@@ -138,7 +145,7 @@ namespace AmateurFootballLeague.Controllers
 
                 PlayerInTeam checkPlayer = _playerInTeamService.GetList().Join(_playerInTournamentService.GetList(), pit => pit.Id, pitour => pitour.PlayerInTeamId, (pit, pitour) => new { pit, pitour }).
                 Where(p => p.pit.FootballPlayerId == model.UserId)
-                    .Join(_teamInTournamentService.GetList(), pt => pt.pitour.TeamInTournament, tit => tit, (pt, tit) => new { pt, tit }).Where(t => t.tit.TournamentId == checkTour.Id).
+                    .Join(_teamInTournamentService.GetList(), pt => pt.pitour.TeamInTournament, tit => tit, (pt, tit) => new { pt, tit }).Where(t => t.tit.TournamentId == findTour.Id).
                     Select(t => new PlayerInTeam
                     {
                         Id = t.pt.pit.Id,
