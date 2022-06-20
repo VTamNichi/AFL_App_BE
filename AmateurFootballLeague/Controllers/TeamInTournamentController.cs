@@ -240,7 +240,7 @@ namespace AmateurFootballLeague.Controllers
                         Id = titt.tit.Id,
                         Status = titt.tit.Status,
                         StatusInTournament = titt.tit.StatusInTournament
-                    }).Where(tit => tit.StatusInTournament != "Bị loại");
+                    }).Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
 
                 if (checkTeam.Count() > 0)
                 {
@@ -323,7 +323,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     await _teamInTournamentService.DeleteAsync(teamInTournament);
                 }
-                return BadRequest("Xóa đội bóng trong giải đấu thành công");
+                return Ok("Xóa đội bóng trong giải đấu thành công");
             }
             catch (Exception)
             {
