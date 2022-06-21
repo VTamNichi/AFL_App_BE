@@ -218,14 +218,22 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<PlayerInTeamVM>> GetPlayerInTeamById(int id)
+        public async Task<ActionResult<PlayerInTeamFVM>> GetPlayerInTeamById(int id)
         {
             try
             {
-                PlayerInTeam player = await _playerInTeam.GetByIdAsync(id);
+                PlayerInTeam player =  _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer , f => f, (pit,f ) => new {pit,f}).
+                    Where(pit => pit.pit.Id == id).Select(pit => new PlayerInTeam
+                    {
+                        Id = pit.pit.Id,
+                        Status = pit.pit.Status,
+                        TeamId = pit.pit.TeamId,
+                        FootballPlayerId = pit.pit.FootballPlayerId,
+                        FootballPlayer = pit.f
+                    }).FirstOrDefault();
               if (player != null)
                 {
-                    return Ok(_mapper.Map<PlayerInTeamVM>(player));
+                    return Ok(_mapper.Map<PlayerInTeamFVM>(player));
                 }
                 return NotFound("Không tìm thấy cầu thủ trong đội bóng với id là " + id);
             }
