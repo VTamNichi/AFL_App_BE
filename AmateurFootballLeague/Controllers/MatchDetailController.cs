@@ -17,9 +17,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IFootballPlayerService _footballPlayerService;
+        private readonly IMatchService _matchService;
 
         public MatchDetailController (IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament, 
-            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService)
+            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService)
         {
             _matchDetail = matchDetail;
             _mapper = mapper;
@@ -27,6 +28,7 @@ namespace AmateurFootballLeague.Controllers
             _teamInTournamentService = teamInTournamentService;
             _playerInTeamService = playerInTeamService;
             _footballPlayerService = footballPlayerService;
+            _matchService = matchService;
         }
 
         [HttpGet]
@@ -119,19 +121,28 @@ namespace AmateurFootballLeague.Controllers
         public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match)
         {
             MatchDetail matchDetail = new();
-            try { 
-               
-                    matchDetail.MatchScore = match.MatchScore;
-                    matchDetail.YellowCardNumber = match.YellowCardNumber;
-                    matchDetail.RedCardNumber = match.RedCardNumber;
-                    matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
-                    matchDetail.MatchId = match.MatchId;
-                    matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
-                    MatchDetail created =await _matchDetail.AddAsync(matchDetail);
-                    if(created != null)
-                    {
-                        return CreatedAtAction("GetById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
-                    }
+            try {
+                Match crrMatch = await _matchService.GetByIdAsync(match.MatchId);
+                if(crrMatch == null)
+                {
+                    return NotFound("Không tìm thấy trận đấu");
+                }
+                PlayerInTournament pitour = await _playerInTournament.GetByIdAsync(match.PlayerInTournamentId);
+                if(pitour == null)
+                {
+                    return NotFound("Không tìm thấy cầu thủ trong giải đấu");
+                }
+                matchDetail.MatchScore = match.MatchScore;
+                matchDetail.YellowCardNumber = match.YellowCardNumber;
+                matchDetail.RedCardNumber = match.RedCardNumber;
+                matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
+                matchDetail.MatchId = match.MatchId;
+                matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
+                MatchDetail created =await _matchDetail.AddAsync(matchDetail);
+                if(created != null)
+                {
+                    return CreatedAtAction("FindById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
+                }
                 
                 return BadRequest("Tạo chi tiết trận đấu thất bại");
             }
