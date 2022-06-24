@@ -334,7 +334,11 @@ namespace AmateurFootballLeague.Controllers
 //                 }
                 tournament.TournamentPhone = String.IsNullOrEmpty(model.TournamentPhone) ? "" : model.TournamentPhone.Trim();
                 tournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : "Other";
-                tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.RegisterEndDate;
+                if (tournament.Mode == "PUBLIC")
+                {
+                    tournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.RegisterEndDate;
+                }
+                
                 tournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? DateTime.Now.AddHours(7) : model.TournamentStartDate;
                 tournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? DateTime.Now.AddHours(7) : model.TournamentEndDate;
                 tournament.FootballFieldAddress = String.IsNullOrEmpty(model.FootballFieldAddress) ? "" : model.FootballFieldAddress;
@@ -349,6 +353,7 @@ namespace AmateurFootballLeague.Controllers
                 tournament.DateCreate = DateTime.Now.AddHours(7);
                 tournament.Status = true;
                 tournament.StatusTnm = "";
+
 
                 Tournament tournamentCreated = await _tournamentService.AddAsync(tournament);
                 if (tournamentCreated != null)
@@ -402,14 +407,17 @@ namespace AmateurFootballLeague.Controllers
                 currentTournament.TournamentName = String.IsNullOrEmpty(model.TournamentName) ? currentTournament.TournamentName : model.TournamentName.Trim();
                 currentTournament.Description = String.IsNullOrEmpty(model.Description) ? currentTournament.Description : model.Description.Trim();
                 currentTournament.Mode = model.Mode == TournamentModeEnum.PUBLIC ? "PUBLIC" : model.Mode == TournamentModeEnum.PRIVATE ? "PRIVATE" : currentTournament.Mode;
-//                 if (model.RegisterEndDate < currentTournament.TournamentStartDate)
-//                 {
-//                     return BadRequest(new
-//                     {
-//                         message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
-//                     });
-//                 }
-                currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
+                //                 if (model.RegisterEndDate < currentTournament.TournamentStartDate)
+                //                 {
+                //                     return BadRequest(new
+                //                     {
+                //                         message = "Ngày kết thúc đăng ký phải trước ngày bắt đầu dự kiến"
+                //                     });
+                //                 }
+                if (currentTournament.Mode == "PUBLIC")
+                {
+                    currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
+                }
 
                 int countTeamInTournament = _teamInTournamentService.CountTeamInATournament(model.Id);
                 if(countTeamInTournament == 0)
