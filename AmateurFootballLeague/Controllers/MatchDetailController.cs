@@ -19,7 +19,7 @@ namespace AmateurFootballLeague.Controllers
         private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMatchService _matchService;
 
-        public MatchDetailController (IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament, 
+        public MatchDetailController(IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament,
             ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService)
         {
             _matchDetail = matchDetail;
@@ -37,10 +37,10 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                if(matchId == 0)
+                if (matchId == 0)
                 {
                     IQueryable<MatchDetail> match = _matchDetail.GetList();
-                    return Ok (match);
+                    return Ok(match);
                 }
                 IQueryable<MatchDetail> listDtMatch = _matchDetail.GetList().Join(_playerInTournament.GetList(), md => md.PlayerInTournament, pit => pit, (md, pit) => new { md, pit })
                     .Join(_teamInTournamentService.GetList(), pitt => pitt.pit.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
@@ -70,7 +70,7 @@ namespace AmateurFootballLeague.Controllers
                                     Position = f.Position
                                 }
                             },
-                            
+
 
                         }
                     }).Where(m => m.MatchId == matchId);
@@ -103,9 +103,10 @@ namespace AmateurFootballLeague.Controllers
         [Route("Id")]
         public async Task<ActionResult<MatchDetailVM>> FindById(int id)
         {
-            try {
+            try
+            {
                 MatchDetail match = await _matchDetail.GetByIdAsync(id);
-                if(match == null)
+                if (match == null)
                 {
                     return NotFound("Không tìm thấy chi tiết trận đấu");
                 }
@@ -121,14 +122,15 @@ namespace AmateurFootballLeague.Controllers
         public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match)
         {
             MatchDetail matchDetail = new();
-            try {
+            try
+            {
                 Match crrMatch = await _matchService.GetByIdAsync(match.MatchId);
-                if(crrMatch == null)
+                if (crrMatch == null)
                 {
                     return NotFound("Không tìm thấy trận đấu");
                 }
                 PlayerInTournament pitour = await _playerInTournament.GetByIdAsync(match.PlayerInTournamentId);
-                if(pitour == null)
+                if (pitour == null)
                 {
                     return NotFound("Không tìm thấy cầu thủ trong giải đấu");
                 }
@@ -138,17 +140,17 @@ namespace AmateurFootballLeague.Controllers
                 matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                 matchDetail.MatchId = match.MatchId;
                 matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
-                MatchDetail created =await _matchDetail.AddAsync(matchDetail);
-                if(created != null)
+                MatchDetail created = await _matchDetail.AddAsync(matchDetail);
+                if (created != null)
                 {
                     return CreatedAtAction("FindById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
                 }
-                
+
                 return BadRequest("Tạo chi tiết trận đấu thất bại");
             }
             catch
             {
-              return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -158,7 +160,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 MatchDetail matchDetail = await _matchDetail.GetByIdAsync(match.Id);
-                if(matchDetail != null)
+                if (matchDetail != null)
                 {
                     matchDetail.MatchScore = match.MatchScore;
                     matchDetail.YellowCardNumber = match.YellowCardNumber;
@@ -188,16 +190,54 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 MatchDetail matchDetail = await _matchDetail.GetByIdAsync(id);
-                if(matchDetail != null)
+                if (matchDetail != null)
                 {
                     bool isDeleted = await _matchDetail.DeleteAsync(matchDetail);
                     if (isDeleted)
                     {
-                        return Ok( new {
+                        return Ok(new
+                        {
                             message = "Xóa chi tiết trận đấu thành công"
                         });
                     }
                     return BadRequest("Xóa chi tiết trận đấu thất bại");
+                }
+                return NotFound("Không tìm thấy chi tiết trận đấu");
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpDelete("delete-type")]
+        public async Task<ActionResult> DeleteMatchDetailByType(int matchId, DeleteType type)
+        {
+            try
+            {
+                IQueryable<MatchDetail> listMatchDetail = _matchDetail.GetList().Where(md => md.MatchId == matchId);
+
+                if (type == DeleteType.score)
+                {
+                    listMatchDetail = listMatchDetail.Where(md => md.MatchScore == 1);
+                }
+                else if (type == DeleteType.yellow)
+                {
+                    listMatchDetail = listMatchDetail.Where(md => md.YellowCardNumber == 1);
+                }
+                else
+                {
+                    listMatchDetail = listMatchDetail.Where(md => md.RedCardNumber == 1);
+                }
+                if (listMatchDetail.Any())
+                {
+                    foreach (MatchDetail matchDetail in listMatchDetail.ToList())
+                    {
+                        await _matchDetail.DeleteAsync(matchDetail);
+                    }
+                    return Ok(new
+                    {
+                        message = "Xóa chi tiết trận đấu thành công"
+                    });
                 }
                 return NotFound("Không tìm thấy chi tiết trận đấu");
             }

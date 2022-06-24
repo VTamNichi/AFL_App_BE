@@ -46,7 +46,22 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                IQueryable<PromoteRequest> promoteRequestList = _promoteRequestService.GetList();
+                IQueryable<PromoteRequest> promoteRequestList = _promoteRequestService.GetList().
+                    Join(_userService.GetList(), pr => pr.User, u => u, (pr, u) => new PromoteRequest
+                    {
+                        Id = pr.Id,
+                        RequestContent = pr.RequestContent,
+                        IdentityCard = pr.IdentityCard,
+                        DateIssuance = pr.DateIssuance,
+                        PhoneBusiness = pr.PhoneBusiness,
+                        NameBusiness = pr.NameBusiness,
+                        Tinbusiness = pr.Tinbusiness,
+                        Status = pr.Status,
+                        Reason = pr.Reason,
+                        DateCreate = pr.DateCreate,
+                        UserId = pr.UserId,
+                        User = u
+                    });
                 if (!String.IsNullOrEmpty(content))
                 {
                     promoteRequestList = promoteRequestList.Where(s => s.RequestContent!.ToUpper().Contains(content.Trim().ToUpper()));
@@ -166,6 +181,8 @@ namespace AmateurFootballLeague.Controllers
                 PromoteRequest currentPR = await _promoteRequestService.GetByIdAsync(id);
                 if (currentPR != null)
                 {
+                    User user = await _userService.GetByIdAsync(currentPR.UserId!.Value);
+                    currentPR.User = user;
                     return Ok(_mapper.Map<PromoteRequestVM>(currentPR));
                 }
                 return NotFound("Không thể tìm thấy yêu cầu nâng cấp với id là " + id);
@@ -237,6 +254,8 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _promoteRequestService.UpdateAsync(currentPromoteRequest);
                 if (isUpdated)
                 {
+                    User user = await _userService.GetByIdAsync(currentPromoteRequest.UserId!.Value);
+                    currentPromoteRequest.User = user;
                     return Ok(_mapper.Map<PromoteRequestVM>(currentPromoteRequest));
                 }
                 return BadRequest("Cập nhật vai trò thất bại");

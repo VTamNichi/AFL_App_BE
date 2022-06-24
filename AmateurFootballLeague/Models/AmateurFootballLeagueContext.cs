@@ -331,9 +331,9 @@ namespace AmateurFootballLeague.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.CommentId).HasColumnName("CommentID");
-
                 entity.Property(e => e.DateReport).HasColumnType("datetime");
+
+                entity.Property(e => e.FootballPlayerId).HasColumnName("FootballPlayerID");
 
                 entity.Property(e => e.Reason).HasMaxLength(256);
 
@@ -343,10 +343,10 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
-                entity.HasOne(d => d.Comment)
+                entity.HasOne(d => d.FootballPlayer)
                     .WithMany(p => p.Reports)
-                    .HasForeignKey(d => d.CommentId)
-                    .HasConstraintName("FK__Reports__Comment__7B5B524B");
+                    .HasForeignKey(d => d.FootballPlayerId)
+                    .HasConstraintName("FK_Reports_FootballPlayer");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.Reports)

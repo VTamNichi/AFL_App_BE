@@ -2,6 +2,12 @@
 
 namespace AmateurFootballLeague.ViewModels.Requests
 {
+    public enum DeleteType
+    {
+        score,
+        yellow,
+        red
+    }
     public class MatchDetailCM
     {
         public int MatchScore { get; set; }
