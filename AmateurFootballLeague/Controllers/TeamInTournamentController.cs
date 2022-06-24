@@ -169,6 +169,24 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Đội bóng không tồn tại");
                 }
+                DateTime date = DateTime.Now.AddHours(7);
+                IQueryable<TeamInTournament> checkTeam = _teamInTournamentService.GetList().Join(_tournamentService.GetList(), tit => tit.Tournament, t => t, (tit, t) => new { tit, t })
+                    .Where(t => t.t.TournamentEndDate > date)
+                    .Join(_teamService.GetList(), titt => titt.tit.Team, team => team, (titt, team) => new { titt, team })
+                    .Where(t => t.team.Id == model.TeamId).Select(t => new TeamInTournament
+                    {
+                        Id = t.titt.tit.Id,
+                        Status = t.titt.tit.Status,
+                        StatusInTournament = t.titt.tit.StatusInTournament
+                    })
+                    .Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
+                if (checkTeam.Count() > 0)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Đội của bạn đang tham gia một giải đấu khác"
+                    });
+                }
                 teamInTournament.TournamentId = model.TournamentId;
                 teamInTournament.TeamId = model.TeamId;
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
