@@ -180,13 +180,13 @@ namespace AmateurFootballLeague.Controllers
                         StatusInTournament = t.titt.tit.StatusInTournament
                     })
                     .Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
-                if (checkTeam.Count() > 0)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Đội của bạn đang tham gia một giải đấu khác"
-                    });
-                }
+//                 if (checkTeam.Count() > 0)
+//                 {
+//                     return BadRequest(new
+//                     {
+//                         message = "Đội của bạn đang tham gia một giải đấu khác"
+//                     });
+//                 }
                 teamInTournament.TournamentId = model.TournamentId;
                 teamInTournament.TeamId = model.TeamId;
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) ? 0 : model.Point;
@@ -261,13 +261,13 @@ namespace AmateurFootballLeague.Controllers
                         StatusInTournament = t.titt.tit.StatusInTournament
                     })
                     .Where(tit => tit.StatusInTournament != "Bị loại" && tit.Status == "Tham gia");
-                if (checkTeam.Count() > 0)
-                {
-                    return BadRequest(new
-                    {
-                        message = "Đội của bạn đang tham gia một giải đấu khác"
-                    });
-                }
+//                 if (checkTeam.Count() > 0)
+//                 {
+//                     return BadRequest(new
+//                     {
+//                         message = "Đội của bạn đang tham gia một giải đấu khác"
+//                     });
+//                 }
 
                 teamInTournament.Point = String.IsNullOrEmpty(model.Point.ToString()) && model.Point != 0 ? teamInTournament.Point : model.Point;
                 teamInTournament.WinScoreNumber = String.IsNullOrEmpty(model.WinScoreNumber.ToString()) || model.WinScoreNumber == 0 ? teamInTournament.WinScoreNumber : model.WinScoreNumber;
