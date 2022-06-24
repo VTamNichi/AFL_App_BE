@@ -5,11 +5,6 @@ namespace AmateurFootballLeague.Models
 {
     public partial class Comment
     {
-        public Comment()
-        {
-            Reports = new HashSet<Report>();
-        }
-
         public int Id { get; set; }
         public string? Content { get; set; }
         public string? Status { get; set; }
@@ -25,6 +20,5 @@ namespace AmateurFootballLeague.Models
         public virtual Team? Team { get; set; }
         public virtual Tournament? Tournament { get; set; }
         public virtual User? User { get; set; }
-        public virtual ICollection<Report> Reports { get; set; }
     }
 }

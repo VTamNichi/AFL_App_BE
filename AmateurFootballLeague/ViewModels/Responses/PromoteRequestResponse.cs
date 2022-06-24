@@ -1,4 +1,6 @@
-﻿namespace AmateurFootballLeague.ViewModels.Responses
+﻿using AmateurFootballLeague.Models;
+
+namespace AmateurFootballLeague.ViewModels.Responses
 {
     public class PromoteRequestVM
     {
@@ -13,6 +15,7 @@
         public string? Reason { get; set; }
         public string? DateCreate { get; set; }
         public int UserId { get; set; }
+        public User? User { get; set; }
     }
     public class PromoteRequestListVM
     {

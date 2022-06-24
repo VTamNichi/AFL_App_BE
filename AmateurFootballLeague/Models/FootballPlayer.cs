@@ -8,6 +8,7 @@ namespace AmateurFootballLeague.Models
         public FootballPlayer()
         {
             PlayerInTeams = new HashSet<PlayerInTeam>();
+            Reports = new HashSet<Report>();
         }
 
         public int Id { get; set; }
@@ -22,5 +23,6 @@ namespace AmateurFootballLeague.Models
 
         public virtual User IdNavigation { get; set; } = null!;
         public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
+        public virtual ICollection<Report> Reports { get; set; }
     }
 }

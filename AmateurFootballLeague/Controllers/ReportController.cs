@@ -16,16 +16,16 @@ namespace AmateurFootballLeague.Controllers
         private readonly IUserService _userService;
         private readonly ITournamentService _tournamentService;
         private readonly ITeamService _teamService;
-        private readonly ICommentService _commentService;
+        private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMapper _mapper;
 
-        public ReportController(IReportService reportService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, ICommentService commentService, IMapper mapper)
+        public ReportController(IReportService reportService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, IFootballPlayerService footballPlayerService, IMapper mapper)
         {
             _reportService = reportService;
             _userService = userService;
             _tournamentService = tournamentService;
             _teamService = teamService;
-            _commentService = commentService;
+            _footballPlayerService = footballPlayerService;
             _mapper = mapper;
         }
 
@@ -38,7 +38,7 @@ namespace AmateurFootballLeague.Controllers
         public ActionResult<ReportListVM> GetListReport(
             [FromQuery(Name = "reason")] string? reason,
             [FromQuery(Name = "user-id")] int? userId,
-            [FromQuery(Name = "comment-id")] int? commentId,
+            [FromQuery(Name = "football-player-id")] int? footballPlayerId,
             [FromQuery(Name = "team-id")] int? teamId,
             [FromQuery(Name = "tournament-id")] int? tourId,
             [FromQuery(Name = "order-by")] ReportFieldEnum orderBy,
@@ -49,7 +49,18 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                IQueryable<Report> reportList = _reportService.GetList();
+                IQueryable<Report> reportList = _reportService.GetList().
+                    Join(_userService.GetList(), rp => rp.User, u => u, (rp, u) => new Report
+                    {
+                        Id = rp.Id,
+                        Reason = rp.Reason,
+                        DateReport = rp.DateReport,
+                        UserId = rp.UserId,
+                        FootballPlayerId = rp.FootballPlayerId,
+                        TeamId = rp.TeamId,
+                        TournamentId = rp.TournamentId,
+                        User = u
+                    });
                 if (!String.IsNullOrEmpty(reason))
                 {
                     reportList = reportList.Where(s => s.Reason!.ToUpper().Contains(reason.Trim().ToUpper()));
@@ -58,9 +69,9 @@ namespace AmateurFootballLeague.Controllers
                 {
                     reportList = reportList.Where(s => s.UserId == userId);
                 }
-                if (!String.IsNullOrEmpty(commentId.ToString()))
+                if (!String.IsNullOrEmpty(footballPlayerId.ToString()))
                 {
-                    reportList = reportList.Where(s => s.CommentId == commentId);
+                    reportList = reportList.Where(s => s.FootballPlayerId == footballPlayerId);
                 }
                 if (!String.IsNullOrEmpty(teamId.ToString()))
                 {
@@ -95,12 +106,12 @@ namespace AmateurFootballLeague.Controllers
                         reportList = reportList.OrderByDescending(rp => rp.UserId);
                     }
                 }
-                else if (orderBy == ReportFieldEnum.CommentId)
+                else if (orderBy == ReportFieldEnum.FootballPlayerId)
                 {
-                    reportList = reportList.OrderBy(rp => rp.CommentId);
+                    reportList = reportList.OrderBy(rp => rp.FootballPlayerId);
                     if (orderType == SortTypeEnum.DESC)
                     {
-                        reportList = reportList.OrderByDescending(rp => rp.CommentId);
+                        reportList = reportList.OrderByDescending(rp => rp.FootballPlayerId);
                     }
                 }
                 else if (orderBy == ReportFieldEnum.TeamId)
@@ -163,6 +174,8 @@ namespace AmateurFootballLeague.Controllers
                 Report currentReport = await _reportService.GetByIdAsync(id);
                 if (currentReport != null)
                 {
+                    User user = await _userService.GetByIdAsync(currentReport.UserId!.Value);
+                    currentReport.User = user;
                     return Ok(_mapper.Map<ReportVM>(currentReport));
                 }
                 return NotFound("Không thể tìm thấy báo cáo với id là " + id);
@@ -191,16 +204,16 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Không tìm thấy người dùng");
                 }
 
-                if (!String.IsNullOrEmpty(model.CommentId.ToString()) && model.CommentId != 0)
+                if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
-                    Comment comment = await _commentService.GetByIdAsync(model.CommentId!.Value);
-                    if(comment == null)
+                    FootballPlayer footballPlayer = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);
+                    if(footballPlayer == null)
                     {
-                        return NotFound("Không tìm thấy bình luận");
+                        return NotFound("Không tìm thấy cầu thủ");
                     }
                     else
                     {
-                        report.CommentId = comment.Id;
+                        report.FootballPlayerId = footballPlayer.Id;
                     }
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
@@ -268,12 +281,12 @@ namespace AmateurFootballLeague.Controllers
                         report.UserId = user.Id;
                     }
                 }
-                if (!String.IsNullOrEmpty(model.CommentId.ToString()) && model.CommentId != 0)
+                if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
-                    Comment comment = await _commentService.GetByIdAsync(model.CommentId!.Value);
-                    if (comment != null)
+                    FootballPlayer footballPlayer = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);
+                    if (footballPlayer != null)
                     {
-                        report.CommentId = comment.Id;
+                        report.FootballPlayerId = footballPlayer.Id;
                     }
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
@@ -296,6 +309,8 @@ namespace AmateurFootballLeague.Controllers
                 bool isUpdated = await _reportService.UpdateAsync(report);
                 if (isUpdated)
                 {
+                    User user = await _userService.GetByIdAsync(report.UserId!.Value);
+                    report.User = user;
                     return Ok(_mapper.Map<ReportVM>(report));
                 }
                 return BadRequest("Cập nhật báo cáo thất bại");

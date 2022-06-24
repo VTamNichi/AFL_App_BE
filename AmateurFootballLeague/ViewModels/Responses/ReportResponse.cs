@@ -1,4 +1,6 @@
-﻿namespace AmateurFootballLeague.ViewModels.Responses
+﻿using AmateurFootballLeague.Models;
+
+namespace AmateurFootballLeague.ViewModels.Responses
 {
     public class ReportVM
     {
@@ -6,9 +8,10 @@
         public string? Reason { get; set; }
         public string? DateReport { get; set; }
         public int UserId { get; set; }
-        public int CommentId { get; set; }
+        public int FootballPlayerId { get; set; }
         public int TeamId { get; set; }
         public int TournamentId { get; set; }
+        public User? User { get; set; }
     }
 
     public class ReportListVM
