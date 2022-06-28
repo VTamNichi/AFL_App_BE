@@ -17,23 +17,19 @@ namespace AmateurFootballLeague.Controllers
         private readonly IScorePredictionService _scorePrediction;
         private readonly IMapper _mapper;
         private readonly IMatchService _matchService;
-        private readonly ITeamInMatchService _teamService;
         private readonly ITournamentService _tournamentService;
-        private readonly IUserService _userService;
         private readonly ITeamService _teamService1;
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IPlayerInTournamentService _playerInTournamentService;
-        public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService, ITeamInMatchService teamService,
+        public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService,
             ITournamentService tournamentService, IUserService userService, ITeamService teamService1, ITeamInTournamentService teamInTournamentService,
             IPlayerInTournamentService playerInTournamentService, IPlayerInTeamService playerInTeamService)
         {
             _scorePrediction = scorePrediction; 
             _mapper = mapper;
             _matchService = matchService;
-            _teamService = teamService;
             _tournamentService = tournamentService;
-            _userService = userService;
             _teamService1 = teamService1;
             _teamInTournamentService= teamInTournamentService;
             _playerInTeamService = playerInTeamService;
@@ -111,7 +107,7 @@ namespace AmateurFootballLeague.Controllers
                         Status = t.t.Status,
                         UserId = t.t.UserId
 
-                    }).Where(t=> t.UserId == model.UserId).FirstOrDefault();
+                    }).Where(t=> t.UserId == model.UserId).FirstOrDefault()!;
                 Tournament findTour = _tournamentService.GetList().Join(_matchService.GetList(), t => t.Id, m => m.TournamentId, (t, m) => new { t, m }).
                     Where(t => t.m.Id == model.MatchId).Select(t => new Tournament
                     {
@@ -119,7 +115,7 @@ namespace AmateurFootballLeague.Controllers
                         Status = t.t.Status,
                         UserId = t.t.UserId
 
-                    }).FirstOrDefault();
+                    }).FirstOrDefault()!;
                 if(checkTour != null)
                 {
                     return BadRequest(new
@@ -133,7 +129,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         Id =t.t.Id,
                         TeamName = t.t.TeamName
-                    }).FirstOrDefault();
+                    }).FirstOrDefault()!;
 
                 if(chekcTeam != null)
                 {
@@ -151,7 +147,7 @@ namespace AmateurFootballLeague.Controllers
                         Id = t.pt.pit.Id,
                         TeamId = t.pt.pit.TeamId,
                         FootballPlayerId = t.pt.pit.FootballPlayerId
-                    }).FirstOrDefault();
+                    }).FirstOrDefault()!;
 
                 if(checkPlayer != null)
                 {
@@ -176,7 +172,7 @@ namespace AmateurFootballLeague.Controllers
                         messgae = "Trận đấu đã bắt đầu"
                     });
                 }
-                if(check == null  || check.Count() == 0)
+                if(!check.Any())
                 {
                     scorePrediction.TeamAscore = model.TeamAscore;
 

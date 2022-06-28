@@ -55,6 +55,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "tournament-type")] TournamentTypeEnum? type,
             [FromQuery(Name = "tournament-gender")] TournamentGenderEnum? gender,
             [FromQuery(Name = "tournament-football-type")] TournamentFootballFieldTypeEnum? footballType,
+            [FromQuery(Name = "tournament-statusTnm")] string? statusTnm,
             [FromQuery(Name = "order-by")] TournamentFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -91,6 +92,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(footballType.ToString()))
                 {
                     tournamentList = tournamentList.Where(s => s.FootballFieldType!.FootballFieldTypeName!.ToUpper().Contains(footballType.ToString()!.Trim().ToUpper()));
+                }
+                if (!String.IsNullOrEmpty(statusTnm))
+                {
+                    tournamentList = tournamentList.Where(s => s.StatusTnm == statusTnm);
                 }
                 tournamentList = tournamentList.Where(s => s.Status == true);
 
@@ -352,7 +357,7 @@ namespace AmateurFootballLeague.Controllers
                 tournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : 3;
                 tournament.DateCreate = DateTime.Now.AddHours(7);
                 tournament.Status = true;
-                tournament.StatusTnm = "";
+                tournament.StatusTnm = "Chuẩn bị";
 
 
                 Tournament tournamentCreated = await _tournamentService.AddAsync(tournament);
@@ -416,7 +421,7 @@ namespace AmateurFootballLeague.Controllers
                 //                 }
                 currentTournament.TournamentStartDate = String.IsNullOrEmpty(model.TournamentStartDate.ToString()) ? currentTournament.TournamentStartDate : model.TournamentStartDate;
                 currentTournament.TournamentEndDate = String.IsNullOrEmpty(model.TournamentEndDate.ToString()) ? currentTournament.TournamentEndDate : model.TournamentEndDate;
-                    
+
                 if (currentTournament.Mode == "PUBLIC")
                 {
                     currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
@@ -462,7 +467,7 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else if(countTeamInTournament > 0 && countTeamInTournament < currentTournament.FootballTeamNumber)
                 {
-                    if(currentTournament.TournamentTypeId == 2)
+                    if (currentTournament.TournamentTypeId == 2)
                     {
                         if (model.FootballTeamNumber > 8)
                         {

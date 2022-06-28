@@ -106,7 +106,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     
                    
-                    for (int i = 0; i < checkList.Count(); i++)
+                    for (int i = 0; i < checkList.Count; i++)
                     {
                         IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == checkList[i].FootballPlayerId).
                             Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
@@ -133,7 +133,7 @@ namespace AmateurFootballLeague.Controllers
                                 },
 
                             });
-                        if (busyList.Count() > 0)
+                        if (busyList.Any())
                         {
                             playerBusy.Add(checkList[i]);
                         }
@@ -218,7 +218,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<PlayerInTeamFVM>> GetPlayerInTeamById(int id)
+        public ActionResult<PlayerInTeamFVM> GetPlayerInTeamById(int id)
         {
             try
             {
@@ -230,7 +230,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamId = pit.pit.TeamId,
                         FootballPlayerId = pit.pit.FootballPlayerId,
                         FootballPlayer = pit.f
-                    }).FirstOrDefault();
+                    }).FirstOrDefault()!;
               if (player != null)
                 {
                     return Ok(_mapper.Map<PlayerInTeamFVM>(player));
@@ -248,7 +248,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault();
+                PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault()!;
                 if(player != null)
                 {
                     DateTime date = DateTime.Now.AddHours(7);
@@ -277,7 +277,7 @@ namespace AmateurFootballLeague.Controllers
                                 },
 
                             }).Where(p => p.TeamId == player.TeamId);
-                    if(busyList.Count() > 0)
+                    if(busyList.Any())
                     {
                         return BadRequest(new
                         {
