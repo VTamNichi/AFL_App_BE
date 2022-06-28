@@ -18,12 +18,11 @@ namespace AmateurFootballLeague.Controllers
         private readonly IAgoraProvider _agoraProvider;
         private readonly IMapper _mapper;
         private readonly ITeamService _teamService;
-        private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IPlayerInTournamentService _playerInTournament;
 
         public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
-            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService,IPlayerInTournamentService playerInTournament)
+            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService,IPlayerInTournamentService playerInTournament)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -31,7 +30,6 @@ namespace AmateurFootballLeague.Controllers
             _agoraProvider = agoraProvider;
             _mapper = mapper;
             _teamService = teamService;
-            _teamInTournamentService = teamInTournamentService;
             _playerInTeamService = playerInTeamService;
             _playerInTournament = playerInTournament;
         }
@@ -182,7 +180,7 @@ namespace AmateurFootballLeague.Controllers
                 if(fullInfo == true)
                 {
                     listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
-                       .Join(_teamService.GetList(), timt => timt.tim.TeamInTournament.Team, t => t, (timt, t) => new Match
+                       .Join(_teamService.GetList(), timt => timt.tim.TeamInTournament!.Team, t => t, (timt, t) => new Match
                        {
                            Id = timt.m.Id,
                            MatchDate = timt.m.MatchDate,

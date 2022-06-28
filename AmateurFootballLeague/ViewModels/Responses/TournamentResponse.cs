@@ -15,6 +15,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string? FootballFieldAddress { get; set; }
         public string? TournamentAvatar { get; set; }
         public string? Description { get; set; }
+        public string? StatusTnm { get; set; }
         public int MatchMinutes { get; set; }
         public int FootballTeamNumber { get; set; }
         public int FootballPlayerMaxNumber { get; set; }

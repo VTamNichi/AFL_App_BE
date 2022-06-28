@@ -14,20 +14,11 @@ namespace AmateurFootballLeague.Controllers
     public class PlayerInTournamentController : ControllerBase
     {
         private readonly IPlayerInTournamentService _playerInTournament;
-        private readonly ITournamentService _tournamentService;
-        private readonly ITeamInTournamentService _teamInTournamentService;
-        private readonly IPlayerInTeamService _playerInTeamService;
-        private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMapper _mapper;
-        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament, IMapper mapper, ITournamentService tournamentService,
-            ITeamInTournamentService teamInTournamentService, IFootballPlayerService footballPlayerService, IPlayerInTeamService playerInTeamService)
+        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament, IMapper mapper)
         {
             _playerInTournament = playerInTournament;
             _mapper = mapper;
-            _tournamentService = tournamentService;
-            _teamInTournamentService = teamInTournamentService;
-            _footballPlayerService = footballPlayerService;
-            _playerInTeamService = playerInTeamService;
         }
 
         [HttpGet]
@@ -99,7 +90,7 @@ namespace AmateurFootballLeague.Controllers
             {
 
                 DateTime date = DateTime.Now.AddHours(7);
-                PlayerInTournament checkPlayer = _playerInTournament.GetList().Where(p => (int)p.TeamInTournamentId == player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault();
+                PlayerInTournament checkPlayer = _playerInTournament.GetList().Where(p => p.TeamInTournamentId! == player.TeamInTournamentId && p.PlayerInTeamId == player.PlayerInTeamId).FirstOrDefault()!;
 
                 if(checkPlayer != null)
                 {
