@@ -28,7 +28,7 @@ namespace AmateurFootballLeague.ExternalService
                     foreach(Tournament tournament in listTournament)
                     {
                         tournament.StatusTnm = "Đang diễn ra";
-                        tournamentService.UpdateAsync(tournament);
+                        tournamentService.UpdateAsync(tournament).Wait();
                     }
                 }
             }
