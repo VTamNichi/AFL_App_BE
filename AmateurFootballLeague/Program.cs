@@ -22,18 +22,25 @@ using StackExchange.Redis.Extensions.Core.Configuration;
 using Quartz.Spi;
 using Quartz;
 using Quartz.Impl;
+using AmateurFootballLeague.ViewModels.Responses;
+using AmateurFootballLeague.Hubs;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            policy.AllowAnyHeader().AllowAnyMethod()
+            //.AllowAnyOrigin()
+            .SetIsOriginAllowed((host) => true)
+            .AllowCredentials();
+            
         });
 });
+builder.Services.AddSingleton<IDictionary<string, UserCommentVM>>(opts => new Dictionary<string, UserCommentVM>());
 // Add services to the container.
 
 builder.Services.AddDbContext<AmateurFootballLeagueContext>(options =>
@@ -194,6 +201,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
@@ -201,5 +210,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<CommentHub>("/chat");
+});
 
 app.Run();

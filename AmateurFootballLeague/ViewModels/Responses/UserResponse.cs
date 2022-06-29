@@ -29,6 +29,17 @@
         public int RoleId { get; set; }
     }
 
+    public class UserCommentVM
+    {
+        public string Id { get; set; }
+        public string? Username { get; set; }
+        public string? Avatar { get; set; }
+        public string Room { get; set; }
+        public string ConnectionId { get; set; }
+        public bool NewGuest { get; set; }
+    }
+
+
     public class UserListVM
     {
         public List<UserVM> Users { get; set; } = new List<UserVM>();
