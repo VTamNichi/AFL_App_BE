@@ -290,7 +290,7 @@ namespace AmateurFootballLeague.Controllers
                 DateTime currentDate = DateTime.Today;
                 List<Tournament> listTournamentEnd = _tournamentService.GetList().Where(t => t.StatusTnm == "Đang diễn ra" && t.TournamentEndDate!.Value.CompareTo(currentDate) < 0).ToList();
 
-                return Ok("Success " + listTournamentEnd.Count);
+                return Ok("Success: " + listTournamentEnd.Count + " date: " + currentDate);
             }
             catch (Exception)
             {
