@@ -209,13 +209,14 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 User user = _userService.GetUserByEmail(email);
-                if(toDo == 1)
+                if (toDo == 1)
                 {
                     if (user != null)
                     {
                         return BadRequest("Tài khoản đã tồn tại");
                     }
-                } else
+                }
+                else
                 {
                     if (user == null)
                     {
@@ -266,10 +267,11 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Xác nhận thất bại");
                 }
-                if (DateTime.Compare(checkVerifyCode.DateExpire ?? DateTime.Now.AddHours(7).AddMinutes(-1), DateTime.Now.AddHours(7)) < 0) {
+                if (DateTime.Compare(checkVerifyCode.DateExpire ?? DateTime.Now.AddHours(7).AddMinutes(-1), DateTime.Now.AddHours(7)) < 0)
+                {
                     return BadRequest("Mã xác nhận đã hết hạn");
                 }
-                
+
                 return Ok("Xác nhận thành công");
 
             }
@@ -288,9 +290,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 DateTime currentDate = DateTime.Today;
+                TimeSpan totalTime = DateTime.Now.TimeOfDay;
                 List<Tournament> listTournamentEnd = _tournamentService.GetList().Where(t => t.StatusTnm == "Đang diễn ra" && t.TournamentEndDate!.Value.CompareTo(currentDate) < 0).ToList();
 
-                return Ok("Success " + listTournamentEnd.Count);
+                return Ok("Success: " + totalTime + " date: " + totalTime.Days);
             }
             catch (Exception)
             {
