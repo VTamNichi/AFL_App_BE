@@ -16,6 +16,7 @@ namespace AmateurFootballLeague.Models
         {
         }
 
+        public virtual DbSet<ActionMatch> ActionMatchs { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<FootballFieldType> FootballFieldTypes { get; set; } = null!;
         public virtual DbSet<FootballPlayer> FootballPlayers { get; set; } = null!;
@@ -50,6 +51,13 @@ namespace AmateurFootballLeague.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ActionMatch>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ActionMatchName).HasMaxLength(16);
+            });
+
             modelBuilder.Entity<Comment>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
@@ -177,6 +185,8 @@ namespace AmateurFootballLeague.Models
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.ActionMatchId).HasColumnName("ActionMatchID");
+
                 entity.Property(e => e.ActionMinute)
                     .HasMaxLength(16)
                     .IsUnicode(false);
@@ -184,6 +194,11 @@ namespace AmateurFootballLeague.Models
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
 
                 entity.Property(e => e.PlayerInTournamentId).HasColumnName("PlayerInTournamentID");
+
+                entity.HasOne(d => d.ActionMatch)
+                    .WithMany(p => p.MatchDetails)
+                    .HasForeignKey(d => d.ActionMatchId)
+                    .HasConstraintName("FK_MatchDetail_ActionMatch");
 
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.MatchDetails)

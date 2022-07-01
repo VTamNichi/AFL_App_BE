@@ -19,13 +19,16 @@ namespace AmateurFootballLeague.Controllers
         private readonly ISendEmailService _sendEmailService;
         private readonly IMapper _mapper;
 
-        public AuthController(IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
+        private readonly ITournamentService _tournamentService;
+        public AuthController(ITournamentService tournamentService, IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
         {
             _userService = userService;
             _verifyCodeService = verifyCodeService;
             _jwtProvider = jwtProvider;
             _sendEmailService = sendEmailService;
             _mapper = mapper;
+
+            _tournamentService = tournamentService;
         }
 
         /// <summary>Login with email and password</summary>
@@ -285,9 +288,9 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 DateTime currentDate = DateTime.Today;
+                List<Tournament> listTournamentEnd = _tournamentService.GetList().Where(t => t.StatusTnm == "Đang diễn ra" && t.TournamentEndDate!.Value.CompareTo(currentDate) < 0).ToList();
 
-
-                return Ok("Success " + currentDate);
+                return Ok("Success " + listTournamentEnd.Count);
             }
             catch (Exception)
             {

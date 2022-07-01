@@ -292,9 +292,13 @@ namespace AmateurFootballLeague.Controllers
                 }
                 Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId!.Value);
                 int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId!.Value);
-
+                
                 if (model.TypeUpdate)
                 {
+                    if (!String.IsNullOrEmpty(model.TeamIndex.ToString()) && model.TeamIndex > 0)
+                    {
+                        numberTeamInTournament = model.TeamIndex!.Value;
+                    }
                     IQueryable<Match> listMatchInTournament = _matchService.GetList().Where(m => m.TournamentId == currentTeamInTournament.TournamentId)
                     .Join(_teamInMatch.GetList().Where(tim => tim.TeamName == "Đội " + numberTeamInTournament), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
                     {

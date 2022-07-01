@@ -72,7 +72,7 @@ builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
 builder.Services.AddSingleton<ChangeStatusTournamentService>();
 builder.Services.AddSingleton(new JobSchedule(
     jobType: typeof(ChangeStatusTournamentService),
-    cronExpression: "0 0/5 0 * * ?"));
+    cronExpression: "0 * * * * ?"));
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
