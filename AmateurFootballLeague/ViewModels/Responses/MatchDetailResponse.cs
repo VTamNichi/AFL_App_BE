@@ -17,9 +17,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     public class MatchDetailFVM
     {
         public int Id { get; set; }
-        public int MatchScore { get; set; }
-        public int YellowCardNumber { get; set; }
-        public int RedCardNumber { get; set; }
+        public int ActionMatchId { get; set; }
         public string? ActionMinute { get; set; }
         public int MatchId { get; set; }
         public int PlayerInTournamentId { get; set; }

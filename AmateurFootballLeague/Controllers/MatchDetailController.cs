@@ -18,9 +18,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMatchService _matchService;
+        private readonly IActionMatchService _actionMatchService;
 
         public MatchDetailController(IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament,
-            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService)
+            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService, IActionMatchService actionMatchService)
         {
             _matchDetail = matchDetail;
             _mapper = mapper;
@@ -29,6 +30,7 @@ namespace AmateurFootballLeague.Controllers
             _playerInTeamService = playerInTeamService;
             _footballPlayerService = footballPlayerService;
             _matchService = matchService;
+            _actionMatchService = actionMatchService;
         }
 
         [HttpGet]
@@ -48,9 +50,7 @@ namespace AmateurFootballLeague.Controllers
                     .Join(_footballPlayerService.GetList(), pitf => pitf.piteam.FootballPlayer, f => f, (pitf, f) => new MatchDetail
                     {
                         Id = pitf.pitp.pitt.md.Id,
-                        MatchScore = pitf.pitp.pitt.md.MatchScore,
-                        YellowCardNumber = pitf.pitp.pitt.md.YellowCardNumber,
-                        RedCardNumber = pitf.pitp.pitt.md.RedCardNumber,
+                        ActionMatchId = pitf.pitp.pitt.md.ActionMatchId,
                         MatchId = pitf.pitp.pitt.md.MatchId,
                         PlayerInTournament = new PlayerInTournament
                         {
@@ -134,9 +134,12 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy cầu thủ trong giải đấu");
                 }
-                matchDetail.MatchScore = match.MatchScore;
-                matchDetail.YellowCardNumber = match.YellowCardNumber;
-                matchDetail.RedCardNumber = match.RedCardNumber;
+                ActionMatch actionM = await _actionMatchService.GetByIdAsync(match.ActionMatchId);
+                if (actionM == null)
+                {
+                    return NotFound("Không tìm thấy loại hành động");
+                }
+                matchDetail.ActionMatchId = match.ActionMatchId;
                 matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                 matchDetail.MatchId = match.MatchId;
                 matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
@@ -162,9 +165,12 @@ namespace AmateurFootballLeague.Controllers
                 MatchDetail matchDetail = await _matchDetail.GetByIdAsync(match.Id);
                 if (matchDetail != null)
                 {
-                    matchDetail.MatchScore = match.MatchScore;
-                    matchDetail.YellowCardNumber = match.YellowCardNumber;
-                    matchDetail.RedCardNumber = match.RedCardNumber;
+                    ActionMatch actionM = await _actionMatchService.GetByIdAsync(match.ActionMatchId);
+                    if (actionM == null)
+                    {
+                        return NotFound("Không tìm thấy loại hành động");
+                    }
+                    matchDetail.ActionMatchId = match.ActionMatchId;
                     matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                     bool isUpdated = await _matchDetail.UpdateAsync(matchDetail);
                     if (isUpdated)
@@ -218,15 +224,15 @@ namespace AmateurFootballLeague.Controllers
 
                 if (type == DeleteType.score)
                 {
-                    listMatchDetail = listMatchDetail.Where(md => md.MatchScore == 1);
+                    listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 1);
                 }
                 else if (type == DeleteType.yellow)
                 {
-                    listMatchDetail = listMatchDetail.Where(md => md.YellowCardNumber == 1);
+                    listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 2);
                 }
                 else
                 {
-                    listMatchDetail = listMatchDetail.Where(md => md.RedCardNumber == 1);
+                    listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 3);
                 }
                 if (listMatchDetail.Any())
                 {
