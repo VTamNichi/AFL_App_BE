@@ -19,6 +19,11 @@ namespace AmateurFootballLeague.ExternalService
             using (var scope = _serviceProvider.CreateScope())
             {
                 DateTime currentDate = DateTime.Today;
+                TimeSpan totalTime = DateTime.Now.TimeOfDay;
+                if(totalTime.Hours >= 17)
+                {
+                    currentDate = currentDate.AddDays(1);
+                }
                 
                 ITournamentService tournamentService = scope.ServiceProvider.GetService<ITournamentService>()!;
                 List<Tournament> listTournamentStart = tournamentService.GetList().Where(t => t.StatusTnm == "Chuẩn bị" && t.TournamentStartDate!.Value.CompareTo(currentDate) >= 0).ToList();
