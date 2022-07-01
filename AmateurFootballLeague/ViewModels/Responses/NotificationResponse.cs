@@ -16,6 +16,7 @@
     {
         public List<NotificationVM> Notifications { get; set; } = new List<NotificationVM>();
         public int CountList { get; set; }
+        public int CountUnRead { get; set; }
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
