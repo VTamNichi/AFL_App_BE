@@ -54,6 +54,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                int countUnRead = 0;
                 IQueryable<Notification> notificationList = _notificationService.GetList();
                 if (!String.IsNullOrEmpty(content))
                 {
@@ -70,6 +71,7 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(userId.ToString()))
                 {
                     notificationList = notificationList.Where(s => s.UserId == userId);
+                    countUnRead = notificationList.Where(s => s.IsSeen == false).Count();
                 }
                 if (!String.IsNullOrEmpty(teamId.ToString()))
                 {
@@ -137,6 +139,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     Notifications = _mapper.Map<List<NotificationVM>>(notificationListPaging),
                     CountList = countList,
+                    CountUnRead = countUnRead,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
