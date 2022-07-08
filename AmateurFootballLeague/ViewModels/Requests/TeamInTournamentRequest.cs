@@ -30,4 +30,10 @@
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
     }
+    public class TeamInTournamentUMR
+    {
+        public int Id { get; set; }
+        public int? TotalYellowCard { get; set; }
+        public int? TotalRedCard { get; set; }
+    }
 }

@@ -217,6 +217,33 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="400">Field is not team in tournament</response>
         /// <response code="500">Failed to save request</response>
+        /// 
+
+        [HttpPut("card")]
+        public async Task<ActionResult> UpdateTotalCard(TeamInTournamentUMR model)
+        {
+            try
+            {
+                TeamInTournament teamInTournament = await _teamInTournamentService.GetByIdAsync(model.Id);
+                if (teamInTournament == null)
+                {
+                    return NotFound("Không tìm thấy đội bóng trong giải đấu với id là " + model.Id);
+                }
+                teamInTournament.TotalRedCard = model.TotalRedCard;
+                teamInTournament.TotalYellowCard = model.TotalYellowCard;
+                bool isUpdate = await _teamInTournamentService.UpdateAsync(teamInTournament);
+                if (isUpdate)
+                {
+                    return Ok("Cập nhật thẻ thành công");
+                }
+                return BadRequest("Cập nhật thẻ thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpPut]
         [Produces("application/json")]
         public async Task<ActionResult<TeamInTournamentVM>> UpdateTeamInTournament([FromBody] TeamInTournamentUM model)

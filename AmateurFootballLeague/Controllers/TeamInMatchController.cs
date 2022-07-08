@@ -1,10 +1,12 @@
-﻿using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.Hubs;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AmateurFootballLeague.Controllers
 {
@@ -18,8 +20,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamService _teamService;
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly ITournamentService _tournamentService;
+        private readonly IHubContext<CommentHub> _hubContext;
 
-        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService, ITeamService teamService, ITeamInTournamentService teamInTournamentService)
+        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService,
+            ITeamService teamService, ITeamInTournamentService teamInTournamentService, IHubContext<CommentHub> hubContext)
         {
             _teamInMatch = teamInMatch;
             _mapper = mapper;
@@ -27,6 +31,7 @@ namespace AmateurFootballLeague.Controllers
             _teamService = teamService;
             _tournamentService= tournamentService;
             _teamInTournamentService = teamInTournamentService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -138,9 +143,15 @@ namespace AmateurFootballLeague.Controllers
                         {
                             Id = timm.tit.Id,
                             Point = timm.tit.Point,
+                            WinScoreNumber = timm.tit.WinScoreNumber,
+                            LoseScoreNumber = timm.tit.LoseScoreNumber,
                             DifferentPoint = timm.tit.DifferentPoint,
+                            TotalYellowCard = timm.tit.TotalYellowCard,
+                            TotalRedCard = timm.tit.TotalRedCard,
                             Status = timm.tit.Status,
+                            StatusInTournament = timm.tit.StatusInTournament,
                             TournamentId = timm.tit.TournamentId,
+                            TeamId = timm.tit.TeamId,
                             Team = team
                         },
                         MatchId = timm.titm.tim.MatchId,
@@ -241,7 +252,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(TeamInMatchUM teamInMatch)
+        public async Task<ActionResult> Update(TeamInMatchUM teamInMatch, string? room)
         {
             try
             {
@@ -259,6 +270,34 @@ namespace AmateurFootballLeague.Controllers
                     bool isUpdated =await _teamInMatch.UpdateAsync(team);
                     if (isUpdated)
                     {
+                        if (!String.IsNullOrEmpty(room))
+                        {
+                            TeamInMatch listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m }).
+                   Join(_teamInTournamentService.GetList(), titm => titm.tim.TeamInTournament, tit => tit, (titm, tit) => new { titm, tit }).
+                   Join(_teamService.GetList(), timm => timm.tit.Team, team => team, (timm, team) => new TeamInMatch
+                   {
+                       Id = timm.titm.tim.Id,
+                       TeamScore = timm.titm.tim.TeamScore,
+                       YellowCardNumber = timm.titm.tim.YellowCardNumber,
+                       RedCardNumber = timm.titm.tim.RedCardNumber,
+                       TeamInTournamentId = timm.titm.tim.TeamInTournamentId,
+                       TeamInTournament = new TeamInTournament
+                       {
+                           Id = timm.tit.Id,
+                           Point = timm.tit.Point,
+                           DifferentPoint = timm.tit.DifferentPoint,
+                           Status = timm.tit.Status,
+                           TournamentId = timm.tit.TournamentId,
+                           Team = team
+                       },
+                       MatchId = timm.titm.tim.MatchId,
+                       Result = timm.titm.tim.Result,
+                       NextTeam = timm.titm.tim.NextTeam,
+                       TeamName = timm.titm.tim.TeamName,
+                       Match = timm.titm.tim.Match,
+                   }).Where(m => m.Id == team.Id).FirstOrDefault();
+                            await _hubContext.Clients.Group(room).SendAsync("TeamInMatch", _mapper.Map<TeamInMatchMT>(listTeam));
+                        }
                         return Ok(new
                         {
                             message = "Cập nhật đội bóng trong trận đấu thành công"

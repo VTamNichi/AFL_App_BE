@@ -14,10 +14,14 @@ namespace AmateurFootballLeague.Controllers
     public class PlayerInTournamentController : ControllerBase
     {
         private readonly IPlayerInTournamentService _playerInTournament;
+        public readonly IPlayerInTeamService _playerInTeam;
+        public readonly IFootballPlayerService _footballPlayerService;
         private readonly IMapper _mapper;
-        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament, IMapper mapper)
+        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament,IPlayerInTeamService playerInTeam, IFootballPlayerService footballPlayerService, IMapper mapper)
         {
             _playerInTournament = playerInTournament;
+            _playerInTeam = playerInTeam;
+            _footballPlayerService = footballPlayerService;
             _mapper = mapper;
         }
 
@@ -38,7 +42,39 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<PlayerInTournament> playerList = _playerInTournament.GetList();
                 if (!String.IsNullOrEmpty(teamInTourId.ToString()))
                 {
-                    playerList = playerList.Where(s => s.TeamInTournamentId == teamInTourId);
+                    playerList = playerList.Join(_playerInTeam.GetList(), pit => pit.PlayerInTeam, t => t, (pit, t) => new { pit, t }).
+                        Join(_footballPlayerService.GetList(), tf => tf.t.FootballPlayer, f => f, (tf, f) => new { tf, f }).
+                        Select(p => new PlayerInTournament
+                        {
+                            Id = p.tf.pit.Id,
+                            Status = p.tf.pit.Status,
+                            ClothesNumber = p.tf.pit.ClothesNumber,
+                            TeamInTournamentId = p.tf.pit.TeamInTournamentId,
+                            PlayerInTeamId = p.tf.pit.PlayerInTeamId,
+                            PlayerInTeam = new PlayerInTeam
+                            {
+                                Id = p.tf.t.Id,
+                                Status = p.tf.t.Status,
+                                TeamId = p.tf.t.TeamId,
+                                FootballPlayerId = p.tf.t.FootballPlayerId,
+                                FootballPlayer = new FootballPlayer
+                                {
+                                    Id = p.f.Id,
+                                    PlayerName= p.f.PlayerName, 
+                                    PlayerAvatar = p.f.PlayerAvatar,
+                                    Position = p.f.Position
+                                }
+                            }
+                        }).
+                        Where(s => s.TeamInTournamentId == teamInTourId);
+                    int count = playerList.Count();
+                    var listFullPlayer = playerList.ToList();
+                    var playerListFullResponse = new PlayerInTournamentLFV
+                    {
+                        PlayerInTournaments = _mapper.Map<List<PlayerInTournament>, List<PlayerInTournamentFVM>>(listFullPlayer),
+                        CountList = count
+                    };
+                    return Ok(playerListFullResponse);
                 }
                 if (!String.IsNullOrEmpty(playerInTeamId.ToString()))
                 {

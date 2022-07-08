@@ -1,9 +1,11 @@
-﻿using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.Hubs;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AmateurFootballLeague.Controllers
 {
@@ -19,9 +21,11 @@ namespace AmateurFootballLeague.Controllers
         private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMatchService _matchService;
         private readonly IActionMatchService _actionMatchService;
+        private readonly IHubContext<CommentHub> _hubContext;
 
         public MatchDetailController(IMatchDetailService matchDetail, IMapper mapper, IPlayerInTournamentService playerInTournament,
-            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService, IActionMatchService actionMatchService)
+            ITeamInTournamentService teamInTournamentService, IPlayerInTeamService playerInTeamService, IFootballPlayerService footballPlayerService, IMatchService matchService, IActionMatchService actionMatchService,
+            IHubContext<CommentHub> hubContext)
         {
             _matchDetail = matchDetail;
             _mapper = mapper;
@@ -31,6 +35,7 @@ namespace AmateurFootballLeague.Controllers
             _footballPlayerService = footballPlayerService;
             _matchService = matchService;
             _actionMatchService = actionMatchService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -51,6 +56,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         Id = pitf.pitp.pitt.md.Id,
                         ActionMatchId = pitf.pitp.pitt.md.ActionMatchId,
+                        ActionMinute = pitf.pitp.pitt.md.ActionMinute,
                         MatchId = pitf.pitp.pitt.md.MatchId,
                         PlayerInTournament = new PlayerInTournament
                         {
@@ -119,7 +125,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match)
+        public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match , string? room)
         {
             MatchDetail matchDetail = new();
             try
@@ -146,6 +152,42 @@ namespace AmateurFootballLeague.Controllers
                 MatchDetail created = await _matchDetail.AddAsync(matchDetail);
                 if (created != null)
                 {
+                    if (!String.IsNullOrEmpty(room))
+                    {
+                        MatchDetail dtMatch = _matchDetail.GetList().Join(_playerInTournament.GetList(), md => md.PlayerInTournament, pit => pit, (md, pit) => new { md, pit })
+                    .Join(_teamInTournamentService.GetList(), pitt => pitt.pit.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                    Join(_playerInTeamService.GetList(), pitp => pitp.pitt.pit.PlayerInTeam, piteam => piteam, (pitp, piteam) => new { pitp, piteam })
+                    .Join(_footballPlayerService.GetList(), pitf => pitf.piteam.FootballPlayer, f => f, (pitf, f) => new MatchDetail
+                    {
+                        Id = pitf.pitp.pitt.md.Id,
+                        ActionMatchId = pitf.pitp.pitt.md.ActionMatchId,
+                        ActionMinute = pitf.pitp.pitt.md.ActionMinute,
+                        MatchId = pitf.pitp.pitt.md.MatchId,
+                        PlayerInTournament = new PlayerInTournament
+                        {
+                            Id = pitf.pitp.pitt.pit.Id,
+                            Status = pitf.pitp.pitt.pit.Status,
+                            ClothesNumber = pitf.pitp.pitt.pit.ClothesNumber,
+                            PlayerInTeam = new PlayerInTeam
+                            {
+                                Id = pitf.piteam.Id,
+                                Status = pitf.piteam.Status,
+                                TeamId = pitf.pitp.tit.TeamId,
+                                FootballPlayer = new FootballPlayer
+                                {
+                                    Id = f.Id,
+                                    PlayerName = f.PlayerName,
+                                    PlayerAvatar = f.PlayerAvatar,
+                                    Position = f.Position
+                                }
+                            },
+
+
+                        }
+                    }).Where(m => m.Id == created.Id).FirstOrDefault();
+
+                        await _hubContext.Clients.Group(room).SendAsync("MatchDetail", _mapper.Map<MatchDetailFVM>(dtMatch));
+                    }
                     return CreatedAtAction("FindById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
                 }
 
