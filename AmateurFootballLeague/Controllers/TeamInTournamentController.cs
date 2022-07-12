@@ -15,13 +15,15 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly ITournamentService _tournamentService;
         private readonly ITeamService _teamService;
+        private readonly ITeamInMatchService _teamInMatchService;
         private readonly IMapper _mapper;
 
-        public TeamInTournamentController(ITeamInTournamentService teamInTournamentService, ITournamentService tournamentService, ITeamService teamService, IMapper mapper)
+        public TeamInTournamentController(ITeamInTournamentService teamInTournamentService, ITournamentService tournamentService, ITeamService teamService, ITeamInMatchService teamInMatchService, IMapper mapper)
         {
             _teamInTournamentService = teamInTournamentService;
             _tournamentService = tournamentService;
             _teamService = teamService;
+            _teamInMatchService = teamInMatchService;
             _mapper = mapper;
         }
 
@@ -346,6 +348,35 @@ namespace AmateurFootballLeague.Controllers
                     await _teamInTournamentService.DeleteAsync(teamInTournament);
                 }
                 return Ok("Xóa đội bóng trong giải đấu thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Update score a team in tournament by tournament id</summary>
+        /// <response code="201">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Field is not team in tournament</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPut("update-score")]
+        [Produces("application/json")]
+        public async Task<ActionResult<TeamInTournamentVM>> UpdateTeamInTournamentByTournamentId(int tournamentId)
+        {
+            try
+            {
+                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber) });
+                foreach(var tim in teamInMatchList.ToList())
+                {
+                    TeamInTournament tit = await _teamInTournamentService.GetByIdAsync(tim.titID!.Value);
+                    tit.WinScoreNumber = tim.sumScore;
+                    tit.TotalYellowCard = tim.sumYellow;
+                    tit.TotalRedCard = tim.sumRed;
+                    await _teamInTournamentService.UpdateAsync(tit);
+                }
+
+                return BadRequest("Cập nhật đội bóng trong giải đấu thất bại: " + teamInMatchList.ToList().Count);
             }
             catch (Exception)
             {

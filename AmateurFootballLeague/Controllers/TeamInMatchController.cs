@@ -59,6 +59,7 @@ namespace AmateurFootballLeague.Controllers
     {
         Id = t.timm.tim.Id,
         TeamScore = t.timm.tim.TeamScore,
+        TeamScoreLose = t.timm.tim.TeamScoreLose,
         YellowCardNumber = t.timm.tim.YellowCardNumber,
         RedCardNumber = t.timm.tim.RedCardNumber,
         TeamInTournamentId = t.timm.tim.TeamInTournamentId,
@@ -81,6 +82,7 @@ namespace AmateurFootballLeague.Controllers
                    {
                        Id = timt.ttim.tim.Id,
                        TeamScore = timt.ttim.tim.TeamScore,
+                       TeamScoreLose = timt.ttim.tim.TeamScoreLose,
                        YellowCardNumber = timt.ttim.tim.YellowCardNumber,
                        RedCardNumber = timt.ttim.tim.RedCardNumber,
                        TeamInTournamentId = timt.ttim.tim.TeamInTournamentId,
@@ -131,6 +133,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         Id = timm.titm.tim.Id,
                         TeamScore = timm.titm.tim.TeamScore,
+                        TeamScoreLose = timm.titm.tim.TeamScoreLose,
                         YellowCardNumber = timm.titm.tim.YellowCardNumber,
                         RedCardNumber = timm.titm.tim.RedCardNumber,
                         TeamInTournamentId = timm.titm.tim.TeamInTournamentId,
@@ -220,6 +223,7 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
                 team.TeamScore = teamInMatch.TeamScore;
+                team.TeamScoreLose = teamInMatch.TeamScoreLose;
                 team.YellowCardNumber = teamInMatch.YellowCardNumber;
                 team.RedCardNumber = teamInMatch.RedCardNumber;
                 team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
@@ -248,7 +252,8 @@ namespace AmateurFootballLeague.Controllers
                 TeamInMatch team = await _teamInMatch.GetByIdAsync(teamInMatch.Id);
                 if(team != null)
                 {
-                    team.TeamScore = teamInMatch.TeamScore;    
+                    team.TeamScore = teamInMatch.TeamScore;
+                    team.TeamScoreLose = teamInMatch.TeamScoreLose;
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
                     team.RedCardNumber = teamInMatch.RedCardNumber;
                     team.TeamInTournamentId = teamInMatch.TeamInTournamentId;

@@ -12,6 +12,7 @@ namespace AmateurFootballLeague.Models
         public int? TeamId { get; set; }
         public int? TournamentId { get; set; }
         public int? FootballPlayerId { get; set; }
+        public string? Status { get; set; }
 
         public virtual FootballPlayer? FootballPlayer { get; set; }
         public virtual Team? Team { get; set; }
