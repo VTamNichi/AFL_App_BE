@@ -42,6 +42,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "team-id")] int? teamId,
             [FromQuery(Name = "tournament-id")] int? tourId,
             [FromQuery(Name = "status")] string? status,
+            [FromQuery(Name = "report-type")] ReportType? reportType,
             [FromQuery(Name = "order-by")] ReportFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -97,6 +98,22 @@ namespace AmateurFootballLeague.Controllers
                 {
                     reportList = reportList.Where(s => s.Status!.ToUpper().Contains(status.Trim().ToUpper()));
                 }
+                if (!String.IsNullOrEmpty(reportType.ToString()))
+                {
+                    if (reportType == ReportType.FootballPlayer)
+                    {
+                        reportList = reportList.Where(s => s.FootballPlayerId > 0);
+                    }
+                    else if (reportType == ReportType.Team)
+                    {
+                        reportList = reportList.Where(s => s.TeamId > 0);
+                    }
+                    else
+                    {
+                        reportList = reportList.Where(s => s.TournamentId > 0);
+                    }
+                }
+                
 
                 if (orderBy == ReportFieldEnum.Reason)
                 {
