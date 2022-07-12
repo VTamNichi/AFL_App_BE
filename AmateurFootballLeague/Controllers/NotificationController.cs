@@ -55,6 +55,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 int countUnRead = 0;
+                int countNew = 0;
                 IQueryable<Notification> notificationList = _notificationService.GetList();
                 if (!String.IsNullOrEmpty(content))
                 {
@@ -72,6 +73,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     notificationList = notificationList.Where(s => s.UserId == userId);
                     countUnRead = notificationList.Where(s => s.IsSeen == false).Count();
+                    countNew = notificationList.Where(s => s.IsOld == false).Count();
                 }
                 if (!String.IsNullOrEmpty(teamId.ToString()))
                 {
@@ -140,6 +142,7 @@ namespace AmateurFootballLeague.Controllers
                     Notifications = _mapper.Map<List<NotificationVM>>(notificationListPaging),
                     CountList = countList,
                     CountUnRead = countUnRead,
+                    CountNew = countNew,
                     CurrentPage = pageIndex,
                     Size = limit
                 };
@@ -223,6 +226,7 @@ namespace AmateurFootballLeague.Controllers
                 notification.Content = String.IsNullOrEmpty(model.Content) ? "" : model.Content;
                 notification.IsActive = true;
                 notification.IsSeen = false;
+                notification.IsOld = false;
                 notification.DateCreate = DateTime.Now.AddHours(7);
 
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
@@ -346,6 +350,26 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
                 return BadRequest("Xóa thông báo thất bại");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Update old notification</summary>
+        [HttpPost("update-old-notification")]
+        public async Task<ActionResult> UpdateOldNotification(int userId)
+        {
+            try
+            {
+                IQueryable<Notification> notificationList = _notificationService.GetList().Where(s => s.UserId == userId && s.IsOld == false);
+                foreach(Notification noti in notificationList.ToList())
+                {
+                    noti.IsOld = true;
+                    await _notificationService.UpdateAsync(noti);
+                }
+                return Ok("Cập nhật thông báo thành công");
             }
             catch (Exception)
             {
