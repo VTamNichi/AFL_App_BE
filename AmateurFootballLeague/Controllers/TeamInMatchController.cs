@@ -44,6 +44,7 @@ namespace AmateurFootballLeague.Controllers
                 //    {
                 //        Id = timm.tim.Id,
                 //        TeamScore = timm.tim.TeamScore,
+                //        TeamScoreLose = timm.tim.TeamScoreLose,
                 //        YellowCardNumber = timm.tim.YellowCardNumber,
                 //        RedCardNumber = timm.tim.RedCardNumber,
                 //        TeamInTournamentId = timm.tim.TeamInTournamentId,
@@ -283,6 +284,7 @@ namespace AmateurFootballLeague.Controllers
                    {
                        Id = timm.titm.tim.Id,
                        TeamScore = timm.titm.tim.TeamScore,
+                       TeamScoreLose = timm.titm.tim.TeamScoreLose,
                        YellowCardNumber = timm.titm.tim.YellowCardNumber,
                        RedCardNumber = timm.titm.tim.RedCardNumber,
                        TeamInTournamentId = timm.titm.tim.TeamInTournamentId,

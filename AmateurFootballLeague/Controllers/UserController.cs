@@ -272,7 +272,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
                 convertUser.Bio = String.IsNullOrEmpty(model.Bio) ? "" : model.Bio.Trim();
                 convertUser.StatusBan = "NO BANNED";
-                convertUser.FlagReportComment = 0;
+                convertUser.FlagReportFootballPlayer = 0;
                 convertUser.FlagReportTeam = 0;
                 convertUser.FlagReportTournament = 0;
                 convertUser.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? "" : model.IdentityCard.Trim();
@@ -345,7 +345,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.Gender = model.Gender == UserGenderEnum.Male ? "Male" : "Female";
                 convertUser.Phone = String.IsNullOrEmpty(model.Phone) ? "" : model.Phone.Trim();
                 convertUser.StatusBan = "NO BANNED";
-                convertUser.FlagReportComment = 0;
+                convertUser.FlagReportFootballPlayer = 0;
                 convertUser.FlagReportTeam = 0;
                 convertUser.FlagReportTournament = 0;
                 convertUser.Status = true;
@@ -485,6 +485,9 @@ namespace AmateurFootballLeague.Controllers
                 user.Address = String.IsNullOrEmpty(model.Address) ? user.Address : model.Address;
                 user.Phone = String.IsNullOrEmpty(model.Phone) ? user.Phone : model.Phone;
                 user.Bio = String.IsNullOrEmpty(model.Bio) ? user.Bio : model.Bio;
+                user.FlagReportFootballPlayer = String.IsNullOrEmpty(model.FlagReportFootballPlayer.ToString()) ? user.FlagReportFootballPlayer : model.FlagReportFootballPlayer;
+                user.FlagReportTeam = String.IsNullOrEmpty(model.FlagReportTeam.ToString()) ? user.FlagReportTeam : model.FlagReportTeam;
+                user.FlagReportTournament = String.IsNullOrEmpty(model.FlagReportTournament.ToString()) ? user.FlagReportTournament : model.FlagReportTournament;
                 user.IdentityCard = String.IsNullOrEmpty(model.IdentityCard) ? user.IdentityCard : model.IdentityCard;
                 user.DateIssuance = String.IsNullOrEmpty(model.DateIssuance.ToString()) ? user.DateIssuance : model.DateIssuance;
                 user.PhoneBusiness = String.IsNullOrEmpty(model.PhoneBusiness) ? user.PhoneBusiness : model.PhoneBusiness;

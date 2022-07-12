@@ -74,6 +74,9 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? Phone { get; set; }
         public IFormFile? Avatar { get; set; }
         public string? Bio { get; set; }
+        public int? FlagReportFootballPlayer { get; set; }
+        public int? FlagReportTeam { get; set; }
+        public int? FlagReportTournament { get; set; }
         public string? IdentityCard { get; set; }
         public DateTime? DateIssuance { get; set; }
         public string? PhoneBusiness { get; set; }

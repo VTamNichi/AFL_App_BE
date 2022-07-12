@@ -14,7 +14,7 @@
         public string? StatusBan { get; set; }
         public string? DateBan { get; set; }
         public string? DateUnban { get; set; }
-        public int FlagReportComment { get; set; }
+        public int FlagReportFootballPlayer { get; set; }
         public int FlagReportTeam { get; set; }
         public int FlagReportTournament { get; set; }
         public string? IdentityCard { get; set; }
