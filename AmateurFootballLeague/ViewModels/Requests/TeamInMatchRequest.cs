@@ -6,6 +6,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         [Required]
         public int TeamScore { get; set; }
+        public int? TeamScoreLose { get; set; }
         public int? YellowCardNumber { get; set; }
         public int? RedCardNumber { get; set; }
         [Required]
@@ -20,7 +21,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
     public class TeamInMatchUM
     {
         public int Id { get; set; }
-        public int TeamScore { get; set; }
+        public int? TeamScore { get; set; }
+        public int? TeamScoreLose { get; set; }
         public int? YellowCardNumber { get; set; }
         public int? RedCardNumber { get; set; }
         public int TeamInTournamentId { get; set; }

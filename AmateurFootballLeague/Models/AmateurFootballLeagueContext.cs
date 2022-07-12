@@ -352,6 +352,8 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.Reason).HasMaxLength(256);
 
+                entity.Property(e => e.Status).HasMaxLength(32);
+
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
                 entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
@@ -484,6 +486,8 @@ namespace AmateurFootballLeague.Models
             modelBuilder.Entity<TeamInTournament>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.GroupName).HasMaxLength(16);
 
                 entity.Property(e => e.Status).HasMaxLength(32);
 

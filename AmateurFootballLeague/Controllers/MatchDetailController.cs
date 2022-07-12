@@ -40,7 +40,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("MatchId")]
-        public ActionResult<MatchDetailFVM> GetMatchDetailByMatch(int matchId)
+        public async Task<ActionResult<MatchDetailFVM>> GetMatchDetailByMatch(int matchId)
         {
             try
             {
@@ -294,6 +294,5 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
     }
 }
