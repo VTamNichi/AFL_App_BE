@@ -13,7 +13,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int TeamInTournamentId { get; set; }
         [Required]
         public int MatchId { get; set; }
-        public string? Result { get; set; }
+        public int? Result { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
     }
@@ -27,7 +27,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int? RedCardNumber { get; set; }
         public int TeamInTournamentId { get; set; }
         public int MatchId { get; set; }
-        public string? Result { get; set; }
+        public int? Result { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
     }

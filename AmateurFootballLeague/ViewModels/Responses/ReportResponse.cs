@@ -11,7 +11,11 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int FootballPlayerId { get; set; }
         public int TeamId { get; set; }
         public int TournamentId { get; set; }
+        public string? Status { get; set; }
         public User? User { get; set; }
+        public FootballPlayer? FootballPlayer { get; set; }
+        public Team? Team { get; set; }
+        public Tournament? Tournament { get; set; }
     }
 
     public class ReportListVM

@@ -393,17 +393,20 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber) });
-                foreach(var tim in teamInMatchList.ToList())
+                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumScoreLose = g.Sum(s => s.TeamScoreLose), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber), sumPoint = g.Sum(s => s.Result) });
+                foreach (var tim in teamInMatchList.ToList())
                 {
                     TeamInTournament tit = await _teamInTournamentService.GetByIdAsync(tim.titID!.Value);
                     tit.WinScoreNumber = tim.sumScore;
+                    tit.LoseScoreNumber = tim.sumScoreLose;
+                    tit.DifferentPoint = tim.sumScore - tim.sumScoreLose;
                     tit.TotalYellowCard = tim.sumYellow;
                     tit.TotalRedCard = tim.sumRed;
+                    tit.Point = tim.sumPoint;
                     await _teamInTournamentService.UpdateAsync(tit);
                 }
 
-                return BadRequest("Cập nhật đội bóng trong giải đấu thất bại: " + teamInMatchList.ToList().Count);
+                return Ok("Cập nhật điểm số đội bóng trong giải đấu thành công");
             }
             catch (Exception)
             {

@@ -240,7 +240,7 @@ namespace AmateurFootballLeague.Controllers
                 team.RedCardNumber = teamInMatch.RedCardNumber;
                 team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
                 team.MatchId = teamInMatch.MatchId;
-                team.Result = "";
+                team.Result = 0;
                 team.NextTeam = "";
                 team.TeamName = teamInMatch.TeamName;
                 TeamInMatch created = await _teamInMatch.AddAsync(team);
