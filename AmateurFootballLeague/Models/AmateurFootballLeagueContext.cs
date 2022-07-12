@@ -466,8 +466,6 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.NextTeam).HasMaxLength(128);
 
-                entity.Property(e => e.Result).HasMaxLength(16);
-
                 entity.Property(e => e.TeamInTournamentId).HasColumnName("TeamInTournamentID");
 
                 entity.Property(e => e.TeamName).HasMaxLength(128);

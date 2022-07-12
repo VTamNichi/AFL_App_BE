@@ -18,6 +18,7 @@
         public int? FootballPlayerId { get; set; }
         public int? TeamId { get; set; }
         public int? TournamentId { get; set; }
+        public string? Status { get; set; }
     }
 
     public class ReportUM
@@ -28,5 +29,6 @@
         public int? FootballPlayerId { get; set; }
         public int? TeamId { get; set; }
         public int? TournamentId { get; set; }
+        public string? Status { get; set; }
     }
 }

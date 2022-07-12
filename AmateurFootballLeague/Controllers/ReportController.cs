@@ -41,6 +41,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "football-player-id")] int? footballPlayerId,
             [FromQuery(Name = "team-id")] int? teamId,
             [FromQuery(Name = "tournament-id")] int? tourId,
+            [FromQuery(Name = "status")] string? status,
             [FromQuery(Name = "order-by")] ReportFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
@@ -50,17 +51,28 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Report> reportList = _reportService.GetList().
-                    Join(_userService.GetList(), rp => rp.User, u => u, (rp, u) => new Report
+                    Join(_userService.GetList(), rp => rp.User, u => u, (rp, u) => new { rp, u }).
+                    GroupJoin(_footballPlayerService.GetList(), rpu => rpu.rp.FootballPlayer, fp => fp, (rpu, fp) => new { rpu, fp }).
+                    SelectMany(rpufp => rpufp.fp.DefaultIfEmpty(), (rpufp, fp) => new { rpufp, fp }).
+                    GroupJoin(_teamService.GetList(), rpufpteam => rpufpteam.rpufp.rpu.rp.Team, team => team, (rpufpteam, team) => new { rpufpteam, team }).
+                    SelectMany(rpufpteams => rpufpteams.team.DefaultIfEmpty(), (rpufpteams, team) => new { rpufpteams , team}).
+                    GroupJoin(_tournamentService.GetList(), rpfpteamstour => rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.Tournament, tour => tour, (rpfpteamstour, tour) => new { rpfpteamstour, tour }).
+                    SelectMany(rpfpteamstours => rpfpteamstours.tour.DefaultIfEmpty(), (rpfpteamstours, tour) => new Report
                     {
-                        Id = rp.Id,
-                        Reason = rp.Reason,
-                        DateReport = rp.DateReport,
-                        UserId = rp.UserId,
-                        FootballPlayerId = rp.FootballPlayerId,
-                        TeamId = rp.TeamId,
-                        TournamentId = rp.TournamentId,
-                        User = u
+                        Id = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.Id,
+                        Reason = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.Reason,
+                        DateReport = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.DateReport,
+                        UserId = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.UserId,
+                        FootballPlayerId = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.FootballPlayerId,
+                        TeamId = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.TeamId,
+                        TournamentId = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.TournamentId,
+                        Status = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.Status,
+                        User = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.u,
+                        FootballPlayer = rpfpteamstours.rpfpteamstour.rpufpteams.rpufpteam.fp,
+                        Team = rpfpteamstours.rpfpteamstour.team,
+                        Tournament = tour
                     });
+
                 if (!String.IsNullOrEmpty(reason))
                 {
                     reportList = reportList.Where(s => s.Reason!.ToUpper().Contains(reason.Trim().ToUpper()));
@@ -80,6 +92,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(tourId.ToString()))
                 {
                     reportList = reportList.Where(s => s.TournamentId == tourId);
+                }
+                if (!String.IsNullOrEmpty(status))
+                {
+                    reportList = reportList.Where(s => s.Status!.ToUpper().Contains(status.Trim().ToUpper()));
                 }
 
                 if (orderBy == ReportFieldEnum.Reason)
@@ -240,6 +256,7 @@ namespace AmateurFootballLeague.Controllers
                         report.TournamentId = tournament.Id;
                     }
                 }
+                report.Status = String.IsNullOrEmpty(model.Status) ? "Chưa duyệt" : model.Status;
                 report.UserId = user.Id;
                 report.Reason = String.IsNullOrEmpty(model.Reason) ? "" : model.Reason;
                 report.DateReport = DateTime.Now.AddHours(7);
@@ -305,6 +322,7 @@ namespace AmateurFootballLeague.Controllers
                         report.TournamentId = tournament.Id;
                     }
                 }
+                report.Status = String.IsNullOrEmpty(model.Status) ? report.Status : model.Status;
 
                 bool isUpdated = await _reportService.UpdateAsync(report);
                 if (isUpdated)
