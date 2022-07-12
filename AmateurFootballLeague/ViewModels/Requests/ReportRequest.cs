@@ -11,6 +11,13 @@
         TournamentId
     }
 
+    public enum ReportType
+    {
+        FootballPlayer,
+        Team,
+        Tournament
+    }
+
     public class ReportCM
     {
         public string? Reason { get; set; }
