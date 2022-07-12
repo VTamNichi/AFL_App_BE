@@ -149,47 +149,47 @@ namespace AmateurFootballLeague.Controllers
                 matchDetail.ActionMinute = String.IsNullOrEmpty(match.ActionMinute) ? "" : match.ActionMinute;
                 matchDetail.MatchId = match.MatchId;
                 matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
-                //MatchDetail created = await _matchDetail.AddAsync(matchDetail);
-                //if (created != null)
-                //{
-                //    if (!String.IsNullOrEmpty(room))
-                //    {
-                //        MatchDetail dtMatch = _matchDetail.GetList().Join(_playerInTournament.GetList(), md => md.PlayerInTournament, pit => pit, (md, pit) => new { md, pit })
-                //    .Join(_teamInTournamentService.GetList(), pitt => pitt.pit.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
-                //    Join(_playerInTeamService.GetList(), pitp => pitp.pitt.pit.PlayerInTeam, piteam => piteam, (pitp, piteam) => new { pitp, piteam })
-                //    .Join(_footballPlayerService.GetList(), pitf => pitf.piteam.FootballPlayer, f => f, (pitf, f) => new MatchDetail
-                //    {
-                //        Id = pitf.pitp.pitt.md.Id,
-                //        ActionMatchId = pitf.pitp.pitt.md.ActionMatchId,
-                //        ActionMinute = pitf.pitp.pitt.md.ActionMinute,
-                //        MatchId = pitf.pitp.pitt.md.MatchId,
-                //        PlayerInTournament = new PlayerInTournament
-                //        {
-                //            Id = pitf.pitp.pitt.pit.Id,
-                //            Status = pitf.pitp.pitt.pit.Status,
-                //            ClothesNumber = pitf.pitp.pitt.pit.ClothesNumber,
-                //            PlayerInTeam = new PlayerInTeam
-                //            {
-                //                Id = pitf.piteam.Id,
-                //                Status = pitf.piteam.Status,
-                //                TeamId = pitf.pitp.tit.TeamId,
-                //                FootballPlayer = new FootballPlayer
-                //                {
-                //                    Id = f.Id,
-                //                    PlayerName = f.PlayerName,
-                //                    PlayerAvatar = f.PlayerAvatar,
-                //                    Position = f.Position
-                //                }
-                //            },
+                MatchDetail created = await _matchDetail.AddAsync(matchDetail);
+                if (created != null)
+                {
+                   if (!String.IsNullOrEmpty(room))
+                   {
+                       MatchDetail dtMatch = _matchDetail.GetList().Join(_playerInTournament.GetList(), md => md.PlayerInTournament, pit => pit, (md, pit) => new { md, pit })
+                   .Join(_teamInTournamentService.GetList(), pitt => pitt.pit.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                   Join(_playerInTeamService.GetList(), pitp => pitp.pitt.pit.PlayerInTeam, piteam => piteam, (pitp, piteam) => new { pitp, piteam })
+                   .Join(_footballPlayerService.GetList(), pitf => pitf.piteam.FootballPlayer, f => f, (pitf, f) => new MatchDetail
+                   {
+                       Id = pitf.pitp.pitt.md.Id,
+                       ActionMatchId = pitf.pitp.pitt.md.ActionMatchId,
+                       ActionMinute = pitf.pitp.pitt.md.ActionMinute,
+                       MatchId = pitf.pitp.pitt.md.MatchId,
+                       PlayerInTournament = new PlayerInTournament
+                       {
+                           Id = pitf.pitp.pitt.pit.Id,
+                           Status = pitf.pitp.pitt.pit.Status,
+                           ClothesNumber = pitf.pitp.pitt.pit.ClothesNumber,
+                           PlayerInTeam = new PlayerInTeam
+                           {
+                               Id = pitf.piteam.Id,
+                               Status = pitf.piteam.Status,
+                               TeamId = pitf.pitp.tit.TeamId,
+                               FootballPlayer = new FootballPlayer
+                               {
+                                   Id = f.Id,
+                                   PlayerName = f.PlayerName,
+                                   PlayerAvatar = f.PlayerAvatar,
+                                   Position = f.Position
+                               }
+                           },
 
 
-                //        }
-                //    }).Where(m => m.Id == created.Id).FirstOrDefault();
+                       }
+                   }).Where(m => m.Id == created.Id).FirstOrDefault();
 
-                //        await _hubContext.Clients.Group(room).SendAsync("MatchDetail", _mapper.Map<MatchDetailFVM>(dtMatch));
-                //    }
-                //    return CreatedAtAction("FindById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
-                //}
+                       await _hubContext.Clients.Group(room).SendAsync("MatchDetail", _mapper.Map<MatchDetailFVM>(dtMatch));
+                   }
+                   return CreatedAtAction("FindById", new { id = created.Id }, _mapper.Map<MatchDetailVM>(created));
+                }
 
                 return BadRequest("Tạo chi tiết trận đấu thất bại");
             }
