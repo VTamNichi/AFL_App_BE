@@ -109,9 +109,19 @@ namespace AmateurFootballLeague.Controllers
 
                 var teamInTournamentListPaging = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
+                List<TeamInTournamentVM> listTeamInTournamentVM = new();
+                listTeamInTournamentVM = _mapper.Map<List<TeamInTournamentVM>>(teamInTournamentListPaging);
+                foreach (var teamInTournamentVM in listTeamInTournamentVM)
+                {
+                    teamInTournamentVM.numberOfMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result != null).Count();
+                    teamInTournamentVM.numberOfWin = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result > 1).Count();
+                    teamInTournamentVM.numberOfLose = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result < 1).Count();
+                    teamInTournamentVM.numberOfDraw = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result == 1).Count();
+                }
+
                 var teamInTournamentListResponse = new TeamInTournamentListVM
                 {
-                    TeamInTournaments = _mapper.Map<List<TeamInTournament>, List<TeamInTournamentVM>>(teamInTournamentListPaging),
+                    TeamInTournaments = listTeamInTournamentVM,
                     CountList = countList,
                     CurrentPage = pageIndex,
                     Size = limit

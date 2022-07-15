@@ -14,7 +14,10 @@
         public string? StatusInTournament { get; set; }
         public int TournamentId { get; set; }
         public int TeamId { get; set; }
-       
+        public int numberOfMatch { get; set; }
+        public int numberOfWin { get; set; }
+        public int numberOfLose { get; set; }
+        public int numberOfDraw { get; set; }
     }
     public class TeamInTournamentListVM
     {
