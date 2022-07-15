@@ -338,9 +338,10 @@ namespace AmateurFootballLeague.Controllers
                 }
                 Team team = await _teamService.GetByIdAsync(currentTeamInTournament.TeamId!.Value);
                 int numberTeamInTournament = _teamInTournamentService.CountTeamInATournament(currentTeamInTournament.TournamentId!.Value);
-                
+
                 if (model.TypeUpdate)
                 {
+                    string groupName = "";
                     if (!String.IsNullOrEmpty(model.TeamIndex.ToString()) && model.TeamIndex > 0)
                     {
                         numberTeamInTournament = model.TeamIndex!.Value;
@@ -357,6 +358,7 @@ namespace AmateurFootballLeague.Controllers
                         GroupFight = m.GroupFight,
                         TeamInMatches = m.TeamInMatches
                     });
+                    groupName = listMatchInTournament.ToList()[0].GroupFight!;
 
                     foreach (Match match in listMatchInTournament.ToList())
                     {
@@ -370,6 +372,9 @@ namespace AmateurFootballLeague.Controllers
                             }
                         }
                     }
+
+                    currentTeamInTournament.GroupName = groupName;
+                    await _teamInTournamentService.UpdateAsync(currentTeamInTournament);
                 }
                 else
                 {
