@@ -9,6 +9,7 @@
         public int? DifferentPoint { get; set; }
         public int? TotalYellowCard { get; set; }
         public int? TotalRedCard { get; set; }
+        public string? GroupName { get; set; }
         public string? Status { get; set; }
         public string? StatusInTournament { get; set; }
         public int TournamentId { get; set; }
