@@ -56,6 +56,8 @@ namespace AmateurFootballLeague.Controllers
                         ActionMatchId = md.ActionMatchId,
                         ActionMinute =md.ActionMinute,
                         MatchId = md.MatchId,
+                        PlayerInTournamentId = md.PlayerInTournamentId,
+                        FootballPlayerId = f.Id,
                         FootballPlayer = new FootballPlayer
                                 {
                                     Id = f.Id,
@@ -146,6 +148,8 @@ namespace AmateurFootballLeague.Controllers
                        ActionMatchId = md.ActionMatchId,
                        ActionMinute = md.ActionMinute,
                        MatchId = md.MatchId,
+                       PlayerInTournamentId = md.PlayerInTournamentId,
+                       FootballPlayerId = f.Id,
                        FootballPlayer = new FootballPlayer
                                {
                                    Id = f.Id,
