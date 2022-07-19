@@ -16,6 +16,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int MatchId { get; set; }
         [Required]
         public int PlayerInTournamentId { get; set; }
+        [Required]
+        public int FootballPlayerId { get; set; }
     }
 
     public class MatchDetailUM
