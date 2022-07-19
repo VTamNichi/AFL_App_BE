@@ -191,6 +191,8 @@ namespace AmateurFootballLeague.Models
                     .HasMaxLength(16)
                     .IsUnicode(false);
 
+                entity.Property(e => e.FootballPlayerId).HasColumnName("FootballPlayerID");
+
                 entity.Property(e => e.MatchId).HasColumnName("MatchID");
 
                 entity.Property(e => e.PlayerInTournamentId).HasColumnName("PlayerInTournamentID");
@@ -199,6 +201,11 @@ namespace AmateurFootballLeague.Models
                     .WithMany(p => p.MatchDetails)
                     .HasForeignKey(d => d.ActionMatchId)
                     .HasConstraintName("FK_MatchDetail_ActionMatch");
+
+                entity.HasOne(d => d.FootballPlayer)
+                    .WithMany(p => p.MatchDetails)
+                    .HasForeignKey(d => d.FootballPlayerId)
+                    .HasConstraintName("FK_MatchDetail_FootballPlayer");
 
                 entity.HasOne(d => d.Match)
                     .WithMany(p => p.MatchDetails)
