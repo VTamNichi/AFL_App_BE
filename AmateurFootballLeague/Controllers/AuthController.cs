@@ -20,7 +20,10 @@ namespace AmateurFootballLeague.Controllers
         private readonly IMapper _mapper;
 
         private readonly ITournamentService _tournamentService;
-        public AuthController(ITournamentService tournamentService, IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper)
+        private readonly ITeamInMatchService _teamInMatchService;
+        private readonly IMatchService _matchService;
+
+        public AuthController(ITournamentService tournamentService, IUserService userService, IVerifyCodeService verifyCodeService, IJWTProvider jwtProvider, ISendEmailService sendEmailService, IMapper mapper, ITeamInMatchService teamInMatchService, IMatchService matchService)
         {
             _userService = userService;
             _verifyCodeService = verifyCodeService;
@@ -29,6 +32,8 @@ namespace AmateurFootballLeague.Controllers
             _mapper = mapper;
 
             _tournamentService = tournamentService;
+            _teamInMatchService = teamInMatchService;
+            _matchService = matchService;
         }
 
         /// <summary>Login with email and password</summary>
@@ -281,19 +286,25 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        /// <summary>Test firebase by upload image</summary>
-        /// <response code="201">Success</response>
-        /// <response code="500">Failed</response>
-        [HttpPost("upload-image")]
-        public ActionResult UploadImage(string? statusTnm)
+        /// <summary>Test api</summary>
+        [HttpPost("test-api")]
+        public async Task<ActionResult<TeamInMatch>> TestAPI()
         {
             try
             {
-                DateTime currentDate = DateTime.Today;
-                TimeSpan totalTime = DateTime.Now.TimeOfDay;
-                List<Tournament> listTournamentEnd = _tournamentService.GetList().Where(t => t.StatusTnm == "Đang diễn ra" && t.TournamentEndDate!.Value.CompareTo(currentDate) < 0).ToList();
-
-                return Ok("Success: " + totalTime + " date: " + totalTime.Days);
+                TeamInMatch teamInMatchWin = new();
+                List<TeamInMatch> listTeamInMatch = _teamInMatchService.GetList().Where(tim => tim.MatchId == 1508).ToList();
+                if (listTeamInMatch[0].Result < 100)
+                {
+                    teamInMatchWin = listTeamInMatch[0];
+                }
+                if (listTeamInMatch[1].Result > 1)
+                {
+                    teamInMatchWin = listTeamInMatch[1];
+                }
+                TeamInMatch teamInMatchNext = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == 34 && tim.TeamName == "Thắng Trận 1").FirstOrDefault()!;
+                Match match = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
+                return Ok(listTeamInMatch[0]);
             }
             catch (Exception)
             {
