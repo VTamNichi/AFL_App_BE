@@ -16,12 +16,15 @@ namespace AmateurFootballLeague.Controllers
         private readonly IPlayerInTournamentService _playerInTournament;
         public readonly IPlayerInTeamService _playerInTeam;
         public readonly IFootballPlayerService _footballPlayerService;
+        private readonly ITournamentService _tournamentService;
         private readonly IMapper _mapper;
-        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament,IPlayerInTeamService playerInTeam, IFootballPlayerService footballPlayerService, IMapper mapper)
+        public PlayerInTournamentController(IPlayerInTournamentService playerInTournament,IPlayerInTeamService playerInTeam, 
+            IFootballPlayerService footballPlayerService,ITournamentService tournamentService, IMapper mapper)
         {
             _playerInTournament = playerInTournament;
             _playerInTeam = playerInTeam;
             _footballPlayerService = footballPlayerService;
+            _tournamentService = tournamentService;
             _mapper = mapper;
         }
 
@@ -190,10 +193,46 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteById(int id)
+        public async Task<ActionResult> DeleteById(int id, int tourId, int teamIntourId)
         {
             try
             {
+                Tournament tour = _tournamentService.GetList().Where(t=>t.Id == tourId).FirstOrDefault();
+                if(tour == null)
+                {
+                    return NotFound(new { message = "Giải đấu không tồn tại "});
+                }
+
+                DateTime date = DateTime.Now.AddHours(7);
+
+                if(tour.RegisterEndDate < date)
+                {
+                    return BadRequest(new {
+                            message = "Không thể xóa cầu thủ khi giải đấu đang diễn ra"});
+                }
+
+                IQueryable<PlayerInTournament> listPlayer = _playerInTournament.GetList().Where(p => p.TeamInTournamentId == teamIntourId);
+                var playerIntour = listPlayer.ToList();
+                int numplayer = 0;
+                if(tour.FootballFieldTypeId == 1)
+                {
+                    numplayer = 5;
+                }
+
+                if(tour.FootballFieldTypeId == 2)
+                {
+                    numplayer = 7;
+                }
+                if(tour.FootballFieldTypeId == 3)
+                {
+                    numplayer = 11;
+                }
+                if(playerIntour.Count() <= numplayer)
+                {
+                    return BadRequest(new {
+                            message = "Số lượng cầu thủ tham gia giải không đủ"});
+                }
+
                 PlayerInTournament player = await _playerInTournament.GetByIdAsync(id);
                 if(player != null)
                 {
@@ -207,10 +246,11 @@ namespace AmateurFootballLeague.Controllers
                     }
                     else
                     {
-                        return BadRequest("Xóa cầu thủ trong giải đấu thất bại");
+                        return BadRequest(new {
+                            message = "Xóa cầu thủ trong giải đấu thất bại"});
                     }
                 }
-                return NotFound("Không tìm thấy cầu thủ trong giải đấu với id là " + id);
+                return NotFound(new { message = "Không tìm thấy cầu thủ trong giải đấu với id là " + id});
             }
             catch
             {
