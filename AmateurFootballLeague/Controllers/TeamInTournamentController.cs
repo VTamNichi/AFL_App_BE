@@ -94,73 +94,73 @@ namespace AmateurFootballLeague.Controllers
                     if (orderType == SortTypeEnum.DESC)
                     {
                         teamInTournamentList = teamInTournamentList.OrderByDescending(tnm => tnm.Point);
-                        var listTeam = teamInTournamentList.ToList();
-                        var listCompare = teamInTournamentList.ToList();
-                        List<TeamInTournament> listSort = new List<TeamInTournament>();
-                        for(int i = 0; i < listTeam.Count(); i++)
-                        {
-                            TeamInTournament tit = listCompare[0];
-                            for(int j = 0; j < listCompare.Count(); j++)
-                            {
-                                if(listCompare[j].Point >= tit.Point)
-                                {
-                                   if(listCompare[j].Point > tit.Point)
-                                    {
-                                        tit = listCompare[j];
-                                    }
-                                    else
-                                    {
-                                        if(listCompare[j].DifferentPoint >= tit.DifferentPoint)
-                                        {
-                                            if (listCompare[j].DifferentPoint > tit.DifferentPoint)
-                                            {
-                                                tit = listCompare[j];
-                                            }
-                                            else
-                                            {
-                                                if (listCompare[j].TotalRedCard <= tit.TotalRedCard)
-                                                {
-                                                    if (listCompare[j].TotalRedCard < tit.TotalRedCard)
-                                                    {
-                                                        tit = listCompare[j];
-                                                    }
-                                                    else
-                                                    {
-                                                        if (listCompare[j].TotalYellowCard <= tit.TotalYellowCard)
-                                                        {
-                                                            if (listCompare[j].TotalYellowCard < tit.TotalYellowCard)
-                                                            {
-                                                                tit = listCompare[j];
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                }
-                                        }
-                                    }
+                        //var listTeam = teamInTournamentList.ToList();
+                        //var listCompare = teamInTournamentList.ToList();
+                        //List<TeamInTournament> listSort = new List<TeamInTournament>();
+                        //for (int i = 0; i < listTeam.Count(); i++)
+                        //{
+                        //    TeamInTournament tit = listCompare[0];
+                        //    for (int j = 0; j < listCompare.Count(); j++)
+                        //    {
+                        //        if (listCompare[j].Point >= tit.Point)
+                        //        {
+                        //            if (listCompare[j].Point > tit.Point)
+                        //            {
+                        //                tit = listCompare[j];
+                        //            }
+                        //            else
+                        //            {
+                        //                if (listCompare[j].DifferentPoint >= tit.DifferentPoint)
+                        //                {
+                        //                    if (listCompare[j].DifferentPoint > tit.DifferentPoint)
+                        //                    {
+                        //                        tit = listCompare[j];
+                        //                    }
+                        //                    else
+                        //                    {
+                        //                        if (listCompare[j].TotalRedCard <= tit.TotalRedCard)
+                        //                        {
+                        //                            if (listCompare[j].TotalRedCard < tit.TotalRedCard)
+                        //                            {
+                        //                                tit = listCompare[j];
+                        //                            }
+                        //                            else
+                        //                            {
+                        //                                if (listCompare[j].TotalYellowCard <= tit.TotalYellowCard)
+                        //                                {
+                        //                                    if (listCompare[j].TotalYellowCard < tit.TotalYellowCard)
+                        //                                    {
+                        //                                        tit = listCompare[j];
+                        //                                    }
+                        //                                }
+                        //                            }
+                        //                        }
+                        //                    }
+                        //                }
+                        //            }
 
-                                }
-                         
-                            }
-                            listSort.Add(tit);
-                            listCompare.Remove(tit);
-                        }
-                        int countListRank = teamInTournamentList.Count();
+                        //        }
 
-                        var rankingTeamListPaging = listSort.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                        //    }
+                        //    listSort.Add(tit);
+                        //    listCompare.Remove(tit);
+                        //}
+                        //int countListRank = teamInTournamentList.Count();
 
-                        List<TeamInTournamentVM> listRankingTeamVM = new();
-                        listRankingTeamVM = _mapper.Map<List<TeamInTournamentVM>>(rankingTeamListPaging);
+                        //var rankingTeamListPaging = listSort.Skip((pageIndex - 1) * limit).Take(limit).ToList();
 
-                        var rankingListTeam = new TeamInTournamentListVM
-                        {
-                            TeamInTournaments = listRankingTeamVM,
-                            CountList = countListRank,
-                            CurrentPage = pageIndex,
-                            Size = limit
-                        };
+                        //List<TeamInTournamentVM> listRankingTeamVM = new();
+                        //listRankingTeamVM = _mapper.Map<List<TeamInTournamentVM>>(rankingTeamListPaging);
 
-                        return Ok(rankingListTeam);
+                        //var rankingListTeam = new TeamInTournamentListVM
+                        //{
+                        //    TeamInTournaments = listRankingTeamVM,
+                        //    CountList = countListRank,
+                        //    CurrentPage = pageIndex,
+                        //    Size = limit
+                        //};
+
+                        //return Ok(rankingListTeam);
                     }
                 }
                 if (orderBy == TeamInTournamentFieldEnum.DifferentPoint)
