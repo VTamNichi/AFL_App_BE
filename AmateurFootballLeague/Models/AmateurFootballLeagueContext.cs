@@ -575,11 +575,25 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.Description).HasMaxLength(256);
 
+                entity.Property(e => e.FootballPlayerId).HasColumnName("FootballPlayerID");
+
                 entity.Property(e => e.Prize).HasMaxLength(256);
+
+                entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
                 entity.Property(e => e.TeamInTournamentId).HasColumnName("TeamInTournamentID");
 
                 entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
+
+                entity.HasOne(d => d.FootballPlayer)
+                    .WithMany(p => p.TournamentResults)
+                    .HasForeignKey(d => d.FootballPlayerId)
+                    .HasConstraintName("FK_TournamentResult_FootballPlayer");
+
+                entity.HasOne(d => d.Team)
+                    .WithMany(p => p.TournamentResults)
+                    .HasForeignKey(d => d.TeamId)
+                    .HasConstraintName("FK_TournamentResult_Team");
 
                 entity.HasOne(d => d.TeamInTournament)
                     .WithMany(p => p.TournamentResults)

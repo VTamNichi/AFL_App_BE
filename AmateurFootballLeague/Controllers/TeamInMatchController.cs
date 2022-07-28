@@ -441,10 +441,9 @@ namespace AmateurFootballLeague.Controllers
                         return BadRequest("Không có đội thắng");
                     }
                     Match matchWin = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
-                    TeamInMatch teamInMatchNext = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Thắng " + matchWin.Fight).FirstOrDefault()!;
+                    TeamInMatch teamInMatchNext = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Thắng " + matchWin.Fight).FirstOrDefault()!;
                     if (teamInMatchNext != null)
                     {
-                        teamInMatchNext.NextTeam = "";
                         teamInMatchNext.TeamName = teamInMatchWin.TeamName;
                         teamInMatchNext.TeamInTournamentId = teamInMatchWin.TeamInTournamentId;
                         await _teamInMatch.UpdateAsync(teamInMatchNext);
