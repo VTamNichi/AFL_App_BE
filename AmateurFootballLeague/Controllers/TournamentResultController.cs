@@ -133,6 +133,17 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                Match matchInTour = await _matchService.GetByIdAsync(matchId);
+                var listResult = _tournamentResultService.GetList().Where(t => t.TournamentId == matchInTour.TournamentId).ToList();    
+
+                if(listResult != null)
+                {
+                    for(int i=0; i < listResult.Count(); i++)
+                    {
+                        await _tournamentResultService.DeleteAsync(listResult[i]);
+                    }
+                }
+
                 IQueryable<Match> match = _matchService.GetList().Join(_teamInMatchService.GetList(), mt => mt.Id, tim => tim.MatchId, (mt, tim) => new { mt, tim }).Where(m => m.mt.Id == matchId)
                     .Join(_teamInTournamentService.GetList(), tit => tit.tim.TeamInTournament, titour => titour, (tit, titour) => new Match
                     {
