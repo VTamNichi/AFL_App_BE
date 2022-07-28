@@ -21,13 +21,13 @@ namespace AmateurFootballLeague.Hubs
 
             if (!user.NewGuest)
             {
-                UserCommentVM checkRoomUser = _Connection.Where(u => u.Id == user.Id).FirstOrDefault();
+                UserCommentVM checkRoomUser = _Connection.Where(u => u.Id == user.Id).FirstOrDefault()!;
 
                 if (checkRoomUser != null)
                 {
 
                     Console.WriteLine(checkRoomUser.Room + "-" + checkRoomUser.Id + "khac null");
-                    UserCommentVM checkCurrent = _Connection.Where(u => u.Id == user.Id && u.Room == user.Room).FirstOrDefault();
+                    UserCommentVM checkCurrent = _Connection.Where(u => u.Id == user.Id && u.Room == user.Room).FirstOrDefault()!;
                     if (checkCurrent != null)
                     {
                         await Leave(checkCurrent.Room, checkCurrent.ConnectionId);
@@ -51,7 +51,7 @@ namespace AmateurFootballLeague.Hubs
                 while (dup)
                 {
                     user.Id = rd.Next(1, 2147483647)+ "guest";
-                    UserCommentVM checkCurrent = _Connection.Where(u => u.Id == user.Id).FirstOrDefault();
+                    UserCommentVM checkCurrent = _Connection.Where(u => u.Id == user.Id).FirstOrDefault()!;
                     if (checkCurrent == null)
                     {
                         dup = false;

@@ -40,7 +40,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("MatchId")]
-        public async Task<ActionResult<MatchDetailFVM>> GetMatchDetailByMatch(int matchId)
+        public ActionResult<MatchDetailFVM> GetMatchDetailByMatch(int matchId)
         {
             try
             {
@@ -157,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                                    PlayerAvatar = f.PlayerAvatar,
                                    Position = f.Position
                                }
-                   }).Where(m => m.Id == created.Id).FirstOrDefault();
+                   }).Where(m => m.Id == created.Id).FirstOrDefault()!;
 
                        await _hubContext.Clients.Group(room).SendAsync("MatchDetail", _mapper.Map<MatchDetailFVM>(dtMatch));
                    }

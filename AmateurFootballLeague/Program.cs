@@ -74,10 +74,10 @@ builder.Services.AddSingleton(new JobSchedule(
     jobType: typeof(ChangeStatusTournamentService),
     cronExpression: "0 0/5 17 * * ?"));
 
-builder.Services.AddSingleton<EndMatchService>();
-builder.Services.AddSingleton(new JobSchedule(
-    jobType: typeof(EndMatchService),
-    cronExpression: "0 0/5 * * * ?"));
+//builder.Services.AddSingleton<EndMatchService>();
+//builder.Services.AddSingleton(new JobSchedule(
+//    jobType: typeof(EndMatchService),
+//    cronExpression: "0 0/5 * * * ?"));
 
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
