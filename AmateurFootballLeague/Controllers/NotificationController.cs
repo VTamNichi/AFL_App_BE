@@ -305,8 +305,8 @@ namespace AmateurFootballLeague.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> MakeConnection([FromBody] NotificationConnection model)
         {
-            try
-            {
+            //try
+            //{
                 bool isSuccess = await _redisService.Set("user:" + model.Email, model.Token, 1440);
                 if (isSuccess)
                 {
@@ -316,11 +316,11 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
                 return BadRequest();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            //}
+            //catch (Exception)
+            //{
+            //    return StatusCode(StatusCodes.Status500InternalServerError);
+            //}
         }
 
         /// <summary>Delete notification By Id</summary>

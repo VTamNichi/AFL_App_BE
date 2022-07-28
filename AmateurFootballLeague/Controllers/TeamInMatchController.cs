@@ -302,7 +302,7 @@ namespace AmateurFootballLeague.Controllers
                        NextTeam = timm.titm.tim.NextTeam,
                        TeamName = timm.titm.tim.TeamName,
                        Match = timm.titm.tim.Match,
-                   }).Where(m => m.Id == team.Id).FirstOrDefault();
+                   }).Where(m => m.Id == team.Id).FirstOrDefault()!;
                             await _hubContext.Clients.Group(room).SendAsync("TeamInMatch", _mapper.Map<TeamInMatchMT>(listTeam));
                         }
                         return Ok(new
@@ -405,6 +405,155 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
 
+                return Ok("Thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Update next team in match to tournament</summary>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Field is not matched</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPut("update-next-team-in-match")]
+        [Produces("application/json")]
+        public async Task<ActionResult> UpdateNextTeamInMatch([FromBody] TeamInMatchNextUM model)
+        {
+            try
+            {
+                Tournament currentTournament = await _tournamentService.GetByIdAsync(model.TournamentId);
+                if (currentTournament == null)
+                {
+                    return NotFound("Không tìm thấy giải đấu");
+                }
+                if (currentTournament.TournamentTypeId == 2)
+                {
+                    return BadRequest("Giải vòng tròn không có vòng trong");
+                }
+                if (currentTournament.TournamentTypeId == 1)
+                {
+                    TeamInMatch teamInMatchWin = _teamInMatch.GetList().Where(s => s.MatchId == model.MatchId && s.Result > 1).FirstOrDefault()!;
+                    if (teamInMatchWin == null)
+                    {
+                        return BadRequest("Không có đội thắng");
+                    }
+                    Match matchWin = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
+                    TeamInMatch teamInMatchNext = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Thắng " + matchWin.Fight).FirstOrDefault()!;
+                    if (teamInMatchNext != null)
+                    {
+                        teamInMatchNext.NextTeam = "";
+                        teamInMatchNext.TeamName = teamInMatchWin.TeamName;
+                        teamInMatchNext.TeamInTournamentId = teamInMatchWin.TeamInTournamentId;
+                        await _teamInMatch.UpdateAsync(teamInMatchNext);
+                    }
+                }
+                else
+                {
+                    if(model.MatchId == 0)
+                    {
+                        IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == model.TournamentId);
+                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng A").OrderByDescending(o => o.Point).Take(2).ToList();
+                        if (listTeamInTournamentA.Count == 2)
+                        {
+                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhất bảng A").FirstOrDefault()!;
+                            if (teamInMatchNext1 != null)
+                            {
+                                teamInMatchNext1.NextTeam = "";
+                                teamInMatchNext1.TeamName = listTeamInTournamentA[0].Team!.TeamName;
+                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentA[0].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
+                            }
+                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhì bảng A").FirstOrDefault()!;
+                            if (teamInMatchNext2 != null)
+                            {
+                                teamInMatchNext2.NextTeam = "";
+                                teamInMatchNext2.TeamName = listTeamInTournamentA[1].Team!.TeamName;
+                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentA[1].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
+                            }
+                        }
+                        List<TeamInTournament> listTeamInTournamentB = listTeamInTournament.Where(s => s.GroupName == "Bảng B").OrderByDescending(o => o.Point).Take(2).ToList();
+                        if (listTeamInTournamentB.Count == 2)
+                        {
+                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhất bảng B").FirstOrDefault()!;
+                            if (teamInMatchNext1 != null)
+                            {
+                                teamInMatchNext1.NextTeam = "";
+                                teamInMatchNext1.TeamName = listTeamInTournamentB[0].Team!.TeamName;
+                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentB[0].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
+                            }
+                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhì bảng B").FirstOrDefault()!;
+                            if (teamInMatchNext2 != null)
+                            {
+                                teamInMatchNext2.NextTeam = "";
+                                teamInMatchNext2.TeamName = listTeamInTournamentB[1].Team!.TeamName;
+                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentB[1].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
+                            }
+                        }
+                        List<TeamInTournament> listTeamInTournamentC = listTeamInTournament.Where(s => s.GroupName == "Bảng C").OrderByDescending(o => o.Point).Take(2).ToList();
+                        if (listTeamInTournamentC.Count == 2)
+                        {
+                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhất bảng C").FirstOrDefault()!;
+                            if (teamInMatchNext1 != null)
+                            {
+                                teamInMatchNext1.NextTeam = "";
+                                teamInMatchNext1.TeamName = listTeamInTournamentC[0].Team!.TeamName;
+                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentC[0].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
+                            }
+                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhì bảng C").FirstOrDefault()!;
+                            if (teamInMatchNext2 != null)
+                            {
+                                teamInMatchNext2.NextTeam = "";
+                                teamInMatchNext2.TeamName = listTeamInTournamentC[1].Team!.TeamName;
+                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentC[1].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
+                            }
+                        }
+                        List<TeamInTournament> listTeamInTournamentD = listTeamInTournament.Where(s => s.GroupName == "Bảng D").OrderByDescending(o => o.Point).Take(2).ToList();
+                        if (listTeamInTournamentD.Count == 2)
+                        {
+                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhất bảng D").FirstOrDefault()!;
+                            if (teamInMatchNext1 != null)
+                            {
+                                teamInMatchNext1.NextTeam = "";
+                                teamInMatchNext1.TeamName = listTeamInTournamentD[0].Team!.TeamName;
+                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentD[0].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
+                            }
+                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Nhì bảng D").FirstOrDefault()!;
+                            if (teamInMatchNext2 != null)
+                            {
+                                teamInMatchNext2.NextTeam = "";
+                                teamInMatchNext2.TeamName = listTeamInTournamentD[1].Team!.TeamName;
+                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentD[1].Id;
+                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        TeamInMatch teamInMatchWin = _teamInMatch.GetList().Where(s => s.MatchId == model.MatchId && s.Result > 1).FirstOrDefault()!;
+                        if (teamInMatchWin == null)
+                        {
+                            return BadRequest("Không có đội thắng");
+                        }
+                        Match matchWin = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
+                        TeamInMatch teamInMatchNext = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.TeamName == "Thắng " + matchWin.Fight).FirstOrDefault()!;
+                        if (teamInMatchNext != null)
+                        {
+                            teamInMatchNext.NextTeam = "";
+                            teamInMatchNext.TeamName = teamInMatchWin.TeamName;
+                            teamInMatchNext.TeamInTournamentId = teamInMatchWin.TeamInTournamentId;
+                            await _teamInMatch.UpdateAsync(teamInMatchNext);
+                        }
+                    }
+                }
                 return Ok("Thành công");
             }
             catch (Exception)
