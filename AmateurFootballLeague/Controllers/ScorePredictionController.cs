@@ -276,6 +276,12 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
+                ScorePrediction scorePredict = _scorePrediction.GetList().Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
+                if(scorePredict != null)
+                {
+                    scorePredict.Status = "false";
+                    await _scorePrediction.UpdateAsync(scorePredict);
+                }
                 IQueryable<TeamInMatch> result =  _teamInMatch.GetList().Where(s => s.MatchId == matchId);
                 var listResult = result.ToList();
                 IQueryable<ScorePrediction> scorePrediction = _scorePrediction.GetList().Where(s => s.MatchId == matchId);
