@@ -34,6 +34,38 @@ namespace AmateurFootballLeague.Controllers
             _hubContext = hubContext;
         }
 
+
+        [HttpGet("Result")]
+        public ActionResult GetStatisticTeam (int teamId)
+        {
+            try
+            {
+                var team = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, t => t, (tim, t) => new { tim, t }).
+                    Where(t => t.t.TeamId == teamId).Select(t => new TeamInMatch
+                    {
+                        Id = t.tim.Id,
+                        TeamScore = t.tim.TeamScore,
+                        Result = t.tim.Result,
+                    }).ToList();
+                int totalMatch = team.Count();
+                int totalWin = team.Where(t => t.Result == 3).ToList().Count();
+                int totalLose = team.Where(t => t.Result == 0).ToList().Count();
+                int totalDraw = team.Where(t => t.Result == 1).ToList().Count();
+                var statistic = new
+                {
+                    TotalMatch = totalMatch,
+                    TotalWin = totalWin,
+                    TotalLose = totalLose,
+                    TotalDraw = totalDraw
+                };
+                return Ok(statistic);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpGet]
         public ActionResult<List<TeamInMatch>> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo, SortTypeEnum orderType)
         {
