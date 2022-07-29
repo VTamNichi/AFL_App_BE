@@ -616,6 +616,7 @@ namespace AmateurFootballLeague.Controllers
                     second.TeamId = listKingScore[i].PlayerInTeam.TeamId;
                     second.FootballPlayerId = listKingScore[i].PlayerInTeam.FootballPlayerId;
                     second.TotalWinScrore = max;
+                    second.ClothesNumber = listKingScore[i].ClothesNumber;
                     await _tournamentResultService.AddAsync(second);
                 }
 

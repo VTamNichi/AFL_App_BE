@@ -174,7 +174,30 @@ namespace AmateurFootballLeague.Controllers
 
                 int countList = teamInTournamentList.Count();
 
-                var teamInTournamentListPaging = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+                teamInTournamentList = teamInTournamentList.Skip((pageIndex - 1) * limit).Take(limit);
+                var teamInTournamentListPaging = teamInTournamentList.Join(_teamService.GetList(), tit => tit.Team, t => t, (tit, t) => new TeamInTournament
+                {
+                    Id = tit.Id,
+                    Point = tit.Point,
+                    WinScoreNumber = tit.WinScoreNumber,
+                    LoseScoreNumber = tit.LoseScoreNumber,
+                    DifferentPoint = tit.DifferentPoint,
+                    TotalYellowCard = tit.TotalYellowCard,
+                    TotalRedCard = tit.TotalRedCard,
+                    GroupName = tit.GroupName,
+                    Status = tit.Status,
+                    StatusInTournament = tit.StatusInTournament,
+                    TournamentId = tit.TournamentId,
+                    TeamId = tit.TeamId,
+                    Team = new Team
+                    {
+                        Id = t.Id,
+                        TeamName = t.TeamName,
+                        TeamAvatar = t.TeamAvatar,
+                        TeamPhone = t.TeamPhone,
+                        TeamGender = t.TeamGender
+                    }
+                });
 
                 List<TeamInTournamentVM> listTeamInTournamentVM = new();
                 listTeamInTournamentVM = _mapper.Map<List<TeamInTournamentVM>>(teamInTournamentListPaging);
