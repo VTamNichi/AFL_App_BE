@@ -518,8 +518,8 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="404">Not Found</response>
         /// <response code="400">Bad Request</response>
         /// <response code="500">Failed to save request</response>
-        [HttpPatch("{id}")]
-        public async Task<ActionResult> ChangeStatus([FromRoute] int id)
+        [HttpPatch()]
+        public async Task<ActionResult> ChangeStatus(int id, int countBlock)
         {
             try
             {
@@ -528,8 +528,43 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-
                 user.Status = !user.Status;
+                
+                if (user.Status!.Value)
+                {
+                    if(user.CountBlock > 0)
+                    {
+                        user.CountBlock--;
+                    }
+                    
+                    user.DateUnban = null;
+                    user.DateBan = null;
+                }
+                else
+                {
+                    user.CountBlock = countBlock;
+                    user.DateBan = DateTime.Now.AddHours(7);
+                    if (countBlock == 1)
+                    {
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(3);
+                    }
+                    else if (countBlock == 2)
+                    {
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(7);
+                    }
+                    else if (countBlock == 3)
+                    {
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(10);
+                    }
+                    else if (countBlock == 4)
+                    {
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(30);
+                    }
+                    else if(countBlock == 5)
+                    {
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(10000);
+                    }
+                }
 
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
@@ -562,28 +597,6 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 user.Status = false;
-                user.CountBlock++;
-                user.DateBan = DateTime.Now.AddHours(7);
-                if(user.CountBlock == 1)
-                {
-                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(3);
-                }
-                else if (user.CountBlock == 2)
-                {
-                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(7);
-                }
-                else if (user.CountBlock == 3)
-                {
-                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(10);
-                }
-                else if (user.CountBlock == 4)
-                {
-                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(30);
-                }
-                else
-                {
-                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(10000);
-                }
                 user.DateDelete = DateTime.Now.AddHours(7);
                 
                 bool isUpdated = await _userService.UpdateAsync(user);
