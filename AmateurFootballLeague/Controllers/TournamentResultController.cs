@@ -116,6 +116,7 @@ namespace AmateurFootballLeague.Controllers
                         TournamentId = tr.TournamentId,
                         TeamId = tr.TeamId,
                         FootballPlayerId = tr.FootballPlayerId,
+                        ClothesNumber = tr.ClothesNumber,
                         FootballPlayer = new FootballPlayer
                         {
                             Id = t.Id,
@@ -179,6 +180,7 @@ namespace AmateurFootballLeague.Controllers
                         TournamentId = tr.ttr.TournamentId,
                         TeamId = tr.ttr.TeamId,
                         FootballPlayerId = tr.ttr.FootballPlayerId,
+                        ClothesNumber = tr.ttr.ClothesNumber,
                         FootballPlayer = new FootballPlayer
                         {
                             Id = t.Id,
