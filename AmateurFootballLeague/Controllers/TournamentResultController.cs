@@ -108,22 +108,30 @@ namespace AmateurFootballLeague.Controllers
                         FootballPlayerId = tr.FootballPlayerId
                     }).Where(t => t.TournamentId == tourId && t.Prize == "second").FirstOrDefault();
                     result.Add(second);
-                    var topScore = tournamentResultList.Join(_footballPlayerService.GetList(), tr => tr.FootballPlayer, t => t, (tr, t) => new TournamentResult
+                    var topScore = tournamentResultList.
+                        Join(_teamService.GetList(), trt => trt.Team , t => t , (trt, t) => new {trt,t}).
+                        Join(_footballPlayerService.GetList(), tr => tr.trt.FootballPlayer, t => t, (tr, t) => new TournamentResult
                     {
-                        Id = tr.Id,
-                        Prize = tr.Prize,
-                        TeamInTournamentId = tr.TeamInTournamentId,
-                        TournamentId = tr.TournamentId,
-                        TeamId = tr.TeamId,
-                        FootballPlayerId = tr.FootballPlayerId,
-                        ClothesNumber = tr.ClothesNumber,
+                        Id = tr.trt.Id,
+                        Prize = tr.trt.Prize,
+                        TeamInTournamentId = tr.trt.TeamInTournamentId,
+                        TournamentId = tr.trt.TournamentId,
+                        TeamId = tr.trt.TeamId,
+                        FootballPlayerId = tr.trt.FootballPlayerId,
+                        ClothesNumber = tr.trt.ClothesNumber,
                         FootballPlayer = new FootballPlayer
                         {
                             Id = t.Id,
                             PlayerName = t.PlayerName,
                             PlayerAvatar = t.PlayerAvatar
                         },
-                        TotalWinScrore = tr.TotalWinScrore
+                        TotalWinScrore = tr.trt.TotalWinScrore,
+                        Team =new Team
+                        {
+                            Id = tr.t.Id,
+                            TeamName = tr.t.TeamName,
+                            TeamAvatar = tr.t.TeamAvatar
+                        }
                         
                     }).Where(t => t.TournamentId == tourId && t.Prize == "Top Goal").ToList();
                     for(int i=0; i<topScore.Count(); i++)
