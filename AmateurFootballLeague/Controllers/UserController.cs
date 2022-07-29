@@ -546,7 +546,7 @@ namespace AmateurFootballLeague.Controllers
                     user.DateBan = DateTime.Now.AddHours(7);
                     if (countBlock == 1)
                     {
-                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(3);
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(1);
                     }
                     else if (countBlock == 2)
                     {
