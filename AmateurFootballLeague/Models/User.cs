@@ -42,6 +42,7 @@ namespace AmateurFootballLeague.Models
         public DateTime? DateDelete { get; set; }
         public int? RoleId { get; set; }
         public int? FlagReportFootballPlayer { get; set; }
+        public int? CountBlock { get; set; }
 
         public virtual Role? Role { get; set; }
         public virtual FootballPlayer FootballPlayer { get; set; } = null!;

@@ -284,6 +284,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.Status = true;
                 convertUser.DateCreate = DateTime.Now.AddHours(7);
                 convertUser.RoleId = model.RoleId;
+                convertUser.CountBlock = 0;
 
                 User userCreated = await _userService.AddAsync(convertUser);
                 if (userCreated != null)
@@ -351,6 +352,7 @@ namespace AmateurFootballLeague.Controllers
                 convertUser.Status = true;
                 convertUser.DateCreate = DateTime.Now.AddHours(7);
                 convertUser.RoleId = model.RoleId;
+                convertUser.CountBlock = 0;
 
                 User userCreated = await _userService.AddAsync(convertUser);
                 if (userCreated != null)
@@ -494,7 +496,7 @@ namespace AmateurFootballLeague.Controllers
                 user.NameBusiness = String.IsNullOrEmpty(model.NameBusiness) ? user.NameBusiness : model.NameBusiness;
                 user.Tinbusiness = String.IsNullOrEmpty(model.Tinbusiness) ? user.Tinbusiness : model.Tinbusiness;
                 user.DateUpdate = DateTime.Now.AddHours(7);
-
+                user.CountBlock = String.IsNullOrEmpty(model.CountBlock.ToString()) ? user.CountBlock : model.CountBlock;
                 bool isUpdate = await _userService.UpdateAsync(user);
                 if (isUpdate)
                 {
@@ -560,7 +562,30 @@ namespace AmateurFootballLeague.Controllers
                 }
 
                 user.Status = false;
+                user.CountBlock++;
+                user.DateBan = DateTime.Now.AddHours(7);
+                if(user.CountBlock == 1)
+                {
+                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(3);
+                }
+                else if (user.CountBlock == 2)
+                {
+                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(7);
+                }
+                else if (user.CountBlock == 3)
+                {
+                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(10);
+                }
+                else if (user.CountBlock == 4)
+                {
+                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(30);
+                }
+                else
+                {
+                    user.DateUnban = DateTime.Now.AddHours(7).AddDays(10000);
+                }
                 user.DateDelete = DateTime.Now.AddHours(7);
+                
                 bool isUpdated = await _userService.UpdateAsync(user);
                 if (isUpdated)
                 {

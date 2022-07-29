@@ -82,6 +82,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? PhoneBusiness { get; set; }
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
+        public int? CountBlock { get; set; }
         public int? RoleId { get; set; }
     }
 
