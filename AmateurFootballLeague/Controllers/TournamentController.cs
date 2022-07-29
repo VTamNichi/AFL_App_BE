@@ -1,5 +1,5 @@
 ﻿using AmateurFootballLeague.ExternalService;
-using AmateurFootballLeague.IServices;
+ using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
@@ -180,6 +180,7 @@ namespace AmateurFootballLeague.Controllers
                               Status = fpit.pitour.tpit.t.Status,
                               TournamentTypeId = fpit.pitour.tpit.t.TournamentTypeId,
                               FootballFieldTypeId = fpit.pitour.tpit.t.FootballFieldTypeId,
+                              StatusTnm = fpit.pitour.tpit.t.StatusTnm
 
                           });
                 if (sort == SortTypeEnum.DESC)

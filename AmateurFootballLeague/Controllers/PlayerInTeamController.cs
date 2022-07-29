@@ -110,7 +110,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == checkList[i].FootballPlayerId).
                             Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
-                            .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                            .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).Where(t => t.tit.StatusInTournament!= "Bị loại").
                             Join(_tournamentService.GetList(), tit => tit.tit.Tournament, t => t, (tit, t) => new { tit, t }).Where(p => p.t.TournamentEndDate > date && p.t.Status == true).
                             Join(_userService.GetList(), p => p.tit.pitt.pitt.p.IdNavigation, u => u, (p, u) => new PlayerInTeam
                             {
