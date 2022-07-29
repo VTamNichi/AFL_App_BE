@@ -575,5 +575,45 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpDelete("update-result")]
+        [Produces("application/json")]
+        public async Task<ActionResult> UpdateResult(int matchId)
+        {
+            try
+            {
+                var listTeam = _teamInMatch.GetList().Where(t => t.MatchId == matchId).ToList();
+                if(listTeam.Count == 0)
+                {
+                    return NotFound();
+                }
+                if(listTeam[0].TeamScore > listTeam[1].TeamScore)
+                {
+                    listTeam[0].Result = 3;
+                    listTeam[1].Result = 0;
+                    await _teamInMatch.UpdateAsync(listTeam[0]);
+                    await _teamInMatch.UpdateAsync(listTeam[1]);
+                }
+                else if(listTeam[0].TeamScore < listTeam[1].TeamScore)
+                {
+                    listTeam[0].Result = 0;
+                    listTeam[1].Result = 3;
+                    await _teamInMatch.UpdateAsync(listTeam[0]);
+                    await _teamInMatch.UpdateAsync(listTeam[1]);
+                }
+                else
+                {
+                    listTeam[0].Result = 1;
+                    listTeam[1].Result = 1;
+                    await _teamInMatch.UpdateAsync(listTeam[0]);
+                    await _teamInMatch.UpdateAsync(listTeam[1]);
+                }
+               return NoContent();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
