@@ -23,7 +23,7 @@
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
         public bool Status { get; set; }
-        public int CountBlock { get;set }
+        public int CountBlock { get; set; }
         public string? DateCreate { get; set; }
         public string? DateUpdate { get; set; }
         public string? DateDelete { get; set; }
