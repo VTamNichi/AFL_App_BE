@@ -292,19 +292,10 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                TeamInMatch teamInMatchWin = new();
-                List<TeamInMatch> listTeamInMatch = _teamInMatchService.GetList().Where(tim => tim.MatchId == 1508).ToList();
-                if (listTeamInMatch[0].Result < 100)
-                {
-                    teamInMatchWin = listTeamInMatch[0];
-                }
-                if (listTeamInMatch[1].Result > 1)
-                {
-                    teamInMatchWin = listTeamInMatch[1];
-                }
-                TeamInMatch teamInMatchNext = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == 34 && tim.TeamName == "Thắng Trận 1").FirstOrDefault()!;
-                Match match = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
-                return Ok(listTeamInMatch[0]);
+                DateTime currentDate = DateTime.Now;
+                IQueryable<Match> listMatch = _matchService.GetList().Where(m => m.MatchDate!.Value.CompareTo(currentDate) <= 0 && m.TournamentId == 46);
+
+                return Ok(currentDate + " | " + listMatch.ToList()[0].MatchDate!.Value.AddHours(1));
             }
             catch (Exception)
             {

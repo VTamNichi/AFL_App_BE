@@ -18,6 +18,7 @@ namespace AmateurFootballLeague.Models
         public int? TotalWinMatch { get; set; }
         public int? TotalLoseMatch { get; set; }
         public int? TotalDrawMatch { get; set; }
+        public int? ClothesNumber { get; set; }
 
         public virtual FootballPlayer? FootballPlayer { get; set; }
         public virtual Team? Team { get; set; }

@@ -18,41 +18,22 @@ namespace AmateurFootballLeague.ExternalService
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                ITournamentService tournamentService = scope.ServiceProvider.GetService<ITournamentService>()!;
+                DateTime currentDate = DateTime.Now.AddHours(7);
+
                 IMatchService matchService = scope.ServiceProvider.GetService<IMatchService>()!;
-                ITeamInMatchService teamInMatchService = scope.ServiceProvider.GetService<ITeamInMatchService>()!;
 
-
-                List<Tournament> listTournament = tournamentService.GetList().Where(t => t.TournamentTypeId == 1).ToList();
-                foreach (Tournament tournament in listTournament)
+                List<Match> listStart = matchService.GetList().Where(m => m.MatchDate!.Value.CompareTo(currentDate) <= 0 && m.Status == "Chưa bắt đầu").ToList();
+                foreach (Match match in listStart)
                 {
-                    List<Match> listMatch = matchService.GetList().Where(m => m.TournamentId == tournament.Id).ToList();
-                    foreach (Match match in listMatch)
-                    {
-                        TeamInMatch teamInMatchWin = new();
-                        List<TeamInMatch> listTeamInMatch = teamInMatchService.GetList().Where(tim => tim.MatchId == match.Id).ToList();
-                        if (listTeamInMatch[0].Result > 1)
-                        {
-                            teamInMatchWin = listTeamInMatch[0];
-                        }
-                        if (listTeamInMatch[1].Result > 1)
-                        {
-                            teamInMatchWin = listTeamInMatch[1];
-                        }
-                       
-                        if (teamInMatchWin != null)
-                        {
-                            Match matchWin = matchService.GetList().Where(m => m.Id == teamInMatchWin.MatchId!.Value).FirstOrDefault()!;
-                            TeamInMatch teamInMatchNext = teamInMatchService.GetList().Where(tim => tim.Match.TournamentId == tournament.Id && tim.TeamName == "Thắng " + matchWin.Fight).FirstOrDefault()!;
-                            if(teamInMatchNext != null)
-                            {
-                                teamInMatchNext.NextTeam = "";
-                                teamInMatchNext.TeamName = teamInMatchWin.TeamName;
-                                teamInMatchNext.TeamInTournamentId = teamInMatchWin.TeamInTournamentId;
-                                teamInMatchService.UpdateAsync(teamInMatchNext).Wait();
-                            }
-                        }
-                    }
+                    match.Status = "Đang diễn ra";
+                    matchService.UpdateAsync(match).Wait();
+                }
+
+                List<Match> listEnd = matchService.GetList().Where(m => m.MatchDate!.Value.AddHours(1).CompareTo(currentDate) <= 0 && m.Status == "Đang diễn ra").ToList();
+                foreach (Match match in listEnd)
+                {
+                    match.Status = "Kết thúc";
+                    matchService.UpdateAsync(match).Wait();
                 }
             }
 
