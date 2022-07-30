@@ -180,27 +180,34 @@ namespace AmateurFootballLeague.Controllers
                 if (footballPlayerId > 0)
                 {
                     tournamentResultList = tournamentResultList.Join(_tournamentService.GetList(), ttr => ttr.Tournament, tou => tou, (ttr, tou) => new { ttr, tou })
-                        .Join(_footballPlayerService.GetList(), tr => tr.ttr.FootballPlayer, t => t, (tr, t) => new TournamentResult
+                        .Join(_teamService.GetList(), trt => trt.ttr.Team , te => te, (trt,te)=> new {trt,te})
+                        .Join(_footballPlayerService.GetList(), tr => tr.trt.ttr.FootballPlayer, t => t, (tr, t) => new TournamentResult
                     {
-                        Id = tr.ttr.Id,
-                        Prize = tr.ttr.Prize,
-                        TeamInTournamentId = tr.ttr.TeamInTournamentId,
-                        TournamentId = tr.ttr.TournamentId,
-                        TeamId = tr.ttr.TeamId,
-                        FootballPlayerId = tr.ttr.FootballPlayerId,
-                        ClothesNumber = tr.ttr.ClothesNumber,
+                        Id = tr.trt.ttr.Id,
+                        Prize = tr.trt.ttr.Prize,
+                        TeamInTournamentId = tr.trt.ttr.TeamInTournamentId,
+                        TournamentId = tr.trt.ttr.TournamentId,
+                        TeamId = tr.trt.ttr.TeamId,
+                        FootballPlayerId = tr.trt.ttr.FootballPlayerId,
+                        ClothesNumber = tr.trt.ttr.ClothesNumber,
                         FootballPlayer = new FootballPlayer
                         {
                             Id = t.Id,
                             PlayerName = t.PlayerName,
                             PlayerAvatar = t.PlayerAvatar
                         },
-                        TotalWinScrore = tr.ttr.TotalWinScrore,
+                        TotalWinScrore = tr.trt.ttr.TotalWinScrore,
                             Tournament = new Tournament
                             {
-                                Id = tr.tou.Id,
-                                TournamentName = tr.tou.TournamentName,
-                                TournamentAvatar = tr.tou.TournamentAvatar
+                                Id = tr.trt.tou.Id,
+                                TournamentName = tr.trt.tou.TournamentName,
+                                TournamentAvatar = tr.trt.tou.TournamentAvatar
+                            },
+                            Team = new Team
+                            {
+                                Id = tr.te.Id,
+                                TeamName = tr.te.TeamName,
+                                TeamAvatar = tr.te.TeamAvatar
                             }
                         }).Where(t => t.FootballPlayerId == footballPlayerId);
                 }
@@ -392,6 +399,7 @@ namespace AmateurFootballLeague.Controllers
                         champTeam.TotalYellowCard = listSort[i].TotalYellowCard;
                         champTeam.TotalRedCard = listSort[i].TotalRedCard;
                         champTeam.TotalWinScrore = listSort[i].WinScoreNumber;
+                        champTeam.TotalLoseScrore = listSort[i].LoseScoreNumber;
                         champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == listSort[i].Id && s.Result > 1).Count();
                         champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == listSort[i].Id && s.Result < 1).Count();
                         champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == listSort[i].Id && s.Result == 1).Count();
@@ -404,6 +412,7 @@ namespace AmateurFootballLeague.Controllers
                             champRs.TournamentId = listSort[i].TournamentId;
                             champRs.TeamId = listSort[i].TeamId;
                             champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                            champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                             await _tournamentResultService.AddAsync(champRs);
                         }
                     }
@@ -489,6 +498,7 @@ namespace AmateurFootballLeague.Controllers
                     champTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
                     champTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
                     champTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
+                    champTeam.TotalLoseScrore = team1[0].TeamInTournament.LoseScoreNumber;
                     champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
                     champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
                     champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
@@ -501,6 +511,7 @@ namespace AmateurFootballLeague.Controllers
                         champRs.TournamentId = getChampion[0].TournamentId;
                         champRs.TeamId = team1[0].TeamInTournament.TeamId;
                         champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                        champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(champRs);
                     }
 
@@ -509,12 +520,13 @@ namespace AmateurFootballLeague.Controllers
                     secondTeam.TeamInTournamentId = team2[0].TeamInTournament.Id;
                     secondTeam.TournamentId = getChampion[0].TournamentId;
                     secondTeam.TeamId = team2[0].TeamInTournament.TeamId;
-                    secondTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
-                    secondTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
-                    secondTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
-                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
-                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
-                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
+                    secondTeam.TotalYellowCard = team2[0].TeamInTournament.TotalYellowCard;
+                    secondTeam.TotalRedCard = team2[0].TeamInTournament.TotalRedCard;
+                    secondTeam.TotalWinScrore = team2[0].TeamInTournament.WinScoreNumber;
+                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament.LoseScoreNumber;
+                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result > 1).Count();
+                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result < 1).Count();
+                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result == 1).Count();
                     await _tournamentResultService.AddAsync(secondTeam);
                     for (int i = 0; i < playersTeam2.Count(); i++)
                     {
@@ -524,6 +536,7 @@ namespace AmateurFootballLeague.Controllers
                         second.TournamentId = getChampion[0].TournamentId;
                         second.TeamId = team2[0].TeamInTournament.TeamId;
                         second.FootballPlayerId = playersTeam2[i].PlayerInTeam.FootballPlayerId;
+                        second.ClothesNumber = playersTeam2[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(second);
                     }
                 }
@@ -538,6 +551,7 @@ namespace AmateurFootballLeague.Controllers
                     champTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
                     champTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
                     champTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
+                    champTeam.TotalLoseScrore = team1[0].TeamInTournament.LoseScoreNumber;
                     champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
                     champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
                     champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
@@ -551,6 +565,7 @@ namespace AmateurFootballLeague.Controllers
                         champRs.TournamentId = getChampion[0].TournamentId;
                         champRs.TeamId = team1[0].TeamInTournament.TeamId;
                         champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                        champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(champRs);
                     }
 
@@ -559,12 +574,13 @@ namespace AmateurFootballLeague.Controllers
                     secondTeam.TeamInTournamentId = team2[0].TeamInTournament.Id;
                     secondTeam.TournamentId = getChampion[0].TournamentId;
                     secondTeam.TeamId = team2[0].TeamInTournament.TeamId;
-                    secondTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
-                    secondTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
-                    secondTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
-                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
-                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
-                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
+                    secondTeam.TotalYellowCard = team2[0].TeamInTournament.TotalYellowCard;
+                    secondTeam.TotalRedCard = team2[0].TeamInTournament.TotalRedCard;
+                    secondTeam.TotalWinScrore = team2[0].TeamInTournament.WinScoreNumber;
+                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament.LoseScoreNumber;
+                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result > 1).Count();
+                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result < 1).Count();
+                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result == 1).Count();
                     await _tournamentResultService.AddAsync(secondTeam);
                     for (int i = 0; i < playersTeam2.Count(); i++)
                     {
@@ -574,6 +590,7 @@ namespace AmateurFootballLeague.Controllers
                         second.TournamentId = getChampion[0].TournamentId;
                         second.TeamId = team2[0].TeamInTournament.TeamId;
                         second.FootballPlayerId = playersTeam2[i].PlayerInTeam.FootballPlayerId;
+                        second.ClothesNumber = playersTeam2[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(second);
                     }
                 }
