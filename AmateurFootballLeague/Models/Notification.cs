@@ -14,6 +14,7 @@ namespace AmateurFootballLeague.Models
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
         public bool? IsOld { get; set; }
+        public bool? ForAdmin { get; set; }
 
         public virtual Team? Team { get; set; }
         public virtual Tournament? Tournament { get; set; }
