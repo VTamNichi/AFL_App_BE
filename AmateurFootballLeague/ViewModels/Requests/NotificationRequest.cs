@@ -13,6 +13,7 @@
     public class NotificationCM
     {
         public string? Content { get; set; }
+        public bool? ForAdmin { get; set; }
         public int UserId { get; set; }
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }

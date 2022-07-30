@@ -43,6 +43,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "content")] string? content,
             [FromQuery(Name = "is-seen")] bool? isSeen,
             [FromQuery(Name = "is-active")] bool? isActive,
+            [FromQuery(Name = "for-admin")] bool? forAdmin,
             [FromQuery(Name = "user-id")] int? userId,
             [FromQuery(Name = "tournament-id")] int? tourId,
             [FromQuery(Name = "team-id")] int? teamId,
@@ -68,6 +69,10 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(isActive.ToString()))
                 {
                     notificationList = notificationList.Where(s => s.IsActive == isActive);
+                }
+                if (!String.IsNullOrEmpty(forAdmin.ToString()))
+                {
+                    notificationList = notificationList.Where(s => s.ForAdmin == forAdmin);
                 }
                 if (!String.IsNullOrEmpty(userId.ToString()))
                 {
@@ -228,6 +233,7 @@ namespace AmateurFootballLeague.Controllers
                 notification.IsSeen = false;
                 notification.IsOld = false;
                 notification.DateCreate = DateTime.Now.AddHours(7);
+                notification.ForAdmin = String.IsNullOrEmpty(model.ForAdmin.ToString()) ? false : true;
 
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)
