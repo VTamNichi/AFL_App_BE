@@ -23,6 +23,7 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamInTournamentService _teamInTournamentService;
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IPlayerInTournamentService _playerInTournamentService;
+        private readonly IUserService _userService;
         public ScorePredictionController (IScorePredictionService scorePrediction , IMapper mapper, IMatchService matchService,
             ITournamentService tournamentService, IUserService userService, ITeamService teamService1, ITeamInTournamentService teamInTournamentService,
             IPlayerInTournamentService playerInTournamentService, IPlayerInTeamService playerInTeamService , ITeamInMatchService teamInMatch)
@@ -36,6 +37,7 @@ namespace AmateurFootballLeague.Controllers
             _teamInTournamentService= teamInTournamentService;
             _playerInTeamService = playerInTeamService;
             _playerInTournamentService = playerInTournamentService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -211,7 +213,23 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                ScorePrediction scorePredict = _scorePrediction.GetList().Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
+                ScorePrediction scorePredict = _scorePrediction.GetList().Join(_userService.GetList(), s=>s.User, u=>u, (s,u)=> new ScorePrediction
+                {
+                    Id = s.Id,
+                    TeamAscore =s.TeamAscore,
+                    TeamBscore = s.TeamBscore,
+                    Status = s.Status,
+                    TeamInMatchAid = s.TeamInMatchAid,
+                    TeamInMatchBid = s.TeamInMatchBid,
+                    UserId = s.UserId,
+                    MatchId = s.MatchId,
+                    User = new User
+                    {
+                        Id = u.Id,
+                        Username = u.Username,
+                        Avatar = u.Avatar
+                    }
+                }).Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
                 if (scorePredict == null)
                 {
                     return NotFound("Không có dự đoán trong trận này ");

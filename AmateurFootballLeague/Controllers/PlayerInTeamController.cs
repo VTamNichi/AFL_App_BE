@@ -192,12 +192,15 @@ namespace AmateurFootballLeague.Controllers
             PlayerInTeam pInTeam = new();
             try
             {
-                PlayerInTeam checkPlayer = _playerInTeam.GetList().Where(p => p.TeamId!.Value == player.TeamId && p.FootballPlayerId == player.FootballPlayerId).FirstOrDefault()!;
-                if (checkPlayer != null)
+                Team checkTeam = await _teamService.GetByIdAsync(player.TeamId);
+                User checkPlayer = await _userService.GetByIdAsync(player.FootballPlayerId);
+                var genderP = checkPlayer.Gender == "Male" ? "Nam" : "Nữ";
+                var genderT = checkTeam.TeamGender == "Male" ? "Nam" : "Nữ";
+                if (checkPlayer.Gender != checkTeam.TeamGender)
                 {
                     return BadRequest(new
                     {
-                        message = "Cầu thủ đã có đội bóng"
+                        message = "Cầu thủ " +genderP+ " không thể tham gia đội bòng "+genderT
                     });
                 }
                 pInTeam.Status = player.Status;
