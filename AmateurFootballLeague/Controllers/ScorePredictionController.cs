@@ -294,12 +294,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                ScorePrediction scorePredict = _scorePrediction.GetList().Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
-                if(scorePredict != null)
-                {
-                    scorePredict.Status = "false";
-                    await _scorePrediction.UpdateAsync(scorePredict);
-                }
+                
                 IQueryable<TeamInMatch> result =  _teamInMatch.GetList().Where(s => s.MatchId == matchId);
                 var listResult = result.ToList();
                 IQueryable<ScorePrediction> scorePrediction = _scorePrediction.GetList().Where(s => s.MatchId == matchId);
@@ -524,6 +519,12 @@ namespace AmateurFootballLeague.Controllers
                         }
                     }
                     closetScore.Status = "true";
+                    ScorePrediction scorePredict = _scorePrediction.GetList().Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
+                    if (scorePredict != null && closetScore.Id != scorePredict.Id)
+                    {
+                        scorePredict.Status = "false";
+                        await _scorePrediction.UpdateAsync(scorePredict);
+                    }
                     bool isUpdated = await _scorePrediction.UpdateAsync(closetScore);
                     if (isUpdated)
                     {
@@ -536,9 +537,10 @@ namespace AmateurFootballLeague.Controllers
                 }
                 return NoContent();
             }
-            catch
+            catch(Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                //return StatusCode(StatusCodes.Status500InternalServerError);
+                return NotFound(e.Message);
             }
         }
     }
