@@ -77,8 +77,6 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(userId.ToString()))
                 {
                     notificationList = notificationList.Where(s => s.UserId == userId);
-                    countUnRead = notificationList.Where(s => s.IsSeen == false).Count();
-                    countNew = notificationList.Where(s => s.IsOld == false).Count();
                 }
                 if (!String.IsNullOrEmpty(teamId.ToString()))
                 {
@@ -141,6 +139,9 @@ namespace AmateurFootballLeague.Controllers
                 int countList = notificationList.Count();
 
                 List<Notification> notificationListPaging = notificationList.Skip((pageIndex - 1) * limit).Take(limit).ToList();
+
+                countUnRead = notificationListPaging.Where(s => s.IsSeen == false).Count();
+                countNew = notificationListPaging.Where(s => s.IsOld == false).Count();
 
                 NotificationListVM notificationListResponse = new()
                 {
@@ -313,15 +314,15 @@ namespace AmateurFootballLeague.Controllers
         {
             //try
             //{
-                bool isSuccess = await _redisService.Set("user:" + model.Email, model.Token, 1440);
-                if (isSuccess)
+            bool isSuccess = await _redisService.Set("user:" + model.Email, model.Token, 1440);
+            if (isSuccess)
+            {
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        message = "Success"
-                    });
-                }
-                return BadRequest();
+                    message = "Success"
+                });
+            }
+            return BadRequest();
             //}
             //catch (Exception)
             //{
@@ -370,7 +371,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Notification> notificationList = _notificationService.GetList().Where(s => s.UserId == userId && s.IsOld == false);
-                foreach(Notification noti in notificationList.ToList())
+                foreach (Notification noti in notificationList.ToList())
                 {
                     noti.IsOld = true;
                     await _notificationService.UpdateAsync(noti);

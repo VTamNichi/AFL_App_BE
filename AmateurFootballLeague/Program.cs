@@ -62,8 +62,8 @@ builder.Services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>((options)
     return builder.Configuration.GetSection("Redis").Get<RedisConfiguration>();
 });
 
-builder.Services.AddHostedService<QuartzHostedService>();
-builder.Services.AddHostedService<BackgroundWork>();
+// builder.Services.AddHostedService<QuartzHostedService>();
+// builder.Services.AddHostedService<BackgroundWork>();
 
 builder.Services.AddSingleton<IJobFactory, SingletonJobFactory>();
 builder.Services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
