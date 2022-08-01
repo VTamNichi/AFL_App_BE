@@ -20,9 +20,11 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITeamService _teamService;
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IPlayerInTournamentService _playerInTournament;
+        private readonly ITeamInTournamentService _teamInTournamentService;
 
         public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
-            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService,IPlayerInTournamentService playerInTournament)
+            IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService,
+            IPlayerInTournamentService playerInTournament, ITeamInTournamentService teamInTournamentService)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -32,6 +34,7 @@ namespace AmateurFootballLeague.Controllers
             _teamService = teamService;
             _playerInTeamService = playerInTeamService;
             _playerInTournament = playerInTournament;
+            _teamInTournamentService = teamInTournamentService;
         }
 
         [HttpGet]
@@ -58,13 +61,15 @@ namespace AmateurFootballLeague.Controllers
 
                 if(footballPlayerID>0)
                 {
-                    DateTime fromDate = DateTime.Now.AddHours(7).Date;
-                    var date = DateTime.Now.AddHours(7).AddDays(+1).ToShortDateString().Split("/");
-                    string nextDate = date[2]+"-"+date[1]+"-"+date[0];
+                    DateTime fromDate = DateTime.Now.Date;
+                    var date = DateTime.Now.AddDays(+1).ToShortDateString().Split("/");
+                    string nextDate = date[0] + "-"+date[1] + "-"+date[2];
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
+                    Console.WriteLine($"Date Value: {fromDate2}");
                     Console.WriteLine($"Date Value: {nextDate}");
-                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate>=fromDate&&m.m.MatchDate<fromDate2).
-                        Join(_teamService.GetList(), timt => timt.tim.TeamInTournament!.Team, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
+                    Console.WriteLine($"To date Date Value: {fromDate}");
+                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate >= fromDate && m.m.MatchDate < fromDate2).
+                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
                         tpit=> tpit.t.Id, pit=>pit.TeamInTournamentId, (tpit, pit) => new
                         {
                             tpit,pit
@@ -95,7 +100,18 @@ namespace AmateurFootballLeague.Controllers
                                    NextTeam = m.pitt.tpit.timt.tim.NextTeam,
                                    TeamInTournament = new TeamInTournament
                                    {
-                                       Team = m.pitt.tpit.t
+                                       Id = m.pitt.tpit.t.Id,
+                                        Point = m.pitt.tpit.t.Point,
+                    WinScoreNumber = m.pitt.tpit.t.WinScoreNumber,
+                    LoseScoreNumber = m.pitt.tpit.t.LoseScoreNumber,
+                    DifferentPoint = m.pitt.tpit.t.DifferentPoint,
+                    TotalYellowCard = m.pitt.tpit.t.TotalYellowCard,
+                    TotalRedCard = m.pitt.tpit.t.TotalRedCard,
+                    GroupName = m.pitt.tpit.t.GroupName,
+                    Status = m.pitt.tpit.t.Status,
+                    StatusInTournament = m.pitt.tpit.t.StatusInTournament,
+                    TournamentId = m.pitt.tpit.t.TournamentId,
+                    TeamId = m.pitt.tpit.t.TeamId,
                                    }
                                }
                            }
