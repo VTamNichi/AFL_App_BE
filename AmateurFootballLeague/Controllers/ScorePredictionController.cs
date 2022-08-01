@@ -209,7 +209,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet("truePredict")]
-        public ActionResult<ScorePredictionVM> GetTrueScorePrediction(int matchId)
+        public ActionResult<ScorePredictionFVM> GetTrueScorePrediction(int matchId)
         {
             try
             {
@@ -234,7 +234,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không có dự đoán trong trận này ");
                 }
-                return Ok(_mapper.Map<ScorePredictionVM>(scorePredict));
+                return Ok(_mapper.Map<ScorePredictionFVM>(scorePredict));
             }
             catch
             {
