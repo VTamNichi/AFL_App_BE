@@ -55,6 +55,7 @@ namespace AmateurFootballLeague.Controllers
             [FromQuery(Name = "tournament-type")] TournamentTypeEnum? type,
             [FromQuery(Name = "tournament-gender")] TournamentGenderEnum? gender,
             [FromQuery(Name = "tournament-football-type")] TournamentFootballFieldTypeEnum? footballType,
+            [FromQuery(Name = "status")] bool? status,
             [FromQuery(Name = "tournament-statusTnm")] string? statusTnm,
             [FromQuery(Name = "order-by")] TournamentFieldEnum orderBy,
             [FromQuery(Name = "order-type")] SortTypeEnum orderType,
@@ -97,7 +98,10 @@ namespace AmateurFootballLeague.Controllers
                 {
                     tournamentList = tournamentList.Where(s => s.StatusTnm == statusTnm);
                 }
-                tournamentList = tournamentList.Where(s => s.Status == true);
+                if (!String.IsNullOrEmpty(status.ToString()))
+                {
+                    tournamentList = tournamentList.Where(s => s.Status == status);
+                }
 
                 int countList = tournamentList.Count();
 
