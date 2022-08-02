@@ -38,4 +38,18 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
+
+    public class TeamReportVM
+    {
+        public int Id { get; set; }
+        public string? TeamName { get; set; }
+        public string? TeamAvatar { get; set; }
+        public string? TeamArea { get; set; }
+        public string? TeamPhone { get; set; }
+        public string? TeamGender { get; set; }
+        public string? DateCreate { get; set; }
+        public string? Description { get; set; }
+        public bool Status { get; set; }
+        public int CountReport { get; set; }
+    }
 }

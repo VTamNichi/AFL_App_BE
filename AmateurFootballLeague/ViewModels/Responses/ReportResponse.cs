@@ -25,4 +25,19 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int CurrentPage { get; set; }
         public int Size { get; set; }
     }
+
+    public class ReportGroupBy
+    {
+        public TournamentReportVM? TournamentReportVM { get; set; }
+        public TeamReportVM? TeamReportVM { get; set; }
+        public FootballPlayerReportVM? FootballPlayerReportVM { get; set; }
+    }
+
+    public class ListReportGroupBy
+    {
+        public List<ReportGroupBy> Reports { get; set; } = new List<ReportGroupBy>();
+        public int CountList { get; set; }
+        public int CurrentPage { get; set; }
+        public int Size { get; set; }
+    }
 }

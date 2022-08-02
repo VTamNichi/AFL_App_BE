@@ -33,11 +33,13 @@ namespace AmateurFootballLeague.Utils
             #region AutoMapper TournamentViewModel
             CreateMap<Tournament, TournamentVM>();
             CreateMap<TournamentCM, Tournament>();
+            CreateMap<Tournament, TournamentReportVM>();
             #endregion
 
             #region AutoMapper TeamViewModel
             CreateMap<Team, TeamVM>();
             CreateMap<TeamCM, Team>();
+            CreateMap<Team, TeamReportVM>();
             #endregion
 
             #region AutoMapper MatchViewModel
@@ -59,6 +61,7 @@ namespace AmateurFootballLeague.Utils
             CreateMap<FootballPlayer, FootballPlayerVM>();
             CreateMap<FootballPlayer, FootballPlayerFVM>();
             CreateMap<FootballPlayerCM, FootballPlayer>();
+            CreateMap<FootballPlayer, FootballPlayerReportVM>();
             #endregion
 
             #region AutoMapper TeamInTournamentViewModel
