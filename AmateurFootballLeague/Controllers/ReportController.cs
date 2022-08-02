@@ -56,7 +56,7 @@ namespace AmateurFootballLeague.Controllers
                     GroupJoin(_footballPlayerService.GetList(), rpu => rpu.rp.FootballPlayer, fp => fp, (rpu, fp) => new { rpu, fp }).
                     SelectMany(rpufp => rpufp.fp.DefaultIfEmpty(), (rpufp, fp) => new { rpufp, fp }).
                     GroupJoin(_teamService.GetList(), rpufpteam => rpufpteam.rpufp.rpu.rp.Team, team => team, (rpufpteam, team) => new { rpufpteam, team }).
-                    SelectMany(rpufpteams => rpufpteams.team.DefaultIfEmpty(), (rpufpteams, team) => new { rpufpteams , team}).
+                    SelectMany(rpufpteams => rpufpteams.team.DefaultIfEmpty(), (rpufpteams, team) => new { rpufpteams, team }).
                     GroupJoin(_tournamentService.GetList(), rpfpteamstour => rpfpteamstour.rpufpteams.rpufpteam.rpufp.rpu.rp.Tournament, tour => tour, (rpfpteamstour, tour) => new { rpfpteamstour, tour }).
                     SelectMany(rpfpteamstours => rpfpteamstours.tour.DefaultIfEmpty(), (rpfpteamstours, tour) => new Report
                     {
@@ -113,7 +113,7 @@ namespace AmateurFootballLeague.Controllers
                         reportList = reportList.Where(s => s.TournamentId > 0);
                     }
                 }
-                
+
 
                 if (orderBy == ReportFieldEnum.Reason)
                 {
@@ -192,6 +192,118 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
+        /// <summary>Get list report group</summary>
+        /// <returns>List report group by</returns>
+        /// <response code="200">Returns list report group by</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet("group-by")]
+        [Produces("application/json")]
+        public async Task<ActionResult> GetListReportGroup(
+            [FromQuery(Name = "report-type")] ReportType? reportType,
+            [FromQuery(Name = "page-offset")] int pageIndex = 1,
+            int limit = 5
+        )
+        {
+            try
+            {
+                IQueryable<Report> reportList = _reportService.GetList();
+
+                if (!String.IsNullOrEmpty(reportType.ToString()))
+                {
+                    List<ReportGroupBy> listReportGrb = new();
+                    if (reportType == ReportType.FootballPlayer)
+                    {
+                        reportList = reportList.Where(rp => rp.FootballPlayerId > 0);
+                        var listGrB = reportList.GroupBy(rp => rp.FootballPlayerId).Select(g => new { footballPlayerId = g.Key, count = g.Count() });
+                        int countList = listGrB.Count();
+                        listGrB = listGrB.Skip((pageIndex - 1) * limit).Take(limit);
+                        var listGrbResponse = listGrB.ToList();
+                        foreach (var response in listGrbResponse)
+                        {
+                            FootballPlayer fp = await _footballPlayerService.GetByIdAsync(response.footballPlayerId!.Value);
+                            FootballPlayerReportVM fpVM = _mapper.Map<FootballPlayerReportVM>(fp);
+                            fpVM.CountReport = response.count;
+                            ReportGroupBy rpGrp = new()
+                            {
+                                FootballPlayerReportVM = fpVM,
+                            };
+                            listReportGrb.Add(rpGrp);
+                        }
+
+                        ListReportGroupBy reportListResponse = new()
+                        {
+                            Reports = listReportGrb,
+                            CountList = countList,
+                            CurrentPage = pageIndex,
+                            Size = limit
+                        };
+                        return Ok(reportListResponse);
+                    }
+                    else if (reportType == ReportType.Team)
+                    {
+                        reportList = reportList.Where(rp => rp.TeamId > 0);
+                        var listGrB = reportList.GroupBy(rp => rp.TeamId).Select(g => new { teamId = g.Key, count = g.Count() });
+                        int countList = listGrB.Count();
+                        listGrB = listGrB.Skip((pageIndex - 1) * limit).Take(limit);
+                        var listGrbResponse = listGrB.ToList();
+                        foreach (var response in listGrbResponse)
+                        {
+                            Team team = await _teamService.GetByIdAsync(response.teamId!.Value);
+                            TeamReportVM teamVM = _mapper.Map<TeamReportVM>(team);
+                            teamVM.CountReport = response.count;
+                            ReportGroupBy rpGrp = new()
+                            {
+                                TeamReportVM = teamVM,
+                            };
+                            listReportGrb.Add(rpGrp);
+                        }
+
+                        ListReportGroupBy reportListResponse = new()
+                        {
+                            Reports = listReportGrb,
+                            CountList = countList,
+                            CurrentPage = pageIndex,
+                            Size = limit
+                        };
+                        return Ok(reportListResponse);
+                    }
+                    else
+                    {
+                        reportList = reportList.Where(rp => rp.TournamentId > 0);
+                        var listGrB = reportList.GroupBy(rp => rp.TournamentId).Select(g => new { tournamentId = g.Key, count = g.Count() });
+                        int countList = listGrB.Count();
+                        listGrB = listGrB.Skip((pageIndex - 1) * limit).Take(limit);
+                        var listGrbResponse = listGrB.ToList();
+                        foreach (var response in listGrbResponse)
+                        {
+                            Tournament tour = await _tournamentService.GetByIdAsync(response.tournamentId!.Value);
+                            TournamentReportVM tourVM = _mapper.Map<TournamentReportVM>(tour);
+                            tourVM.CountReport = response.count;
+                            ReportGroupBy rpGrp = new()
+                            {
+                                TournamentReportVM = tourVM,
+                            };
+                            listReportGrb.Add(rpGrp);
+                        }
+
+                        ListReportGroupBy reportListResponse = new()
+                        {
+                            Reports = listReportGrb,
+                            CountList = countList,
+                            CurrentPage = pageIndex,
+                            Size = limit
+                        };
+                        return Ok(reportListResponse);
+                    }
+                }
+                return BadRequest("Chưa chọn loại báo cáo");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         /// <summary>Get report by id</summary>
         /// <returns>Return the report with the corresponding id</returns>
         /// <response code="200">Returns the report with the specified id</response>
@@ -232,7 +344,7 @@ namespace AmateurFootballLeague.Controllers
                 Report report = new();
 
                 User user = await _userService.GetByIdAsync(model.UserId);
-                if(user == null)
+                if (user == null)
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
@@ -240,7 +352,7 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
                     FootballPlayer footballPlayer = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);
-                    if(footballPlayer == null)
+                    if (footballPlayer == null)
                     {
                         return NotFound("Không tìm thấy cầu thủ");
                     }
@@ -301,7 +413,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Report report = await _reportService.GetByIdAsync(model.Id);
-                if(report == null)
+                if (report == null)
                 {
                     return NotFound("Không tìm thấy báo cáo");
                 }
