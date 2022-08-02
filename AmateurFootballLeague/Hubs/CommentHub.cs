@@ -81,6 +81,14 @@ namespace AmateurFootballLeague.Hubs
                 await Clients.Groups(user.Room).SendAsync("ReceiveComment", user, comment);
             }
         }
+
+        public async Task sendUser(int uid )
+        {
+            if (_ConnectionMap.TryGetValue(Context.ConnectionId, out UserCommentVM user))
+            {
+                await Clients.Groups(user.Room).SendAsync("ReceiveScreen", uid);
+            }
+        }
         public async Task Leave(string roomName, string connectionId)
         {
             await Groups.RemoveFromGroupAsync(connectionId, roomName);
