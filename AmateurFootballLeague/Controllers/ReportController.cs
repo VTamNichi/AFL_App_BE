@@ -200,6 +200,7 @@ namespace AmateurFootballLeague.Controllers
         [Produces("application/json")]
         public async Task<ActionResult> GetListReportGroup(
             [FromQuery(Name = "report-type")] ReportType? reportType,
+            [FromQuery(Name = "status")] string? status,
             [FromQuery(Name = "page-offset")] int pageIndex = 1,
             int limit = 5
         )
@@ -207,6 +208,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Report> reportList = _reportService.GetList();
+                if (!String.IsNullOrEmpty(status))
+                {
+                    reportList = reportList.Where(s => s.Status!.ToUpper().Contains(status.Trim().ToUpper()));
+                }
 
                 if (!String.IsNullOrEmpty(reportType.ToString()))
                 {
