@@ -82,7 +82,7 @@ namespace AmateurFootballLeague.Hubs
             }
         }
 
-        public async Task sendUser(int uid )
+        public async Task sendUser(string uid )
         {
             if (_ConnectionMap.TryGetValue(Context.ConnectionId, out UserCommentVM user))
             {
