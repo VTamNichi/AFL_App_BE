@@ -167,6 +167,8 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.GroupFight).HasMaxLength(16);
 
+                entity.Property(e => e.IdScreen).HasMaxLength(128);
+
                 entity.Property(e => e.MatchDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Round).HasMaxLength(16);
