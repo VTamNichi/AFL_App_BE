@@ -12,6 +12,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string? Fight { get; set; }
         public string? GroupFight { get; set; }
         public string? TokenLivestream { get; set; }
+        public string? IdScreen { get; set; }
     }
 
     public class MatchFVM
@@ -24,6 +25,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public string? GroupFight { get; set; }
         public string? TokenLivestream { get; set; }
         public int TournamentId { get; set; }
+        public string? IdScreen { get; set; }
         public virtual Tournament? Tournament { get; set; }
         public virtual ICollection<MatchDetail>? MatchDetails { get; set; }
         public virtual ICollection<ScorePrediction>? ScorePredictions { get; set; }

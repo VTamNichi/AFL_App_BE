@@ -1,10 +1,12 @@
-﻿using AmateurFootballLeague.IServices;
+﻿using AmateurFootballLeague.Hubs;
+using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace AmateurFootballLeague.Controllers
 {
@@ -21,10 +23,11 @@ namespace AmateurFootballLeague.Controllers
         private readonly IPlayerInTeamService _playerInTeamService;
         private readonly IPlayerInTournamentService _playerInTournament;
         private readonly ITeamInTournamentService _teamInTournamentService;
+        private readonly IHubContext<CommentHub> _hubContext;
 
         public MatchController(IMatchService matchService, ITeamInMatchService teamInMatch, ITournamentService tournamentService,
             IAgoraProvider agoraProvider, IMapper mapper, ITeamService teamService, IPlayerInTeamService playerInTeamService,
-            IPlayerInTournamentService playerInTournament, ITeamInTournamentService teamInTournamentService)
+            IPlayerInTournamentService playerInTournament, ITeamInTournamentService teamInTournamentService, IHubContext<CommentHub> hubContext)
         {
             _matchService = matchService;
             _teamInMatch = teamInMatch;
@@ -35,6 +38,7 @@ namespace AmateurFootballLeague.Controllers
             _playerInTeamService = playerInTeamService;
             _playerInTournament = playerInTournament;
             _teamInTournamentService = teamInTournamentService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -441,6 +445,30 @@ namespace AmateurFootballLeague.Controllers
                 return BadRequest("Tạo trận đấu thất bại");
             }
             catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPut("IdScreen")]
+        public async Task<ActionResult> updateScreen(int matchId,string screenId)
+        {
+            try
+            {
+                Match match = await _matchService.GetByIdAsync(matchId);
+                if (match != null)
+                {
+                    match.IdScreen = screenId;
+                    bool isUpdate =  await _matchService.UpdateAsync(match);
+                    if (isUpdate)
+                    {
+                        await _hubContext.Clients.Group(match.Id.ToString()).SendAsync("ReceiveScreen", screenId);
+                        return NoContent();
+                    }                   
+                }
+                return NotFound();
+            }
+            catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
