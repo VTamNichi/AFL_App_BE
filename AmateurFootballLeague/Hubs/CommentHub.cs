@@ -40,6 +40,10 @@ namespace AmateurFootballLeague.Hubs
                         _Connection.Remove(checkRoomUser);
                         await Leave(checkRoomUser.Room, checkRoomUser.ConnectionId);
                     }
+                    else
+                    {
+                        return;
+                    }
 
                 }
             }
