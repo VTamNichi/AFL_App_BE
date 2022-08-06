@@ -28,13 +28,13 @@ namespace AmateurFootballLeague.Hubs
 
                     Console.WriteLine(checkRoomUser.Room + "-" + checkRoomUser.Id + "khac null");
                     UserCommentVM checkCurrent = _Connection.Where(u => u.Id == user.Id && u.Room == user.Room).FirstOrDefault()!;
-                    if (checkCurrent != null)
-                    {
-                        await Leave(checkCurrent.Room, checkCurrent.ConnectionId);
-                        _Connection.Remove(checkCurrent);
-                        _ConnectionMap.Remove(checkCurrent.ConnectionId);
-                    }
-                    else
+                    //if (checkCurrent != null)
+                    //{
+                    //    await Leave(checkCurrent.Room, checkCurrent.ConnectionId);
+                    //    _Connection.Remove(checkCurrent);
+                    //    _ConnectionMap.Remove(checkCurrent.ConnectionId);
+                    //}
+                    if (checkCurrent == null)
                     {
                         _ConnectionMap.Remove(checkRoomUser.ConnectionId);
                         _Connection.Remove(checkRoomUser);
