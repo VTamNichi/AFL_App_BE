@@ -40,11 +40,6 @@ namespace AmateurFootballLeague.Hubs
                         _Connection.Remove(checkRoomUser);
                         await Leave(checkRoomUser.Room, checkRoomUser.ConnectionId);
                     }
-                    else
-                    {
-                        return;
-                    }
-
                 }
             }
             if(user.NewGuest)
@@ -66,7 +61,7 @@ namespace AmateurFootballLeague.Hubs
             _ConnectionMap[Context.ConnectionId] = user;
             user.ConnectionId = Context.ConnectionId;
             _Connection.Add(user);
-            
+            Console.WriteLine(user.Username +"Context"+Context.ConnectionId+ "user" + user.ConnectionId);
             if(user.NewGuest)
             {
                 await Clients.Groups(user.Room).SendAsync("Guest", user.Id);
@@ -96,6 +91,23 @@ namespace AmateurFootballLeague.Hubs
         public async Task Leave(string roomName, string connectionId)
         {
             await Groups.RemoveFromGroupAsync(connectionId, roomName);
+        }
+
+        public async  Task Disconnected()
+        {
+            try
+            {
+                if (_ConnectionMap.TryGetValue(Context.ConnectionId, out UserCommentVM user))
+                {
+                     Leave(user.Room, user.ConnectionId);
+                    _Connection.Remove(user);
+                    _ConnectionMap.Remove(user.ConnectionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Clients.Caller.SendAsync("onError", "OnDisconnected: " + ex.Message);
+            }
         }
     }
 }
