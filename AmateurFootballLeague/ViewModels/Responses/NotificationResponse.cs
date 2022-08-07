@@ -11,6 +11,7 @@
         public int UserId { get; set; }
         public int TournamentId { get; set; }
         public int TeamId { get; set; }
+        public int FootballPlayerId { get; set; }
     }
 
     public class NotificationListVM

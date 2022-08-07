@@ -14,9 +14,10 @@
     {
         public string? Content { get; set; }
         public bool? ForAdmin { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
+        public int? FootballPlayerId { get; set; }
     }
     public class NotificationUM
     {
@@ -27,6 +28,7 @@
         public int? UserId { get; set; }
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
+        public int? FootballPlayerId { get; set; }
     }
 
     public class NotificationConnection

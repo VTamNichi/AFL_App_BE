@@ -8,6 +8,7 @@ namespace AmateurFootballLeague.Models
         public FootballPlayer()
         {
             MatchDetails = new HashSet<MatchDetail>();
+            Notifications = new HashSet<Notification>();
             PlayerInTeams = new HashSet<PlayerInTeam>();
             Reports = new HashSet<Report>();
             TournamentResults = new HashSet<TournamentResult>();
@@ -25,6 +26,7 @@ namespace AmateurFootballLeague.Models
 
         public virtual User IdNavigation { get; set; } = null!;
         public virtual ICollection<MatchDetail> MatchDetails { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<PlayerInTeam> PlayerInTeams { get; set; }
         public virtual ICollection<Report> Reports { get; set; }
         public virtual ICollection<TournamentResult> TournamentResults { get; set; }
