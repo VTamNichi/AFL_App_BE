@@ -250,11 +250,18 @@ namespace AmateurFootballLeague.Models
 
                 entity.Property(e => e.DateCreate).HasColumnType("datetime");
 
+                entity.Property(e => e.FootballPlayerId).HasColumnName("FootballPlayerID");
+
                 entity.Property(e => e.TeamId).HasColumnName("TeamID");
 
                 entity.Property(e => e.TournamentId).HasColumnName("TournamentID");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.FootballPlayer)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.FootballPlayerId)
+                    .HasConstraintName("FK_Notification_FootballPlayer");
 
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.Notifications)

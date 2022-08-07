@@ -18,6 +18,7 @@ namespace AmateurFootballLeague.Controllers
         private readonly IUserService _userService;
         private readonly ITournamentService _tournamentService;
         private readonly ITeamService _teamService;
+        private readonly IFootballPlayerService _footballPlayerService;
         private readonly IMapper _mapper;
         private readonly IRedisService _redisService;
         private readonly IPushNotificationService _pushNotificationService;
@@ -198,12 +199,20 @@ namespace AmateurFootballLeague.Controllers
             {
                 Notification notification = new();
 
-                User user = await _userService.GetByIdAsync(model.UserId);
-                if (user == null)
+                User user = new();
+                if (model.UserId == 0 || String.IsNullOrEmpty(model.UserId.ToString()))
                 {
-                    return NotFound("Không tìm thấy người dùng");
+                    user = new User()
+                    {
+                        Id = 0,
+                        Email = "admin123"
+                    };
                 }
-
+                else
+                {
+                    user = await _userService.GetByIdAsync(model.UserId!.Value);
+                    notification.UserId = user.Id;
+                }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
                     Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
@@ -228,14 +237,24 @@ namespace AmateurFootballLeague.Controllers
                         notification.TournamentId = tournament.Id;
                     }
                 }
-                notification.UserId = user.Id;
+                if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
+                {
+                    FootballPlayer fp = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);
+                    if (fp == null)
+                    {
+                        return NotFound("Không tìm thấy cầu thủ");
+                    }
+                    else
+                    {
+                        notification.FootballPlayerId = fp.Id;
+                    }
+                }
                 notification.Content = String.IsNullOrEmpty(model.Content) ? "" : model.Content;
                 notification.IsActive = true;
                 notification.IsSeen = false;
                 notification.IsOld = false;
                 notification.DateCreate = DateTime.Now.AddHours(7);
-                notification.ForAdmin = String.IsNullOrEmpty(model.ForAdmin.ToString()) ? false : true;
-
+                notification.ForAdmin = String.IsNullOrEmpty(model.ForAdmin.ToString()) || !model.ForAdmin!.Value ? false : true;
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)
                 {
@@ -292,6 +311,14 @@ namespace AmateurFootballLeague.Controllers
                     if (tournament != null)
                     {
                         notification.TournamentId = tournament.Id;
+                    }
+                }
+                if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
+                {
+                    FootballPlayer fp = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);
+                    if (fp != null)
+                    {
+                        notification.FootballPlayerId = fp.Id;
                     }
                 }
                 notification.IsActive = String.IsNullOrEmpty(model.IsActive.ToString()) ? notification.IsActive : model.IsActive;
