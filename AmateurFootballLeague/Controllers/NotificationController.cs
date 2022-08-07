@@ -239,7 +239,10 @@ namespace AmateurFootballLeague.Controllers
                 Notification notificationCreated = await _notificationService.AddAsync(notification);
                 if (notificationCreated != null)
                 {
-                    _ = await _pushNotificationService.SendMessage("Bạn đã nhận được thông báo mới", notification.Content, user.Email!, new());
+                    Dictionary<string, string> additionalDatas = new Dictionary<string, string>(){
+                        {user.Id.ToString(), user.Email!},
+                    };
+                    _ = await _pushNotificationService.SendMessage("Bạn đã nhận được thông báo mới", notification.Content, user.Email!, additionalDatas);
                     return CreatedAtAction("GetNotificationById", new { id = notificationCreated.Id }, _mapper.Map<NotificationVM>(notificationCreated));
                 }
                 return BadRequest("Tạo thông báo mới thất bại");
