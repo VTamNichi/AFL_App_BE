@@ -495,7 +495,16 @@ namespace AmateurFootballLeague.Controllers
                     if(model.MatchId == 0)
                     {
                         IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == model.TournamentId);
-                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng A").OrderByDescending(o => o.Point).Take(2).ToList();
+                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng A").OrderByDescending(o => o.Point).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                        {
+                            Id = s.Id,
+                            Team = new Team()
+                            {
+                                Id = t.Id,
+                                TeamName = t.TeamName
+                            }
+
+                        }).ToList();
                         if (listTeamInTournamentA.Count == 2)
                         {
                             TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng A").FirstOrDefault()!;
@@ -504,10 +513,12 @@ namespace AmateurFootballLeague.Controllers
                                 teamInMatchNext1.TeamName = listTeamInTournamentA[0].Team!.TeamName;
                                 teamInMatchNext1.TeamInTournamentId = listTeamInTournamentA[0].Id;
                                 await _teamInMatch.UpdateAsync(teamInMatchNext1);
+
+                                TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
+                                teamInTourTop1.StatusInTournament = "Trong giải";
+                                await _teamInTournamentService.UpdateAsync(teamInTourTop1);
                             }
-                            TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
-                            teamInTourTop1.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+
 
                             TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng A").FirstOrDefault()!;
                             if (teamInMatchNext2 != null)
@@ -515,19 +526,31 @@ namespace AmateurFootballLeague.Controllers
                                 teamInMatchNext2.TeamName = listTeamInTournamentA[1].Team!.TeamName;
                                 teamInMatchNext2.TeamInTournamentId = listTeamInTournamentA[1].Id;
                                 await _teamInMatch.UpdateAsync(teamInMatchNext2);
-                            }
-                            TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
-                            teamInTourTop2.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop2);
-                        }
-                        List<TeamInTournament> listTeamInTournamentAOut = listTeamInTournament.Where(s => s.GroupName == "Bảng A" && s.Id != listTeamInTournamentA[0].Id && s.Id != listTeamInTournamentA[1].Id).ToList();
-                        foreach(TeamInTournament tit in listTeamInTournamentAOut)
-                        {
-                            tit.StatusInTournament = "Bị loại";
-                            await _teamInTournamentService.UpdateAsync(tit);
-                        }
 
-                        List<TeamInTournament> listTeamInTournamentB = listTeamInTournament.Where(s => s.GroupName == "Bảng B").OrderByDescending(o => o.Point).Take(2).ToList();
+                                TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
+                                teamInTourTop2.StatusInTournament = "Trong giải";
+                                await _teamInTournamentService.UpdateAsync(teamInTourTop2);
+                            }
+
+                            List<TeamInTournament> listTeamInTournamentAOut = listTeamInTournament.Where(s => s.GroupName == "Bảng A" && s.Id != listTeamInTournamentA[0].Id && s.Id != listTeamInTournamentA[1].Id).ToList();
+                            foreach (TeamInTournament tit in listTeamInTournamentAOut)
+                            {
+                                tit.StatusInTournament = "Bị loại";
+                                await _teamInTournamentService.UpdateAsync(tit);
+                            }
+                        }
+                        
+
+                        List<TeamInTournament> listTeamInTournamentB = listTeamInTournament.Where(s => s.GroupName == "Bảng B").OrderByDescending(o => o.Point).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                        {
+                            Id = s.Id,
+                            Team = new Team()
+                            {
+                                Id = t.Id,
+                                TeamName = t.TeamName
+                            }
+
+                        }).ToList();
                         if (listTeamInTournamentB.Count == 2)
                         {
                             TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng B").FirstOrDefault()!;
@@ -536,91 +559,122 @@ namespace AmateurFootballLeague.Controllers
                                 teamInMatchNext1.TeamName = listTeamInTournamentB[0].Team!.TeamName;
                                 teamInMatchNext1.TeamInTournamentId = listTeamInTournamentB[0].Id;
                                 await _teamInMatch.UpdateAsync(teamInMatchNext1);
-                            }
-                            TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
-                            teamInTourTop1.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop1);
 
+                                TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
+                                teamInTourTop1.StatusInTournament = "Trong giải";
+                                await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+                            }
+                            
                             TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng B").FirstOrDefault()!;
                             if (teamInMatchNext2 != null)
                             {
                                 teamInMatchNext2.TeamName = listTeamInTournamentB[1].Team!.TeamName;
                                 teamInMatchNext2.TeamInTournamentId = listTeamInTournamentB[1].Id;
                                 await _teamInMatch.UpdateAsync(teamInMatchNext2);
+
+                                TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
+                                teamInTourTop2.StatusInTournament = "Trong giải";
+                                await _teamInTournamentService.UpdateAsync(teamInTourTop2);
                             }
-                            TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
-                            teamInTourTop2.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop2);
-                        }
-                        List<TeamInTournament> listTeamInTournamentBOut = listTeamInTournament.Where(s => s.GroupName == "Bảng B" && s.Id != listTeamInTournamentB[0].Id && s.Id != listTeamInTournamentB[1].Id).ToList();
-                        foreach (TeamInTournament tit in listTeamInTournamentBOut)
-                        {
-                            tit.StatusInTournament = "Bị loại";
-                            await _teamInTournamentService.UpdateAsync(tit);
+
+                            List<TeamInTournament> listTeamInTournamentBOut = listTeamInTournament.Where(s => s.GroupName == "Bảng B" && s.Id != listTeamInTournamentB[0].Id && s.Id != listTeamInTournamentB[1].Id).ToList();
+                            foreach (TeamInTournament tit in listTeamInTournamentBOut)
+                            {
+                                tit.StatusInTournament = "Bị loại";
+                                await _teamInTournamentService.UpdateAsync(tit);
+                            }
                         }
 
-                        List<TeamInTournament> listTeamInTournamentC = listTeamInTournament.Where(s => s.GroupName == "Bảng C").OrderByDescending(o => o.Point).Take(2).ToList();
-                        if (listTeamInTournamentC.Count == 2)
+                        if (currentTournament.GroupNumber > 2)
                         {
-                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng C").FirstOrDefault()!;
-                            if (teamInMatchNext1 != null)
+                            List<TeamInTournament> listTeamInTournamentC = listTeamInTournament.Where(s => s.GroupName == "Bảng C").OrderByDescending(o => o.Point).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
                             {
-                                teamInMatchNext1.TeamName = listTeamInTournamentC[0].Team!.TeamName;
-                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentC[0].Id;
-                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
-                            }
-                            TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
-                            teamInTourTop1.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+                                Id = s.Id,
+                                Team = new Team()
+                                {
+                                    Id = t.Id,
+                                    TeamName = t.TeamName
+                                }
 
-                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng C").FirstOrDefault()!;
-                            if (teamInMatchNext2 != null)
+                            }).ToList();
+                            if (listTeamInTournamentC.Count == 2)
                             {
-                                teamInMatchNext2.TeamName = listTeamInTournamentC[1].Team!.TeamName;
-                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentC[1].Id;
-                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
-                            }
-                            TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
-                            teamInTourTop2.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop2);
-                        }
-                        List<TeamInTournament> listTeamInTournamentCOut = listTeamInTournament.Where(s => s.GroupName == "Bảng C" && s.Id != listTeamInTournamentC[0].Id && s.Id != listTeamInTournamentC[1].Id).ToList();
-                        foreach (TeamInTournament tit in listTeamInTournamentCOut)
-                        {
-                            tit.StatusInTournament = "Bị loại";
-                            await _teamInTournamentService.UpdateAsync(tit);
-                        }
+                                TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng C").FirstOrDefault()!;
+                                if (teamInMatchNext1 != null)
+                                {
+                                    teamInMatchNext1.TeamName = listTeamInTournamentC[0].Team!.TeamName;
+                                    teamInMatchNext1.TeamInTournamentId = listTeamInTournamentC[0].Id;
+                                    await _teamInMatch.UpdateAsync(teamInMatchNext1);
 
-                        List<TeamInTournament> listTeamInTournamentD = listTeamInTournament.Where(s => s.GroupName == "Bảng D").OrderByDescending(o => o.Point).Take(2).ToList();
-                        if (listTeamInTournamentD.Count == 2)
-                        {
-                            TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng D").FirstOrDefault()!;
-                            if (teamInMatchNext1 != null)
-                            {
-                                teamInMatchNext1.TeamName = listTeamInTournamentD[0].Team!.TeamName;
-                                teamInMatchNext1.TeamInTournamentId = listTeamInTournamentD[0].Id;
-                                await _teamInMatch.UpdateAsync(teamInMatchNext1);
-                            }
-                            TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
-                            teamInTourTop1.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+                                    TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
+                                    teamInTourTop1.StatusInTournament = "Trong giải";
+                                    await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+                                }
 
-                            TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng D").FirstOrDefault()!;
-                            if (teamInMatchNext2 != null)
-                            {
-                                teamInMatchNext2.TeamName = listTeamInTournamentD[1].Team!.TeamName;
-                                teamInMatchNext2.TeamInTournamentId = listTeamInTournamentD[1].Id;
-                                await _teamInMatch.UpdateAsync(teamInMatchNext2);
+                                TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng C").FirstOrDefault()!;
+                                if (teamInMatchNext2 != null)
+                                {
+                                    teamInMatchNext2.TeamName = listTeamInTournamentC[1].Team!.TeamName;
+                                    teamInMatchNext2.TeamInTournamentId = listTeamInTournamentC[1].Id;
+                                    await _teamInMatch.UpdateAsync(teamInMatchNext2);
+
+                                    TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
+                                    teamInTourTop2.StatusInTournament = "Trong giải";
+                                    await _teamInTournamentService.UpdateAsync(teamInTourTop2);
+                                }
+
+                                List<TeamInTournament> listTeamInTournamentCOut = listTeamInTournament.Where(s => s.GroupName == "Bảng C" && s.Id != listTeamInTournamentC[0].Id && s.Id != listTeamInTournamentC[1].Id).ToList();
+                                foreach (TeamInTournament tit in listTeamInTournamentCOut)
+                                {
+                                    tit.StatusInTournament = "Bị loại";
+                                    await _teamInTournamentService.UpdateAsync(tit);
+                                }
                             }
-                            TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
-                            teamInTourTop2.StatusInTournament = "Trong giải";
-                            await _teamInTournamentService.UpdateAsync(teamInTourTop2);
-                        }
-                        List<TeamInTournament> listTeamInTournamentDOut = listTeamInTournament.Where(s => s.GroupName == "Bảng D" && s.Id != listTeamInTournamentD[0].Id && s.Id != listTeamInTournamentD[1].Id).ToList();
-                        foreach (TeamInTournament tit in listTeamInTournamentDOut)
-                        {
-                            tit.StatusInTournament = "Bị loại";
-                            await _teamInTournamentService.UpdateAsync(tit);
+
+                            List<TeamInTournament> listTeamInTournamentD = listTeamInTournament.Where(s => s.GroupName == "Bảng D").OrderByDescending(o => o.Point).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                            {
+                                Id = s.Id,
+                                Team = new Team()
+                                {
+                                    Id = t.Id,
+                                    TeamName = t.TeamName
+                                }
+
+                            }).ToList();
+                            if (listTeamInTournamentD.Count == 2)
+                            {
+                                TeamInMatch teamInMatchNext1 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhất bảng D").FirstOrDefault()!;
+                                if (teamInMatchNext1 != null)
+                                {
+                                    teamInMatchNext1.TeamName = listTeamInTournamentD[0].Team!.TeamName;
+                                    teamInMatchNext1.TeamInTournamentId = listTeamInTournamentD[0].Id;
+                                    await _teamInMatch.UpdateAsync(teamInMatchNext1);
+
+                                    TeamInTournament teamInTourTop1 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext1!.TeamInTournamentId!.Value);
+                                    teamInTourTop1.StatusInTournament = "Trong giải";
+                                    await _teamInTournamentService.UpdateAsync(teamInTourTop1);
+                                }
+
+
+                                TeamInMatch teamInMatchNext2 = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Nhì bảng D").FirstOrDefault()!;
+                                if (teamInMatchNext2 != null)
+                                {
+                                    teamInMatchNext2.TeamName = listTeamInTournamentD[1].Team!.TeamName;
+                                    teamInMatchNext2.TeamInTournamentId = listTeamInTournamentD[1].Id;
+                                    await _teamInMatch.UpdateAsync(teamInMatchNext2);
+
+                                    TeamInTournament teamInTourTop2 = await _teamInTournamentService.GetByIdAsync(teamInMatchNext2!.TeamInTournamentId!.Value);
+                                    teamInTourTop2.StatusInTournament = "Trong giải";
+                                    await _teamInTournamentService.UpdateAsync(teamInTourTop2);
+                                }
+
+                                List<TeamInTournament> listTeamInTournamentDOut = listTeamInTournament.Where(s => s.GroupName == "Bảng D" && s.Id != listTeamInTournamentD[0].Id && s.Id != listTeamInTournamentD[1].Id).ToList();
+                                foreach (TeamInTournament tit in listTeamInTournamentDOut)
+                                {
+                                    tit.StatusInTournament = "Bị loại";
+                                    await _teamInTournamentService.UpdateAsync(tit);
+                                }
+                            }
                         }
                     }
                     else
