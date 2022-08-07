@@ -23,12 +23,13 @@ namespace AmateurFootballLeague.Controllers
         private readonly IRedisService _redisService;
         private readonly IPushNotificationService _pushNotificationService;
 
-        public NotificationController(INotificationService notificationService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, IMapper mapper, IRedisService redisService, IPushNotificationService pushNotificationService)
+        public NotificationController(INotificationService notificationService, IUserService userService, ITournamentService tournamentService, ITeamService teamService, IFootballPlayerService footballPlayerService, IMapper mapper, IRedisService redisService, IPushNotificationService pushNotificationService)
         {
             _notificationService = notificationService;
             _userService = userService;
             _tournamentService = tournamentService;
             _teamService = teamService;
+            _footballPlayerService = footballPlayerService;
             _mapper = mapper;
             _redisService = redisService;
             _pushNotificationService = pushNotificationService;
@@ -237,6 +238,7 @@ namespace AmateurFootballLeague.Controllers
                         notification.TournamentId = tournament.Id;
                     }
                 }
+
                 if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
                     FootballPlayer fp = await _footballPlayerService.GetByIdAsync(model.FootballPlayerId!.Value);

@@ -1111,10 +1111,14 @@ namespace AmateurFootballLeague.Controllers
                                 {
                                     if(i == 1)
                                     {
+
+                                        tim1.NextTeam = "Nhất bảng A";
                                         tim1.TeamName = "Nhất bảng A";
                                     }
                                     else
                                     {
+
+                                        tim1.NextTeam = "Nhì bảng A";
                                         tim1.TeamName = "Nhì bảng A";
                                     }
                                 }
@@ -1122,18 +1126,25 @@ namespace AmateurFootballLeague.Controllers
                                 {
                                     if (i == 1)
                                     {
+
+                                        tim1.NextTeam = "Nhất bảng A";
                                         tim1.TeamName = "Nhất bảng A";
                                     }
                                     else if (i == 2)
                                     {
+
+                                        tim1.NextTeam = "Nhì bảng A";
                                         tim1.TeamName = "Nhì bảng A";
                                     }
                                     else if (i == 3)
                                     {
+
+                                        tim1.NextTeam = "Nhất bảng C";
                                         tim1.TeamName = "Nhất bảng C";
                                     }
                                     else
                                     {
+                                        tim1.NextTeam = "Nhì bảng C";
                                         tim1.TeamName = "Nhì bảng C";
                                     }
                                 }
@@ -1154,10 +1165,14 @@ namespace AmateurFootballLeague.Controllers
                                 {
                                     if (i == 1)
                                     {
+
+                                        tim2.NextTeam = "Nhì bảng B";
                                         tim2.TeamName = "Nhì bảng B";
                                     }
                                     else
                                     {
+
+                                        tim2.NextTeam = "Nhất bảng B";
                                         tim2.TeamName = "Nhất bảng B";
                                     }
                                 }
@@ -1165,18 +1180,22 @@ namespace AmateurFootballLeague.Controllers
                                 {
                                     if (i == 1)
                                     {
+                                        tim2.NextTeam = "Nhì bảng B";
                                         tim2.TeamName = "Nhì bảng B";
                                     }
                                     else if (i == 2)
                                     {
+                                        tim2.NextTeam = "Nhất bảng B";
                                         tim2.TeamName = "Nhất bảng B";
                                     }
                                     else if (i == 3)
                                     {
+                                        tim2.NextTeam = "Nhì bảng D";
                                         tim2.TeamName = "Nhì bảng D";
                                     }
                                     else
                                     {
+                                        tim2.NextTeam = "Nhất bảng D";
                                         tim2.TeamName = "Nhất bảng D";
                                     }
                                 }
