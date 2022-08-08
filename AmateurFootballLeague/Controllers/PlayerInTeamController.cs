@@ -108,7 +108,7 @@ namespace AmateurFootballLeague.Controllers
                    
                     for (int i = 0; i < checkList.Count; i++)
                     {
-                        IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == checkList[i].FootballPlayerId).
+                        IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == checkList[i].FootballPlayerId && p.pit.Status == "true").
                             Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
                             .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).Where(t => t.tit.StatusInTournament!= "Bị loại").
                             Join(_tournamentService.GetList(), tit => tit.tit.Tournament, t => t, (tit, t) => new { tit, t }).Where(p => p.t.TournamentEndDate > date && p.t.Status == true).
@@ -192,6 +192,28 @@ namespace AmateurFootballLeague.Controllers
             PlayerInTeam pInTeam = new();
             try
             {
+                PlayerInTeam piteam = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "true").FirstOrDefault();
+                if(piteam != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Cầu thủ đang ở trong team"
+                    });
+                }
+
+                PlayerInTeam pUsedTobe = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "false").FirstOrDefault();
+                if (pUsedTobe != null)
+                {
+                    pUsedTobe.Status = "true";
+                    bool success = await _playerInTeam.UpdateAsync(pUsedTobe);
+                    if (success)
+                    {
+                        return Ok(new
+                        {
+                            message = "Thêm cầu thủ vào đội bóng thành công"
+                        });
+                    }
+                }
                 Team checkTeam = await _teamService.GetByIdAsync(player.TeamId);
                 User checkPlayer = await _userService.GetByIdAsync(player.FootballPlayerId);
                 var genderP = checkPlayer.Gender == "Male" ? "Nam" : "Nữ";
@@ -247,10 +269,32 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id, string status)
+        public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id)
         {
             try
             {
+                PlayerInTournament checkNew = _playerInTournament.GetList().Join(_playerInTeam.GetList(), pt => pt.PlayerInTeam, pit => pit, (pt, pit) => new { pt, pit }).
+                    Where(p => p.pit.Id == Id).Select(p => new PlayerInTournament
+                    {
+                        Id = p.pt.Id,
+                        PlayerInTeam = new PlayerInTeam
+                        {
+                            Id = p.pit.Id
+                        }
+                    }).FirstOrDefault();
+                if(checkNew == null)
+                {
+                    PlayerInTeam deletePlayer = await _playerInTeam.GetByIdAsync(checkNew.PlayerInTeam.Id);
+                    bool isDeleted = await _playerInTeam.DeleteAsync(deletePlayer);
+                    if (isDeleted)
+                    {
+                        return Ok(new
+                        {
+                            message = "Xóa cầu thủ trong đội bóng thành công"
+                        });
+                    }
+                    return BadRequest("Xóa cầu thủ trong đội bóng thất bại");
+                }
                 PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault()!;
                 if(player != null)
                 {
@@ -288,7 +332,7 @@ namespace AmateurFootballLeague.Controllers
                         });
                     }
 
-                    player.Status = status;
+                    player.Status = "false";
                     bool success  = await _playerInTeam.UpdateAsync(player);
                     if (success)
                     {
