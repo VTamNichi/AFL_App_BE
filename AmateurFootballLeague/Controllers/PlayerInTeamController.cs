@@ -273,7 +273,8 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                PlayerInTournament checkNew = _playerInTournament.GetList().Join(_playerInTeam.GetList(), pt => pt.PlayerInTeam, pit => pit, (pt, pit) => new { pt, pit }).
+                if (status == "false") { 
+                    PlayerInTournament checkNew = _playerInTournament.GetList().Join(_playerInTeam.GetList(), pt => pt.PlayerInTeam, pit => pit, (pt, pit) => new { pt, pit }).
                     Where(p => p.pit.Id == Id).Select(p => new PlayerInTournament
                     {
                         Id = p.pt.Id,
@@ -282,7 +283,7 @@ namespace AmateurFootballLeague.Controllers
                             Id = p.pit.Id
                         }
                     }).FirstOrDefault();
-                if(checkNew == null)
+                if (checkNew == null)
                 {
                     PlayerInTeam deletePlayer = await _playerInTeam.GetByIdAsync(checkNew.PlayerInTeam.Id);
                     bool isDeleted = await _playerInTeam.DeleteAsync(deletePlayer);
@@ -295,43 +296,55 @@ namespace AmateurFootballLeague.Controllers
                     }
                     return BadRequest("Xóa cầu thủ trong đội bóng thất bại");
                 }
+            }
                 PlayerInTeam player = _playerInTeam.GetList().Where(p => p.Id == Id).FirstOrDefault()!;
                 if(player != null)
                 {
-                    DateTime date = DateTime.Now.AddHours(7);
-                    IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == player.FootballPlayerId).
-                            Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
-                            .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
-                            Join(_tournamentService.GetList(), tit => tit.tit.Tournament, t => t, (tit, t) => new { tit, t }).Where(p => p.t.TournamentEndDate > date && p.t.Status == true).
-                            Join(_userService.GetList(), p => p.tit.pitt.pitt.p.IdNavigation, u => u, (p, u) => new PlayerInTeam
-                            {
-                                Id = p.tit.pitt.pitt.pit.Id,
-                                Status = p.tit.pitt.pitt.pit.Status,
-                                TeamId = p.tit.pitt.pitt.pit.TeamId,
-                                FootballPlayerId = p.tit.pitt.pitt.pit.FootballPlayerId,
-                                FootballPlayer = new FootballPlayer
-                                {
-                                    Id = p.tit.pitt.pitt.p.Id,
-                                    PlayerName = p.tit.pitt.pitt.p.PlayerName,
-                                    PlayerAvatar = p.tit.pitt.pitt.p.PlayerAvatar,
-                                    Position = p.tit.pitt.pitt.p.Position,
-                                    Description = p.tit.pitt.pitt.p.Description,
-                                    Status = p.tit.pitt.pitt.p.Status,
-                                    DateCreate = p.tit.pitt.pitt.p.DateCreate,
-                                    DateUpdate = p.tit.pitt.pitt.p.DateUpdate,
-                                    DateDelete = p.tit.pitt.pitt.p.DateDelete,
-                                    IdNavigation = u
-                                },
-
-                            }).Where(p => p.TeamId == player.TeamId);
-                    if(busyList.Any())
+                    if (status == "false")
                     {
-                        return BadRequest(new
-                        {
-                            message = "Cầu thủ đang được đăng ký vào giải, không thể xóa lúc này"
-                        });
-                    }
+                        DateTime date = DateTime.Now.AddHours(7);
+                        IQueryable<PlayerInTeam> busyList = _playerInTeam.GetList().Join(_footballPlayerService.GetList(), pit => pit.FootballPlayer, p => p, (pit, p) => new { pit, p }).Where(p => p.p.Id == player.FootballPlayerId).
+                                Join(_playerInTournament.GetList(), pitt => pitt.pit.Id, pitour => pitour.PlayerInTeamId, (pitt, pitour) => new { pitt, pitour })
+                                .Join(_teamInTournamentService.GetList(), pitt => pitt.pitour.TeamInTournament, tit => tit, (pitt, tit) => new { pitt, tit }).
+                                Join(_tournamentService.GetList(), tit => tit.tit.Tournament, t => t, (tit, t) => new { tit, t }).Where(p => p.t.TournamentEndDate > date && p.t.Status == true).
+                                Join(_userService.GetList(), p => p.tit.pitt.pitt.p.IdNavigation, u => u, (p, u) => new PlayerInTeam
+                                {
+                                    Id = p.tit.pitt.pitt.pit.Id,
+                                    Status = p.tit.pitt.pitt.pit.Status,
+                                    TeamId = p.tit.pitt.pitt.pit.TeamId,
+                                    FootballPlayerId = p.tit.pitt.pitt.pit.FootballPlayerId,
+                                    FootballPlayer = new FootballPlayer
+                                    {
+                                        Id = p.tit.pitt.pitt.p.Id,
+                                        PlayerName = p.tit.pitt.pitt.p.PlayerName,
+                                        PlayerAvatar = p.tit.pitt.pitt.p.PlayerAvatar,
+                                        Position = p.tit.pitt.pitt.p.Position,
+                                        Description = p.tit.pitt.pitt.p.Description,
+                                        Status = p.tit.pitt.pitt.p.Status,
+                                        DateCreate = p.tit.pitt.pitt.p.DateCreate,
+                                        DateUpdate = p.tit.pitt.pitt.p.DateUpdate,
+                                        DateDelete = p.tit.pitt.pitt.p.DateDelete,
+                                        IdNavigation = u
+                                    },
 
+                                }).Where(p => p.TeamId == player.TeamId);
+                        if (busyList.Any())
+                        {
+                            return BadRequest(new
+                            {
+                                message = "Cầu thủ đang được đăng ký vào giải, không thể xóa lúc này"
+                            });
+                        }
+                        player.Status = status;
+                        bool isUpdate = await _playerInTeam.UpdateAsync(player);
+                        if (isUpdate)
+                        {
+                            return Ok(new
+                            {
+                                message = "Xóa cầu thủ khỏi đội bóng thành công "
+                            });
+                        }
+                    }
                     player.Status = status;
                     bool success  = await _playerInTeam.UpdateAsync(player);
                     if (success)
