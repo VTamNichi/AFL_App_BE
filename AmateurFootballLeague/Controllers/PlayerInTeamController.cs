@@ -269,7 +269,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id)
+        public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id, string status)
         {
             try
             {
@@ -332,7 +332,7 @@ namespace AmateurFootballLeague.Controllers
                         });
                     }
 
-                    player.Status = "false";
+                    player.Status = status;
                     bool success  = await _playerInTeam.UpdateAsync(player);
                     if (success)
                     {
