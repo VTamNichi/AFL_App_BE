@@ -285,7 +285,7 @@ namespace AmateurFootballLeague.Controllers
                     }).FirstOrDefault();
                 if (checkNew == null)
                 {
-                    PlayerInTeam deletePlayer = await _playerInTeam.GetByIdAsync(checkNew.PlayerInTeam.Id);
+                    PlayerInTeam deletePlayer = await _playerInTeam.GetByIdAsync(Id);
                     bool isDeleted = await _playerInTeam.DeleteAsync(deletePlayer);
                     if (isDeleted)
                     {
@@ -357,9 +357,10 @@ namespace AmateurFootballLeague.Controllers
                 }
                 return NotFound("Không tìm thấy cầu thủ trong đội bóng với id là " + Id);
             }
-            catch
+            catch(Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                //return StatusCode(StatusCodes.Status500InternalServerError);
+                return BadRequest(ex);
             }
         }
 
