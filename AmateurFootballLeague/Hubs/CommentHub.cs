@@ -66,10 +66,10 @@ namespace AmateurFootballLeague.Hubs
             {
                 await Clients.Groups(user.Room).SendAsync("Guest", user.Id);
             }
-            else
-            {
-                await Clients.Groups(user.Room).SendAsync("ReceiveComment", _botUser, $"{user.Username} has joined {user.Room}");
-            }
+            //else
+            //{
+            //    await Clients.Groups(user.Room).SendAsync("ReceiveComment", _botUser, $"{user.Username} has joined {user.Room}");
+            //}
 
         }
 

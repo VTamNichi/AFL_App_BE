@@ -39,9 +39,18 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int? TeamIndex { get; set; }
     }
 
+    public enum GroupName
+    {
+        A,
+        B,
+        C,
+        D
+    }
     public class TeamInMatchNextUM
     {
         public int TournamentId { get; set; }
         public int MatchId { get; set; }
+        public GroupName? GroupName { get; set; }
+
     }
 }
