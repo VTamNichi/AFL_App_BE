@@ -19,11 +19,11 @@ namespace AmateurFootballLeague.Models
         public int? DifferentPoint { get; set; }
         public int? TotalYellowCard { get; set; }
         public int? TotalRedCard { get; set; }
+        public string? GroupName { get; set; }
         public string? Status { get; set; }
         public string? StatusInTournament { get; set; }
         public int? TournamentId { get; set; }
         public int? TeamId { get; set; }
-        public string? GroupName { get; set; }
 
         public virtual Team? Team { get; set; }
         public virtual Tournament? Tournament { get; set; }
