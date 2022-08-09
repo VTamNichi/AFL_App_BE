@@ -192,7 +192,7 @@ namespace AmateurFootballLeague.Controllers
             PlayerInTeam pInTeam = new();
             try
             {
-                PlayerInTeam piteam = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "true").FirstOrDefault();
+                PlayerInTeam piteam = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "true" && p.TeamId == player.TeamId).FirstOrDefault();
                 if(piteam != null)
                 {
                     return BadRequest(new
