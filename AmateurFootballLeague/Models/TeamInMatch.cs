@@ -13,13 +13,13 @@ namespace AmateurFootballLeague.Models
 
         public int Id { get; set; }
         public int? TeamScore { get; set; }
+        public int? TeamScoreLose { get; set; }
         public int? YellowCardNumber { get; set; }
         public int? RedCardNumber { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
         public int? TeamInTournamentId { get; set; }
         public int? MatchId { get; set; }
-        public int? TeamScoreLose { get; set; }
         public int? Result { get; set; }
 
         public virtual Match? Match { get; set; }

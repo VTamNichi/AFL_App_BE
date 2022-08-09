@@ -29,6 +29,7 @@ namespace AmateurFootballLeague.Models
         public string? StatusBan { get; set; }
         public DateTime? DateBan { get; set; }
         public DateTime? DateUnban { get; set; }
+        public int? FlagReportFootballPlayer { get; set; }
         public int? FlagReportTeam { get; set; }
         public int? FlagReportTournament { get; set; }
         public string? IdentityCard { get; set; }
@@ -37,12 +38,11 @@ namespace AmateurFootballLeague.Models
         public string? NameBusiness { get; set; }
         public string? Tinbusiness { get; set; }
         public bool? Status { get; set; }
+        public int? CountBlock { get; set; }
         public DateTime? DateCreate { get; set; }
         public DateTime? DateUpdate { get; set; }
         public DateTime? DateDelete { get; set; }
         public int? RoleId { get; set; }
-        public int? FlagReportFootballPlayer { get; set; }
-        public int? CountBlock { get; set; }
 
         public virtual Role? Role { get; set; }
         public virtual FootballPlayer FootballPlayer { get; set; } = null!;
