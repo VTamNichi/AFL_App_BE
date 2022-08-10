@@ -231,7 +231,7 @@ namespace AmateurFootballLeague.Controllers
             }
             DateTime date = DateTime.Now.AddHours(7);
             IQueryable<Team> teamInTour = _teamService.GetList().Join(_teamInTournamentService.GetList(), t => t.Id, tit => tit.TeamId, (t, tit) => new { t, tit }).
-                Where(tit => tit.tit.StatusInTournament != "Bị loại")
+                Where(tit => tit.tit.StatusInTournament != "Bị loại" && tit.tit.Status != "Tham gia")
                 .Join(_tournamentService.GetList(), titt => titt.tit.Tournament, tour => tour, (titt, tour) => new { titt, tour }).
                 Where(t => t.tour.TournamentEndDate > date && t.tour.Status == true).
                 Select(t => new Team
