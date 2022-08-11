@@ -518,22 +518,40 @@ namespace AmateurFootballLeague.Controllers
                             }
                         }
                     }
-                    closetScore.Status = "true";
+   
                     ScorePrediction scorePredict = _scorePrediction.GetList().Where(s => s.MatchId == matchId && s.Status == "true").FirstOrDefault();
-                    if (scorePredict != null && closetScore.Id != scorePredict.Id)
+                    if (scorePredict != null)
                     {
-                        scorePredict.Status = "false";
-                        await _scorePrediction.UpdateAsync(scorePredict);
-                    }
-                    bool isUpdated = await _scorePrediction.UpdateAsync(closetScore);
-                    if (isUpdated)
-                    {
-                        return Ok(new
+                        if(closetScore != null)
                         {
-                            message = "Thay đổi trạng thái dự đoán tỷ số thành công"
-                        });
+                            if(closetScore.Id != scorePredict.Id)
+                            {
+                                scorePredict.Status = "false";
+                                await _scorePrediction.UpdateAsync(scorePredict);
+                            }
+                        }
+                        else
+                        {
+                            scorePredict.Status = "false";
+                            await _scorePrediction.UpdateAsync(scorePredict);
+                        }
+
                     }
-                    return BadRequest("Thay đổi trạng thái dự đoán tỷ số thất bại");
+                    if (closetScore != null)
+                    {
+                        closetScore.Status = "true";
+                        bool isUpdated = await _scorePrediction.UpdateAsync(closetScore);
+                        if (isUpdated)
+                        {
+                            return Ok(new
+                            {
+                                message = "Thay đổi trạng thái dự đoán tỷ số thành công"
+                            });
+                        }
+                        return BadRequest("Thay đổi trạng thái dự đoán tỷ số thất bại");
+                    }
+                    return NoContent();
+                   
                 }
                 return NoContent();
             }
