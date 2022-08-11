@@ -21,6 +21,7 @@ namespace AmateurFootballLeague.Models
         public int? TeamInTournamentId { get; set; }
         public int? MatchId { get; set; }
         public int? Result { get; set; }
+        public int? ScorePenalty { get; set; }
 
         public virtual Match? Match { get; set; }
         public virtual TeamInTournament? TeamInTournament { get; set; }

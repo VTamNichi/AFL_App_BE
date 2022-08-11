@@ -300,6 +300,7 @@ namespace AmateurFootballLeague.Controllers
                     team.TeamScoreLose = teamInMatch.TeamScoreLose;
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
                     team.RedCardNumber = teamInMatch.RedCardNumber;
+                    team.ScorePenalty = teamInMatch.ScorePenalty;
                     team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
                     team.Result = teamInMatch.Result;
                     team.NextTeam = teamInMatch.NextTeam;
@@ -319,6 +320,7 @@ namespace AmateurFootballLeague.Controllers
                        TeamScoreLose = timm.titm.tim.TeamScoreLose,
                        YellowCardNumber = timm.titm.tim.YellowCardNumber,
                        RedCardNumber = timm.titm.tim.RedCardNumber,
+                       ScorePenalty = timm.titm.tim.ScorePenalty,
                        TeamInTournamentId = timm.titm.tim.TeamInTournamentId,
                        TeamInTournament = new TeamInTournament
                        {
