@@ -22,21 +22,21 @@ namespace AmateurFootballLeague.Controllers
         private readonly ITournamentService _tournamentService;
         private readonly IHubContext<CommentHub> _hubContext;
 
-        public TeamInMatchController(ITeamInMatchService teamInMatch,IMapper mapper, IMatchService matchService,ITournamentService tournamentService,
+        public TeamInMatchController(ITeamInMatchService teamInMatch, IMapper mapper, IMatchService matchService, ITournamentService tournamentService,
             ITeamService teamService, ITeamInTournamentService teamInTournamentService, IHubContext<CommentHub> hubContext)
         {
             _teamInMatch = teamInMatch;
             _mapper = mapper;
             _matchService = matchService;
             _teamService = teamService;
-            _tournamentService= tournamentService;
+            _tournamentService = tournamentService;
             _teamInTournamentService = teamInTournamentService;
             _hubContext = hubContext;
         }
 
 
         [HttpGet("Result")]
-        public ActionResult GetStatisticTeam (int teamId)
+        public ActionResult GetStatisticTeam(int teamId)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<TeamInMatch>> GetAllTeamInMatchInTournament(int tournamentId ,bool? fullInfo, SortTypeEnum orderType)
+        public ActionResult<List<TeamInMatch>> GetAllTeamInMatchInTournament(int tournamentId, bool? fullInfo, SortTypeEnum orderType)
         {
             try
             {
@@ -91,9 +91,9 @@ namespace AmateurFootballLeague.Controllers
                 //        Match = timm.tim.Match,
                 //    }).Where(t => t.Match.TournamentId == tournamentId);
                 IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m })
-                    //.Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, tit => tit, (timt, tit) => new{timt,tit })
-    .GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament!.Team, team => team, (timm, team) => new {timm,team})
-    .SelectMany(t => t.team.DefaultIfEmpty(),(t, temp) => new TeamInMatch
+    //.Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, tit => tit, (timt, tit) => new{timt,tit })
+    .GroupJoin(_teamService.GetList(), timm => timm.tim.TeamInTournament!.Team, team => team, (timm, team) => new { timm, team })
+    .SelectMany(t => t.team.DefaultIfEmpty(), (t, temp) => new TeamInMatch
     {
         Id = t.timm.tim.Id,
         TeamScore = t.timm.tim.TeamScore,
@@ -133,7 +133,7 @@ namespace AmateurFootballLeague.Controllers
                        TeamInTournament = timt.te
                    }).Where(m => m.Match!.TournamentId == tournamentId);
                 }
-                if(orderType == SortTypeEnum.DESC)
+                if (orderType == SortTypeEnum.DESC)
                 {
                     listTeam = listTeam.OrderByDescending(t => t.Id);
                 }
@@ -166,8 +166,8 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList() ,tim => tim.Match, m => m, (tim, m) => new  {tim , m}).
-                    Join(_teamInTournamentService.GetList(), titm => titm.tim.TeamInTournament, tit=> tit , (titm, tit)=> new {titm, tit}).
+                IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Join(_matchService.GetList(), tim => tim.Match, m => m, (tim, m) => new { tim, m }).
+                    Join(_teamInTournamentService.GetList(), titm => titm.tim.TeamInTournament, tit => tit, (titm, tit) => new { titm, tit }).
                     Join(_teamService.GetList(), timm => timm.tit.Team, team => team, (timm, team) => new TeamInMatch
                     {
                         Id = timm.titm.tim.Id,
@@ -192,7 +192,7 @@ namespace AmateurFootballLeague.Controllers
                             Team = team
                         },
                         MatchId = timm.titm.tim.MatchId,
-                        Result =timm.titm.tim.Result,
+                        Result = timm.titm.tim.Result,
                         NextTeam = timm.titm.tim.NextTeam,
                         TeamName = timm.titm.tim.TeamName,
                         ScorePenalty = timm.titm.tim.ScorePenalty,
@@ -217,7 +217,7 @@ namespace AmateurFootballLeague.Controllers
                 return NotFound("Không tìm thấy đội bóng trong trận đấu");
 
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
 
@@ -251,8 +251,8 @@ namespace AmateurFootballLeague.Controllers
             TeamInMatch team = new();
             try
             {
-                var checkTeam = _teamInMatch.GetList().Where(t=> t.MatchId == teamInMatch.MatchId && t.TeamInTournamentId == teamInMatch.TeamInTournamentId);
-                if(checkTeam != null)
+                var checkTeam = _teamInMatch.GetList().Where(t => t.MatchId == teamInMatch.MatchId && t.TeamInTournamentId == teamInMatch.TeamInTournamentId);
+                if (checkTeam != null)
                 {
                     return BadRequest(new
                     {
@@ -261,7 +261,7 @@ namespace AmateurFootballLeague.Controllers
 
                 }
                 var checkMatch = _teamInMatch.GetList().Where(t => t.MatchId == teamInMatch.MatchId);
-                if(checkMatch.Count() == 2)
+                if (checkMatch.Count() == 2)
                 {
                     return BadRequest(new
                     {
@@ -296,7 +296,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 TeamInMatch team = await _teamInMatch.GetByIdAsync(teamInMatch.Id);
-                if(team != null)
+                if (team != null)
                 {
                     team.TeamScore = teamInMatch.TeamScore;
                     team.TeamScoreLose = teamInMatch.TeamScoreLose;
@@ -308,7 +308,7 @@ namespace AmateurFootballLeague.Controllers
                     team.NextTeam = teamInMatch.NextTeam;
                     team.TeamName = teamInMatch.TeamName;
 
-                    bool isUpdated =await _teamInMatch.UpdateAsync(team);
+                    bool isUpdated = await _teamInMatch.UpdateAsync(team);
                     if (isUpdated)
                     {
                         if (!String.IsNullOrEmpty(room))
@@ -476,7 +476,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         return BadRequest("Không có đội thắng");
                     }
-                    
+
                     Match matchWin = await _matchService.GetByIdAsync(teamInMatchWin.MatchId!.Value);
                     TeamInMatch teamInMatchNext = _teamInMatch.GetList().Where(tim => tim.Match!.TournamentId == model.TournamentId && tim.NextTeam == "Thắng " + matchWin.Fight).FirstOrDefault()!;
                     if (teamInMatchNext != null)
@@ -496,19 +496,19 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else
                 {
-                    if(model.MatchId == 0)
+                    if (model.MatchId == 0)
                     {
                         if (String.IsNullOrEmpty(model.GroupName.ToString()))
                         {
                             return BadRequest("Tên bảng không được bỏ trống");
                         }
-                        if(currentTournament.GroupNumber == 2 && (model.GroupName == GroupName.C || model.GroupName == GroupName.D)) 
+                        if (currentTournament.GroupNumber == 2 && (model.GroupName == GroupName.C || model.GroupName == GroupName.D))
                         {
                             return BadRequest("Giải đấu không có bảng C hoặc D");
                         }
 
                         IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == model.TournamentId);
-                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng " + model.GroupName).OrderByDescending(o => o.Point).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng " + model.GroupName).OrderByDescending(o => o.Point).ThenByDescending(o => o.DifferentPoint).ThenBy(o => o.TotalRedCard).ThenBy(o => o.TotalYellowCard).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
                         {
                             Id = s.Id,
                             Team = new Team()
@@ -617,18 +617,18 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 var listTeam = _teamInMatch.GetList().Where(t => t.MatchId == matchId).ToList();
-                if(listTeam.Count == 0)
+                if (listTeam.Count == 0)
                 {
                     return NotFound();
                 }
-                if(listTeam[0].TeamScore > listTeam[1].TeamScore)
+                if (listTeam[0].TeamScore > listTeam[1].TeamScore)
                 {
                     listTeam[0].Result = 3;
                     listTeam[1].Result = 0;
                     await _teamInMatch.UpdateAsync(listTeam[0]);
                     await _teamInMatch.UpdateAsync(listTeam[1]);
                 }
-                else if(listTeam[0].TeamScore < listTeam[1].TeamScore)
+                else if (listTeam[0].TeamScore < listTeam[1].TeamScore)
                 {
                     listTeam[0].Result = 0;
                     listTeam[1].Result = 3;
@@ -642,7 +642,7 @@ namespace AmateurFootballLeague.Controllers
                     await _teamInMatch.UpdateAsync(listTeam[0]);
                     await _teamInMatch.UpdateAsync(listTeam[1]);
                 }
-               return NoContent();
+                return NoContent();
             }
             catch (Exception)
             {
