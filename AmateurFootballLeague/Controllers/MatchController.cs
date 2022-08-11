@@ -43,44 +43,46 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpGet]
         [Route("TournamentID")]
-        public ActionResult<MatchListFVM> GetAllMatchByTournamentID (int? tournamentId,int? footballPlayerID, bool? fullInfo)
+        public ActionResult<MatchListFVM> GetAllMatchByTournamentID(int? tournamentId, int? footballPlayerID, bool? fullInfo)
         {
             try
             {
                 IQueryable<Match> listMatch = _matchService.GetList();
                 if (tournamentId > 0)
                 {
-                        listMatch= listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
-                     {
-                         Id = m.Id,
-                         MatchDate = m.MatchDate,
-                         Status = m.Status,
-                         TournamentId = m.TournamentId,
-                         Round = m.Round,
-                         Fight = m.Fight,
-                         GroupFight = m.GroupFight,
-                         TeamInMatches = m.TeamInMatches
-                     }).Where(m => m.TournamentId == tournamentId);
+                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new Match
+                    {
+                        Id = m.Id,
+                        MatchDate = m.MatchDate,
+                        Status = m.Status,
+                        TournamentId = m.TournamentId,
+                        Round = m.Round,
+                        Fight = m.Fight,
+                        GroupFight = m.GroupFight,
+                        TeamInMatches = m.TeamInMatches
+                    }).Where(m => m.TournamentId == tournamentId);
                 }
 
-                if(footballPlayerID>0)
+                if (footballPlayerID > 0)
                 {
                     DateTime fromDate = DateTime.Now.AddHours(7).Date;
                     var date = DateTime.Now.AddHours(7).AddDays(+1).ToShortDateString().Split("/");
-                    string nextDate = date[0] + "-"+date[1] + "-"+date[2];
+                    string nextDate = date[0] + "-" + date[1] + "-" + date[2];
                     DateTime fromDate2 = Convert.ToDateTime(nextDate);
                     Console.WriteLine($"Date Value: {fromDate2}");
                     Console.WriteLine($"Date Value: {nextDate}");
                     Console.WriteLine($"To date Date Value: {fromDate}");
-                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim)=>new { m, tim }).Where(m => m.m.MatchDate >= fromDate && m.m.MatchDate < fromDate2).
-                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new {timt,t}).Join(_playerInTournament.GetList(),
-                        tpit=> tpit.t.Id, pit=>pit.TeamInTournamentId, (tpit, pit) => new
+                    listMatch = listMatch.Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim }).Where(m => m.m.MatchDate >= fromDate && m.m.MatchDate < fromDate2).
+                        Join(_teamInTournamentService.GetList(), timt => timt.tim.TeamInTournament, t => t, (timt, t) => new { timt, t }).Join(_playerInTournament.GetList(),
+                        tpit => tpit.t.Id, pit => pit.TeamInTournamentId, (tpit, pit) => new
                         {
-                            tpit,pit
-                        }).Join(_playerInTeamService.GetList(), pitt=> pitt.pit.PlayerInTeam , piteam => piteam, (pitt, piteam) => new
+                            tpit,
+                            pit
+                        }).Join(_playerInTeamService.GetList(), pitt => pitt.pit.PlayerInTeam, piteam => piteam, (pitt, piteam) => new
                         {
-                            pitt,piteam
-                        }).Where(pit => pit.piteam.FootballPlayerId == footballPlayerID).Select(m=> new Match
+                            pitt,
+                            piteam
+                        }).Where(pit => pit.piteam.FootballPlayerId == footballPlayerID).Select(m => new Match
                         {
                             Id = m.pitt.tpit.timt.m.Id,
                             MatchDate = m.pitt.tpit.timt.m.MatchDate,
@@ -155,7 +157,7 @@ namespace AmateurFootballLeague.Controllers
                            }
                        }).Where(m => m.Id == findMatch[i].Id);
                         var matchQuery = aMatch.ToList();
-                        for(int j = 0; j < matchQuery.Count; j++)
+                        for (int j = 0; j < matchQuery.Count; j++)
                         {
                             matchCheckTeam.Add(matchQuery[j]);
                         }
@@ -197,7 +199,7 @@ namespace AmateurFootballLeague.Controllers
                     return Ok(matchListResponse);
                 }
 
-                if(fullInfo == true)
+                if (fullInfo == true)
                 {
                     listMatch = _matchService.GetList().Join(_teamInMatch.GetList(), m => m.Id, tim => tim.MatchId, (m, tim) => new { m, tim })
                        .Join(_teamService.GetList(), timt => timt.tim.TeamInTournament!.Team, t => t, (timt, t) => new Match
@@ -227,7 +229,7 @@ namespace AmateurFootballLeague.Controllers
                                        Team = t
                                    }
                                }
-                           }    
+                           }
                        }).Where(m => m.TournamentId == tournamentId);
                     var matchFull = new List<Match>();
                     var matchCheckTeam = listMatch.ToList();
@@ -269,21 +271,21 @@ namespace AmateurFootballLeague.Controllers
                 var matchCheck = listMatch.ToList();
                 match.Add(matchCheck[0]);
                 var check = false;
-                for(int i=0; i<matchCheck.Count; i++)
+                for (int i = 0; i < matchCheck.Count; i++)
                 {
                     check = false;
-                    for(int j=0; j<match.Count; j++)
+                    for (int j = 0; j < match.Count; j++)
                     {
-                        if(match[j].Id == matchCheck[i].Id)
+                        if (match[j].Id == matchCheck[i].Id)
                         {
-                            check=true;
+                            check = true;
                             break;
                         }
-                        check=false;
+                        check = false;
                     }
-                    if(check == false)
+                    if (check == false)
                     {
-                        match.Add(matchCheck[i]);   
+                        match.Add(matchCheck[i]);
                     }
                 }
 
@@ -331,7 +333,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 IQueryable<Match> matchList = _matchService.GetList();
-                
+
                 if (!String.IsNullOrEmpty(matchDate))
                 {
                     matchList = matchList.Where(s => s.MatchDate.Equals(matchDate));
@@ -344,7 +346,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     matchList = matchList.Where(s => s.TournamentId == tournamentId);
                 }
-                
+
                 if (orderBy == MatchFieldEnum.Id)
                 {
                     matchList = matchList.OrderBy(tnm => tnm.Id);
@@ -425,7 +427,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Tournament tournament = await _tournamentService.GetByIdAsync(model.TournamentId);
-                if(tournament == null)
+                if (tournament == null)
                 {
                     return BadRequest("Giải đấu không tồn tại");
                 }
@@ -451,7 +453,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut("IdScreen")]
-        public async Task<ActionResult> updateScreen(int matchId,string screenId)
+        public async Task<ActionResult> updateScreen(int matchId, string screenId)
         {
             try
             {
@@ -459,12 +461,12 @@ namespace AmateurFootballLeague.Controllers
                 if (match != null)
                 {
                     match.IdScreen = screenId;
-                    bool isUpdate =  await _matchService.UpdateAsync(match);
+                    bool isUpdate = await _matchService.UpdateAsync(match);
                     if (isUpdate)
                     {
                         await _hubContext.Clients.Group(match.Id.ToString()).SendAsync("ReceiveScreen", screenId);
                         return NoContent();
-                    }                   
+                    }
                 }
                 return NotFound();
             }
@@ -486,7 +488,7 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 Match match = await _matchService.GetByIdAsync(model.Id);
-                if(match == null)
+                if (match == null)
                 {
                     return NotFound("Không tìm thấy trận đấu");
                 }
@@ -496,7 +498,8 @@ namespace AmateurFootballLeague.Controllers
                     if (tournament == null)
                     {
                         return BadRequest("Giải đấu không tồn tại");
-                    } else
+                    }
+                    else
                     {
                         match.TournamentId = (int)model.TournamentId;
                     }
@@ -595,12 +598,12 @@ namespace AmateurFootballLeague.Controllers
                     }
 
                     int numberMatchR1 = (int)(numTeam - Math.Pow(2, n));
-                    if(numberMatchR1 == 0)
+                    if (numberMatchR1 == 0)
                     {
                         int round = 1;
                         int fight = 1;
-                        totalMatch = (int) numTeam - 1;
-                        numTeam /=  2;
+                        totalMatch = (int)numTeam - 1;
+                        numTeam /= 2;
                         int winNumber = 1;
                         while (numTeam >= 1)
                         {
@@ -621,7 +624,8 @@ namespace AmateurFootballLeague.Controllers
                                 else if (numTeam == 1)
                                 {
                                     match.Round = "Chung kết";
-                                } else
+                                }
+                                else
                                 {
                                     match.Round = "Vòng " + round;
                                 }
@@ -678,7 +682,7 @@ namespace AmateurFootballLeague.Controllers
                     else
                     {
                         totalMatch += numberMatchR1;
-                        
+
                         int round = 1;
                         int fight = 1;
                         int winNumber = 1;
@@ -817,14 +821,14 @@ namespace AmateurFootballLeague.Controllers
                                         tim2.TeamName = "Đội " + tn2.ToString();
                                     }
                                 }
-                                
+
                                 await _teamInMatch.AddAsync(tim2);
 
                                 fight++;
                             }
                             round++;
                             numberMatchR2 /= 2;
-                            if(numberMatchR2 >= 1)
+                            if (numberMatchR2 >= 1)
                             {
                                 totalMatch += numberMatchR2;
                             }
@@ -838,7 +842,7 @@ namespace AmateurFootballLeague.Controllers
                         totalMatch += i;
                     }
                     List<string> listTest = new();
-                    
+
                     for (int i = 1; i <= totalMatch; i++)
                     {
                         int tn1 = rd.Next(1, numTeam + 1);
@@ -931,14 +935,14 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else
                 {
-                    int numberTeamOfGroup = (int) (numTeam / groupNum);
-                    int numberTeamRemain = (int) numTeam -  numberTeamOfGroup * groupNum;
+                    int numberTeamOfGroup = (int)(numTeam / groupNum);
+                    int numberTeamRemain = (int)numTeam - numberTeamOfGroup * groupNum;
                     int table = 65;
                     for (int i = 1; i <= numTeam; i++)
                     {
                         listTeamNameAllGroup.Add(i);
                     }
-                for (int i = 1; i <= groupNum; i++)
+                    for (int i = 1; i <= groupNum; i++)
                     {
                         int totalMatchInGroup = 0;
                         int realNumTeamInGroup = numberTeamOfGroup;
@@ -1094,7 +1098,7 @@ namespace AmateurFootballLeague.Controllers
                                 match.Round = "Vòng " + round;
                             }
                             match.Fight = "Trận " + fight;
-                            
+
                             Match matchCreated = await _matchService.AddAsync(match);
 
                             TeamInMatch tim1 = new();
@@ -1107,9 +1111,9 @@ namespace AmateurFootballLeague.Controllers
                             }
                             else
                             {
-                                if(groupNum == 2)
+                                if (groupNum == 2)
                                 {
-                                    if(i == 1)
+                                    if (i == 1)
                                     {
 
                                         tim1.NextTeam = "Nhất bảng A";
@@ -1234,6 +1238,140 @@ namespace AmateurFootballLeague.Controllers
                     await _matchService.DeleteAsync(match);
                 }
                 return Ok("Xóa trận đấu trong giải đấu thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        /// <summary>Create a tie break table match</summary>
+        /// <response code="201">Created tie break table match successfull</response>
+        /// <response code="400">Field is not matched or duplicated</response>
+        /// <response code="500">Failed to save request</response>
+        [HttpPost("create-tie-break-match")]
+        [Produces("application/json")]
+        public async Task<ActionResult<MatchVM>> CreateTieBreakMatch(int tournamentId, string? groupName)
+        {
+            try
+            {
+                Tournament tournament = await _tournamentService.GetByIdAsync(tournamentId);
+                if (tournament == null)
+                {
+                    return BadRequest("Giải đấu không tồn tại");
+                }
+                IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == tournamentId);
+                string tieGroup = "";
+                if (!String.IsNullOrEmpty(groupName))
+                {
+                    tieGroup = "Bảng " + groupName!;
+                    listTeamInTournament = listTeamInTournament.Where(s => s.GroupName == tieGroup);
+                }
+                int maxSort = listTeamInTournament.Max(s => s.Point) ?? 0;
+                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.Point).Where(s => s.Point == maxSort);
+                if (listTeamInTournament.Count() < 2)
+                {
+                    return BadRequest("Phải có ít nhất 2 đội bằng điểm");
+                }
+                maxSort = listTeamInTournament.Max(s => s.DifferentPoint) ?? 0;
+                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.DifferentPoint).Where(s => s.DifferentPoint == maxSort);
+                if (listTeamInTournament.Count() < 2)
+                {
+                    return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
+                }
+
+                maxSort = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
+                listTeamInTournament = listTeamInTournament.OrderBy(o => o.TotalRedCard).Where(s => s.TotalRedCard == maxSort);
+                if (listTeamInTournament.Count() < 2)
+                {
+                    return BadRequest("Phải có ít nhất 2 đội bằng số thẻ đỏ");
+                }
+
+                maxSort = listTeamInTournament.Min(s => s.TotalYellowCard) ?? 0;
+                listTeamInTournament = listTeamInTournament.OrderBy(o => o.TotalYellowCard).Where(s => s.TotalYellowCard == maxSort);
+                if (listTeamInTournament.Count() < 2)
+                {
+                    return BadRequest("Phải có ít nhất 2 đội bằng số thẻ vàng");
+                }
+                listTeamInTournament = listTeamInTournament.Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                {
+                    Id = s.Id,
+                    Team = new Team()
+                    {
+                        Id = t.Id,
+                        TeamName = t.TeamName
+                    }
+
+                });
+                if (listTeamInTournament.Count() == 2)
+                {
+                    IQueryable<Match> listMatch = _matchService.GetList().Where(s => s.Round!.Contains("tie-break"));
+                    Match match = new();
+                    match.TournamentId = tournamentId;
+                    match.Status = "Chưa bắt đầu";
+                    match.Round = "Vòng tie-break " + listMatch.Count();
+                    match.TokenLivestream = "";
+                    match.Fight = "";
+                    match.GroupFight = "Bảng tie-break " + listMatch.Count();
+                    if (tieGroup != "")
+                    {
+                        match.GroupFight = match.GroupFight + " " + tieGroup;
+                    }
+                    Match matchCreated = await _matchService.AddAsync(match);
+
+                    TeamInMatch tim1 = new();
+                    tim1.MatchId = matchCreated.Id;
+                    tim1.TeamInTournamentId = listTeamInTournament.ToList()[0].Id;
+                    tim1.TeamName = listTeamInTournament.ToList()[0].Team!.TeamName;
+                    await _teamInMatch.AddAsync(tim1);
+
+                    TeamInMatch tim2 = new();
+                    tim2.MatchId = matchCreated.Id;
+                    tim2.TeamInTournamentId = listTeamInTournament.ToList()[1].Id;
+                    tim2.TeamName = listTeamInTournament.ToList()[1].Team!.TeamName;
+                    await _teamInMatch.AddAsync(tim2);
+
+                    return Ok("Tạo trận tie-break thành công");
+                }
+                else if (listTeamInTournament.Count() > 2)
+                {
+                    IQueryable<Match> listMatch = _matchService.GetList().Where(s => s.Round!.Contains("tie-break"));
+                    for (int h = 0; h < listTeamInTournament.Count() - 1; h++)
+                    {
+                        for (int k = h + 1; k < listTeamInTournament.Count(); k++)
+                        {
+                            Match match = new();
+                            match.TournamentId = tournamentId;
+                            match.Status = "Chưa bắt đầu";
+                            match.Round = "Vòng tie-break " + listMatch.Count();
+                            match.TokenLivestream = "";
+                            match.Fight = "";
+                            match.GroupFight = "Bảng tie-break " + listMatch.Count();
+                            if (tieGroup != "")
+                            {
+                                match.GroupFight = match.GroupFight + " " + tieGroup;
+                            }
+                            Match matchCreated = await _matchService.AddAsync(match);
+
+                            TeamInMatch tim1 = new();
+                            tim1.MatchId = matchCreated.Id;
+                            tim1.TeamInTournamentId = listTeamInTournament.ToList()[h].Id;
+                            tim1.TeamName = listTeamInTournament.ToList()[h].Team!.TeamName;
+                            await _teamInMatch.AddAsync(tim1);
+
+                            TeamInMatch tim2 = new();
+                            tim2.MatchId = matchCreated.Id;
+                            tim2.TeamInTournamentId = listTeamInTournament.ToList()[k].Id;
+                            tim2.TeamName = listTeamInTournament.ToList()[k].Team!.TeamName;
+                            await _teamInMatch.AddAsync(tim2);
+                        }
+                    }
+
+                    return Ok("Tạo bảng tie-break thành công");
+                }
+
+
+                return BadRequest("Tạo tie-break thất bại");
             }
             catch (Exception)
             {
