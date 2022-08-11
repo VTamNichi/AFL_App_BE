@@ -27,6 +27,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int? Result { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
+        public int? ScorePenalty { get; set; }
         public int TeamInTournamentId { get; set; }
         public int MatchId { get; set; }
         public virtual Match? Match { get; set; }

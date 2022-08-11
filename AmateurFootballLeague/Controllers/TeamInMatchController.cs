@@ -101,6 +101,7 @@ namespace AmateurFootballLeague.Controllers
         YellowCardNumber = t.timm.tim.YellowCardNumber,
         RedCardNumber = t.timm.tim.RedCardNumber,
         TeamInTournamentId = t.timm.tim.TeamInTournamentId,
+        ScorePenalty = t.timm.tim.ScorePenalty,
         TeamInTournament = new TeamInTournament
         {
 
@@ -194,6 +195,7 @@ namespace AmateurFootballLeague.Controllers
                         Result =timm.titm.tim.Result,
                         NextTeam = timm.titm.tim.NextTeam,
                         TeamName = timm.titm.tim.TeamName,
+                        ScorePenalty = timm.titm.tim.ScorePenalty,
                         Match = timm.titm.tim.Match,
                     }
     ).Where(m => m.MatchId == matchId);
