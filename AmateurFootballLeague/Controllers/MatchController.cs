@@ -1280,6 +1280,13 @@ namespace AmateurFootballLeague.Controllers
                     return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
                 }
 
+                maxSort = listTeamInTournament.Max(s => s.WinScoreNumber) ?? 0;
+                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.WinScoreNumber).Where(s => s.WinScoreNumber == maxSort);
+                if (listTeamInTournament.Count() < 2)
+                {
+                    return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
+                }
+
                 maxSort = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
                 listTeamInTournament = listTeamInTournament.OrderBy(o => o.TotalRedCard).Where(s => s.TotalRedCard == maxSort);
                 if (listTeamInTournament.Count() < 2)
