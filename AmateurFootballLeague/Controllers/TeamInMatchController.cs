@@ -508,7 +508,7 @@ namespace AmateurFootballLeague.Controllers
                         }
 
                         IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == model.TournamentId);
-                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng " + model.GroupName).OrderByDescending(o => o.Point).ThenByDescending(o => o.DifferentPoint).ThenBy(o => o.TotalRedCard).ThenBy(o => o.TotalYellowCard).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
+                        List<TeamInTournament> listTeamInTournamentA = listTeamInTournament.Where(s => s.GroupName == "Bảng " + model.GroupName).OrderByDescending(o => o.Point).ThenByDescending(o => o.DifferentPoint).ThenByDescending(o => o.WinScoreNumber).ThenBy(o => o.TotalRedCard).ThenBy(o => o.TotalYellowCard).Take(2).Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
                         {
                             Id = s.Id,
                             Team = new Team()

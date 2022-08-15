@@ -132,6 +132,11 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Không tìm thấy loại hành động");
                 }
                 matchDetail.ActionMatchId = match.ActionMatchId;
+                matchDetail.StatusPen = false;
+                if(match.ActionMatchId == 4)
+                {
+                    matchDetail.StatusPen = true;
+                }
                 matchDetail.ActionMinute = String.IsNullOrEmpty(match.ActionMinute) ? "" : match.ActionMinute;
                 matchDetail.MatchId = match.MatchId;
                 matchDetail.PlayerInTournamentId = match.PlayerInTournamentId;
@@ -186,6 +191,11 @@ namespace AmateurFootballLeague.Controllers
                         return NotFound("Không tìm thấy loại hành động");
                     }
                     matchDetail.ActionMatchId = match.ActionMatchId;
+                    matchDetail.StatusPen = false;
+                    if (match.ActionMatchId == 4)
+                    {
+                        matchDetail.StatusPen = true;
+                    }
                     matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                     bool isUpdated = await _matchDetail.UpdateAsync(matchDetail);
                     if (isUpdated)
