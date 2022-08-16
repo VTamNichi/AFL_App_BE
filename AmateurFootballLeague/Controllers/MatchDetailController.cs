@@ -255,10 +255,15 @@ namespace AmateurFootballLeague.Controllers
                 {
                     listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 2);
                 }
-                else
+                else if (type == DeleteType.red)
                 {
                     listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 3);
                 }
+                else
+                {
+                    listMatchDetail = listMatchDetail.Where(md => md.ActionMatchId == 4);
+                }
+
                 if (listMatchDetail.Any())
                 {
                     foreach (MatchDetail matchDetail in listMatchDetail.ToList())

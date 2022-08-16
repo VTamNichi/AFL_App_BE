@@ -6,7 +6,8 @@ namespace AmateurFootballLeague.ViewModels.Requests
     {
         score,
         yellow,
-        red
+        red,
+        penalty
     }
     public class MatchDetailCM
     {
