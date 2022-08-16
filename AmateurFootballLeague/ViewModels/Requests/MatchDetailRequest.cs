@@ -18,6 +18,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public int PlayerInTournamentId { get; set; }
         [Required]
         public int FootballPlayerId { get; set; }
+        public bool? StatusPen { get; set; }
     }
 
     public class MatchDetailUM
@@ -27,6 +28,7 @@ namespace AmateurFootballLeague.ViewModels.Requests
         public string? ActionMinute { get; set; }
         public int MatchId { get; set; }
         public int PlayerInTournamentId { get; set; }
+        public bool? StatusPen { get; set; }
     }
 
 }

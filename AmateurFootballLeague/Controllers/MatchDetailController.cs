@@ -57,6 +57,7 @@ namespace AmateurFootballLeague.Controllers
                         ActionMinute =md.ActionMinute,
                         MatchId = md.MatchId,
                         PlayerInTournamentId = md.PlayerInTournamentId,
+                        StatusPen = md.StatusPen,
                         FootballPlayerId = f.Id,
                         FootballPlayer = new FootballPlayer
                                 {
@@ -132,10 +133,9 @@ namespace AmateurFootballLeague.Controllers
                     return NotFound("Không tìm thấy loại hành động");
                 }
                 matchDetail.ActionMatchId = match.ActionMatchId;
-                matchDetail.StatusPen = false;
                 if(match.ActionMatchId == 4)
                 {
-                    matchDetail.StatusPen = true;
+                    matchDetail.StatusPen = match.StatusPen;
                 }
                 matchDetail.ActionMinute = String.IsNullOrEmpty(match.ActionMinute) ? "" : match.ActionMinute;
                 matchDetail.MatchId = match.MatchId;
@@ -154,6 +154,7 @@ namespace AmateurFootballLeague.Controllers
                        ActionMinute = md.ActionMinute,
                        MatchId = md.MatchId,
                        PlayerInTournamentId = md.PlayerInTournamentId,
+                       StatusPen = md.StatusPen,
                        FootballPlayerId = f.Id,
                        FootballPlayer = new FootballPlayer
                                {
@@ -191,10 +192,9 @@ namespace AmateurFootballLeague.Controllers
                         return NotFound("Không tìm thấy loại hành động");
                     }
                     matchDetail.ActionMatchId = match.ActionMatchId;
-                    matchDetail.StatusPen = false;
                     if (match.ActionMatchId == 4)
                     {
-                        matchDetail.StatusPen = true;
+                        matchDetail.StatusPen = match.StatusPen;
                     }
                     matchDetail.ActionMinute = String.IsNullOrEmpty(matchDetail.ActionMinute) ? "" : match.ActionMinute;
                     bool isUpdated = await _matchDetail.UpdateAsync(matchDetail);
