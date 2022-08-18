@@ -1268,34 +1268,35 @@ namespace AmateurFootballLeague.Controllers
                     listTeamInTournament = listTeamInTournament.Where(s => s.GroupName == tieGroup);
                 }
                 int maxSort = listTeamInTournament.Max(s => s.Point) ?? 0;
-                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.Point).Where(s => s.Point == maxSort);
+                listTeamInTournament = listTeamInTournament.Where(s => s.Point == maxSort);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng điểm");
                 }
-                maxSort = listTeamInTournament.Max(s => s.DifferentPoint) ?? 0;
-                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.DifferentPoint).Where(s => s.DifferentPoint == maxSort);
+                
+                int maxSort2 = listTeamInTournament.Max(s => s.DifferentPoint) ?? 0;
+                
+                listTeamInTournament = listTeamInTournament.Where(s => s.DifferentPoint == maxSort2);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
                 }
 
-                maxSort = listTeamInTournament.Max(s => s.WinScoreNumber) ?? 0;
-                listTeamInTournament = listTeamInTournament.OrderByDescending(o => o.WinScoreNumber).Where(s => s.WinScoreNumber == maxSort);
+                int maxSort3 = listTeamInTournament.Max(s => s.WinScoreNumber) ?? 0;
+                listTeamInTournament = listTeamInTournament.Where(s => s.WinScoreNumber == maxSort3);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
                 }
 
-                maxSort = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
-                listTeamInTournament = listTeamInTournament.OrderBy(o => o.TotalRedCard).Where(s => s.TotalRedCard == maxSort);
+                int maxSort4 = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
+                listTeamInTournament = listTeamInTournament.Where(s => s.TotalRedCard == maxSort4);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng số thẻ đỏ");
                 }
-
-                maxSort = listTeamInTournament.Min(s => s.TotalYellowCard) ?? 0;
-                listTeamInTournament = listTeamInTournament.OrderBy(o => o.TotalYellowCard).Where(s => s.TotalYellowCard == maxSort);
+                int maxSort5 = listTeamInTournament.Min(s => s.TotalYellowCard) ?? 0;
+                listTeamInTournament = listTeamInTournament.Where(s => s.TotalYellowCard == maxSort5);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng số thẻ vàng");
