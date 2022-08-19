@@ -610,7 +610,7 @@ namespace AmateurFootballLeague.Controllers
             }
         }
 
-        [HttpDelete("update-result")]
+        [HttpPut("update-result")]
         [Produces("application/json")]
         public async Task<ActionResult> UpdateResult(int matchId)
         {
@@ -639,6 +639,21 @@ namespace AmateurFootballLeague.Controllers
                 {
                     listTeam[0].Result = 1;
                     listTeam[1].Result = 1;
+                    if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                    {
+                        listTeam[0].Result = 3;
+                        listTeam[1].Result = 0;
+                    }
+                    else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                    {
+                        listTeam[0].Result = 0;
+                        listTeam[1].Result = 3;
+                    }
+                    else
+                    {
+                        listTeam[0].Result = 1;
+                        listTeam[1].Result = 1;
+                    }
                     await _teamInMatch.UpdateAsync(listTeam[0]);
                     await _teamInMatch.UpdateAsync(listTeam[1]);
                 }
