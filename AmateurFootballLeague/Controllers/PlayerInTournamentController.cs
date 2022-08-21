@@ -202,7 +202,7 @@ namespace AmateurFootballLeague.Controllers
             {
                 if(tourId >0 && teamIntourId >0)
                 {
-                    Tournament tour = _tournamentService.GetList().Where(t => t.Id == tourId).FirstOrDefault();
+                    Tournament tour = _tournamentService.GetList().Where(t => t.Id == tourId).FirstOrDefault()!;
                     if (tour == null)
                     {
                         return NotFound(new { message = "Giải đấu không tồn tại " });

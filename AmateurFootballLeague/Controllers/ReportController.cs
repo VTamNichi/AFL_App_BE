@@ -362,7 +362,6 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Mỗi ngày chỉ được báo cáo một lần");
                 }
-                return Ok(reportListAll);
 
                 if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {

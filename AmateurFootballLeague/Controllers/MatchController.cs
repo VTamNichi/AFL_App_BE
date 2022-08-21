@@ -1277,36 +1277,116 @@ namespace AmateurFootballLeague.Controllers
                     listTeamInTournament = listTeamInTournament.Where(s => s.GroupName == tieGroup);
                 }
                 int maxSort = listTeamInTournament.Max(s => s.Point) ?? 0;
+                IQueryable<TeamInTournament> listTeamInTournament2 = listTeamInTournament;
                 listTeamInTournament = listTeamInTournament.Where(s => s.Point == maxSort);
+                bool flag = false;
                 if (listTeamInTournament.Count() < 2)
                 {
-                    return BadRequest("Phải có ít nhất 2 đội bằng điểm");
+                    int minSort = listTeamInTournament2.Where(s => s.Point < maxSort).Max(s => s.Point) ?? 0;
+                    listTeamInTournament2 = listTeamInTournament2.Where(s => s.Point == minSort);
+                    if (listTeamInTournament2.Count() < 2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng điểm");
+                    }
+                    flag = true;
                 }
+                if(flag)
+                {
+                    listTeamInTournament = listTeamInTournament2;
+                }
+
                 int maxSort2 = listTeamInTournament.Max(s => s.DifferentPoint) ?? 0;
-                
+                listTeamInTournament2 = listTeamInTournament;
                 listTeamInTournament = listTeamInTournament.Where(s => s.DifferentPoint == maxSort2);
+                bool flag2 = false;
                 if (listTeamInTournament.Count() < 2)
                 {
-                    return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
+                    if(flag)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
+                    }
+                    int minSort = listTeamInTournament2.Where(s => s.DifferentPoint < maxSort2).Max(s => s.DifferentPoint) ?? 0;
+                    listTeamInTournament2 = listTeamInTournament2.Where(s => s.DifferentPoint == minSort);
+                    if (listTeamInTournament2.Count() < 2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
+                    }
+                    flag2 = true;
                 }
+                if(flag2)
+                {
+                    listTeamInTournament = listTeamInTournament2;
+                }
+
                 int maxSort3 = listTeamInTournament.Max(s => s.WinScoreNumber) ?? 0;
+                listTeamInTournament2 = listTeamInTournament;
                 listTeamInTournament = listTeamInTournament.Where(s => s.WinScoreNumber == maxSort3);
+                bool flag3 = false;
                 if (listTeamInTournament.Count() < 2)
                 {
-                    return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
+                    if(flag || flag2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
+                    }
+                    int minSort = listTeamInTournament2.Where(s => s.WinScoreNumber < maxSort3).Max(s => s.WinScoreNumber) ?? 0;
+                    listTeamInTournament2 = listTeamInTournament2.Where(s => s.WinScoreNumber == minSort);
+                    if (listTeamInTournament2.Count() < 2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
+                    }
+                    flag3 = true;
                 }
+                if(flag3)
+                {
+                    listTeamInTournament = listTeamInTournament2;
+                }
+
                 int maxSort4 = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
+                listTeamInTournament2 = listTeamInTournament;
                 listTeamInTournament = listTeamInTournament.Where(s => s.TotalRedCard == maxSort4);
+                bool flag4 = false;
                 if (listTeamInTournament.Count() < 2)
                 {
-                    return BadRequest("Phải có ít nhất 2 đội bằng số thẻ đỏ");
+                    if(flag || flag2 || flag3)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số thẻ đỏ");
+                    }
+                    int minSort = listTeamInTournament2.Where(s => s.TotalRedCard > maxSort4).Min(s => s.TotalRedCard) ?? 0;
+                    listTeamInTournament2 = listTeamInTournament2.Where(s => s.TotalRedCard == minSort);
+                    if (listTeamInTournament2.Count() < 2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số thẻ đỏ");
+                    }
+                    flag4 = true;
                 }
+                if(flag4)
+                {
+                    listTeamInTournament = listTeamInTournament2;
+                }
+
                 int maxSort5 = listTeamInTournament.Min(s => s.TotalYellowCard) ?? 0;
+                listTeamInTournament2 = listTeamInTournament;
                 listTeamInTournament = listTeamInTournament.Where(s => s.TotalYellowCard == maxSort5);
+                bool flag5 = false;
                 if (listTeamInTournament.Count() < 2)
                 {
-                    return BadRequest("Phải có ít nhất 2 đội bằng số thẻ vàng");
+                    if(flag || flag2 || flag3 || flag4)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số thẻ vàng");
+                    }
+                    int minSort = listTeamInTournament2.Where(s => s.TotalYellowCard > maxSort5).Min(s => s.TotalYellowCard) ?? 0;
+                    listTeamInTournament2 = listTeamInTournament2.Where(s => s.TotalYellowCard == minSort);
+                    if (listTeamInTournament2.Count() < 2)
+                    {
+                        return BadRequest("Phải có ít nhất 2 đội bằng số thẻ vàng");
+                    }
+                    flag5 = true;
                 }
+                if(flag5)
+                {
+                    listTeamInTournament = listTeamInTournament2;
+                }
+
                 listTeamInTournament = listTeamInTournament.Join(_teamService.GetList(), s => s.Team, t => t, (s, t) => new TeamInTournament()
                 {
                     Id = s.Id,
