@@ -1321,7 +1321,7 @@ namespace AmateurFootballLeague.Controllers
                     Match match = new();
                     match.TournamentId = tournamentId;
                     match.Status = "Chưa bắt đầu";
-                    match.Round = "Vòng tie-break ";
+                    match.Round = "Vòng tie-break";
                     match.TokenLivestream = "";
                     match.Fight = "";
                     
@@ -1335,7 +1335,6 @@ namespace AmateurFootballLeague.Controllers
                     }
                     Match matchCreated = await _matchService.AddAsync(match);
 
-                    Console.WriteLine("dddddddd");
                     TeamInMatch tim1 = new();
                     tim1.MatchId = matchCreated.Id;
                     tim1.TeamInTournamentId = listTeamInTournament.ToList()[0].Id;
@@ -1352,7 +1351,6 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else if (listTeamInTournament.Count() > 2)
                 {
-                    IQueryable<Match> listMatch = _matchService.GetList().Where(s => s.Round!.Contains("tie-break"));
                     for (int h = 0; h < listTeamInTournament.Count() - 1; h++)
                     {
                         for (int k = h + 1; k < listTeamInTournament.Count(); k++)
@@ -1360,13 +1358,16 @@ namespace AmateurFootballLeague.Controllers
                             Match match = new();
                             match.TournamentId = tournamentId;
                             match.Status = "Chưa bắt đầu";
-                            match.Round = "Vòng tie-break " + listMatch.Count();
+                            match.Round = "Vòng tie-break";
                             match.TokenLivestream = "";
                             match.Fight = "";
-                            match.GroupFight = "Bảng tie-break " + listMatch.Count();
                             if (tieGroup != "")
                             {
-                                match.GroupFight = match.GroupFight + " " + tieGroup;
+                                match.GroupFight = "Bảng " + groupName + " tie-break";
+                            }
+                            else
+                            {
+                                match.GroupFight = "Bảng tie-break";
                             }
                             Match matchCreated = await _matchService.AddAsync(match);
 
