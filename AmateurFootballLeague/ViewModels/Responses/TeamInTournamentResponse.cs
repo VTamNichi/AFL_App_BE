@@ -11,6 +11,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int? DifferentPoint { get; set; }
         public int? TotalYellowCard { get; set; }
         public int? TotalRedCard { get; set; }
+        public int? WinTieBreak { get; set; }
         public string? GroupName { get; set; }
         public string? Status { get; set; }
         public string? StatusInTournament { get; set; }

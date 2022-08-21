@@ -6,6 +6,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
     {
         public int Id { get; set; }
         public int TeamScore { get; set; }
+        public int? ScoreTieBreak { get; set; }
         public int? TeamScoreLose { get; set; }
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
@@ -13,6 +14,7 @@ namespace AmateurFootballLeague.ViewModels.Responses
         public int TeamInTournamentId { get; set; }
         public int MatchId { get; set; }
         public int? Result { get; set; }
+        public int? WinTieBreak { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
     }
@@ -21,10 +23,12 @@ namespace AmateurFootballLeague.ViewModels.Responses
     {
         public int Id { get; set; }
         public int TeamScore { get; set; }
+        public int? ScoreTieBreak { get; set; }
         public int? TeamScoreLose { get; set; }
         public int YellowCardNumber { get; set; }
         public int RedCardNumber { get; set; }
         public int? Result { get; set; }
+        public int? WinTieBreak { get; set; }
         public string? NextTeam { get; set; }
         public string? TeamName { get; set; }
         public int? ScorePenalty { get; set; }
