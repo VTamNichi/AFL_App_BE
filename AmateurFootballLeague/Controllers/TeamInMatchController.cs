@@ -682,5 +682,101 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpPut("update-outTeam")]
+        [Produces("application/json")]
+        public async Task<ActionResult> LooseTeam(int teamInTourId)
+        {
+            try
+            {
+                bool status = true;
+                IQueryable<TeamInMatch> teamInMatch = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
+                    (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id == teamInTourId).
+                    Select(t => new TeamInMatch
+                    {
+                        Id = t.tim.Id,
+                        TeamScore = t.tim.TeamScore,
+                        TeamScoreLose = t.tim.TeamScoreLose,
+                        YellowCardNumber = t.tim.YellowCardNumber,
+                        RedCardNumber = t.tim.RedCardNumber,
+                        NextTeam = t.tim.NextTeam,
+                        TeamName = t.tim.TeamName,
+                        TeamInTournamentId = t.tim.TeamInTournamentId,
+                        MatchId = t.tim.MatchId,
+                        Result = t.tim.Result,
+                        ScorePenalty = t.tim.ScorePenalty
+                    });
+                var allMatch = teamInMatch.ToList();
+                if (allMatch.Count > 0)
+                {
+
+                    if (allMatch[0].Match.GroupFight.Contains("Bảng"))
+                    {
+                        IQueryable<TeamInMatch> checkLast = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
+                (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id != teamInTourId).
+                Select(t => new TeamInMatch
+                {
+                    Id = t.tim.Id,
+                    TeamScore = t.tim.TeamScore,
+                    TeamScoreLose = t.tim.TeamScoreLose,
+                    YellowCardNumber = t.tim.YellowCardNumber,
+                    RedCardNumber = t.tim.RedCardNumber,
+                    NextTeam = t.tim.NextTeam,
+                    TeamName = t.tim.TeamName,
+                    TeamInTournamentId = t.tim.TeamInTournamentId,
+                    MatchId = t.tim.MatchId,
+                    Result = t.tim.Result,
+                    ScorePenalty = t.tim.ScorePenalty
+                });
+                        var isLast = checkLast.ToList();
+                        if (isLast.Count > 0)
+                        {
+                            for (int j = 0; j < isLast.Count; j++)
+                            {
+                                if(isLast[j].Result == null)
+                                {
+                                    status = false;
+                                }
+                               
+
+                            }
+                        }
+
+                    }
+
+                    for (int i = 0; i < allMatch.Count; i++)
+                    {
+                        if (allMatch[i].Result == null)
+                        {
+
+                            IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Where(m => m.MatchId == allMatch[i].MatchId);
+                            var changeRs = listTeam.ToList();
+                            for(int j = 0; j < changeRs.Count; j++)
+                            {
+                                if(changeRs[j].TeamInTournamentId == teamInTourId)
+                                {
+                                    changeRs[j].Result = 0;
+                                    changeRs[j].TeamScore = 0;
+                                    await _teamInMatch.UpdateAsync(changeRs[j]);
+                                }
+                                else
+                                {
+                                    changeRs[j].Result = 3;
+                                    changeRs[j].TeamScore = 3;
+                                    await _teamInMatch.UpdateAsync(changeRs[j]);
+                                }
+                            }
+
+                        }
+                    }
+                    return Ok(status);
+                }
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
