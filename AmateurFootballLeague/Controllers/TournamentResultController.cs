@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -278,6 +280,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task <ActionResult<TournamentResultVM>> CreateTournamentResult(int matchId)
         {
             try
@@ -662,6 +665,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TournamentResultVM>> UpdateTournamentResult([FromBody] TournamentResultUM model)
         {
             TournamentResult currentTournamentResult = await _tournamentResultService.GetByIdAsync(model.Id);
@@ -714,6 +718,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             TournamentResult currentTournamentResultVM = await _tournamentResultService.GetByIdAsync(id);

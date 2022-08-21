@@ -3,12 +3,15 @@ using AmateurFootballLeague.IServices;
 using AmateurFootballLeague.Models;
 using AmateurFootballLeague.ViewModels.Requests;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
 {
     [Route("api/v1/systems")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SystemController : ControllerBase
     {
         private readonly IUserService _userService;

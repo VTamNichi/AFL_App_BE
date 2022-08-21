@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -84,6 +86,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<CommentVM>> CreateComment(int? tournamentID, int? teamID, CommentCM model)
         {
             Comment comment = new();
@@ -138,6 +141,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<CommentVM>> UpdateComment(CommentUM model)
         {
             try
@@ -164,6 +168,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpDelete]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<CommentVM>> DeleteComment(int id)
         {
             try

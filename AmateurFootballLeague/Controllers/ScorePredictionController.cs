@@ -5,7 +5,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -98,6 +99,7 @@ namespace AmateurFootballLeague.Controllers
 
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ScorePredictionVM>> CreateScorePrediction(ScorePredictionCM model)
         {
             ScorePrediction scorePrediction = new();
@@ -243,6 +245,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> UpdateScorePrediction(ScorePredictionUM model)
         {
             try
@@ -290,6 +293,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpPut]
         [Route("Status")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatusScorePrediction(int matchId)
         {
             try

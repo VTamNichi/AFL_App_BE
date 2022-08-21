@@ -4,7 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -122,6 +123,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<PlayerInTournamentVM>> CreatePlayerInTournament(PlayerInTournamentCM player, int footballPlayerId)
         {
             PlayerInTournament playerCreate = new();
@@ -193,6 +195,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpDelete]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id, int? tourId, int? teamIntourId)
         {
             try

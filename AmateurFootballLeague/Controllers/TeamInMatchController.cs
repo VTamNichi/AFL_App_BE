@@ -5,6 +5,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -246,6 +248,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamInMatchVM>> CreateTeamInMatch(TeamInMatchCM teamInMatch)
         {
             TeamInMatch team = new();
@@ -291,6 +294,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Update(TeamInMatchUM teamInMatch, string? room)
         {
             try
@@ -363,6 +367,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut("update-team-in-match-to-tournament")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> UpdateTeamInMatch([FromBody] TeamInMatchToTournamentUM model)
         {
             try
@@ -456,6 +461,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut("update-next-team-in-match")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> UpdateNextTeamInMatch([FromBody] TeamInMatchNextUM model)
         {
             try
@@ -593,6 +599,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpDelete("delete-by-tournament-id")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteTeamByTournamrntId(int tournamentId)
         {
             try
@@ -612,6 +619,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpPut("update-result")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> UpdateResult(int matchId)
         {
             try

@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -199,6 +201,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<PromoteRequestVM>> CreatePromoteRequest([FromBody] PromoteRequestCM model)
         {
             try
@@ -233,6 +236,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<PromoteRequestVM>> UpdatePromoteRequest([FromBody] PromoteRequestUM model)
         {
             try

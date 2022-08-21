@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -256,6 +258,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamInTournamentVM>> CreateTeamInTournament([FromBody] TeamInTournamentCM model)
         {
             TeamInTournament teamInTournament = new();
@@ -322,6 +325,7 @@ namespace AmateurFootballLeague.Controllers
         /// 
 
         [HttpPut("card")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> UpdateTotalCard(TeamInTournamentUMR model)
         {
             try
@@ -348,6 +352,7 @@ namespace AmateurFootballLeague.Controllers
 
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamInTournamentVM>> UpdateTeamInTournament([FromBody] TeamInTournamentUM model)
         {
             try
@@ -430,6 +435,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             TeamInTournament currentTeamInTournament = await _teamInTournamentService.GetByIdAsync(id);
@@ -465,6 +471,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpDelete("delete-by-tournament-id")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteByTournamrntId(int tournamentId)
         {
             try
@@ -489,6 +496,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut("update-score")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamInTournamentVM>> UpdateTeamInTournamentByTournamentId(int tournamentId)
         {
             try

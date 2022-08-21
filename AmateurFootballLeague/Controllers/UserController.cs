@@ -5,13 +5,14 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
 {
     [Route("api/v1/users")]
     [ApiController]
-    //[Authorize(Roles = "ADMIN")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -384,6 +385,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<UserVM>> UpdateUser([FromForm] UserUM model)
         {
             try
@@ -519,6 +521,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Bad Request</response>
         /// <response code="500">Failed to save request</response>
         [HttpPatch()]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatus(int id, int countBlock)
         {
             try
@@ -586,6 +589,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpDelete("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteUser([FromRoute] int id)
         {
             try
