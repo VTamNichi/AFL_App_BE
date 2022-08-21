@@ -86,7 +86,7 @@ namespace AmateurFootballLeague.Controllers
                             TeamAvatar = t.TeamAvatar
                         },
                         FootballPlayerId = tr.FootballPlayerId
-                    }).Where(t => t.TournamentId == tourId && t.Prize == "Champion").FirstOrDefault();
+                    }).Where(t => t.TournamentId == tourId && t.Prize == "Champion").FirstOrDefault()!;
                     result.Add(champion);
                     TournamentResult second = tournamentResultList.Join(_teamService.GetList(), tr => tr.Team, t => t, (tr, t) => new TournamentResult
                     {
@@ -108,7 +108,7 @@ namespace AmateurFootballLeague.Controllers
                             TeamAvatar = t.TeamAvatar
                         },
                         FootballPlayerId = tr.FootballPlayerId
-                    }).Where(t => t.TournamentId == tourId && t.Prize == "second").FirstOrDefault();
+                    }).Where(t => t.TournamentId == tourId && t.Prize == "second").FirstOrDefault()!;
                     result.Add(second);
                     var topScore = tournamentResultList.
                         Join(_teamService.GetList(), trt => trt.Team , t => t , (trt, t) => new {trt,t}).
@@ -296,7 +296,7 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
 
-                Tournament tour = await _tournamentService.GetByIdAsync((int)matchInTour.TournamentId);
+                Tournament tour = await _tournamentService.GetByIdAsync((int)matchInTour.TournamentId!);
                 if (tour.TournamentTypeId ==2)
                 {
                     IQueryable<TeamInTournament> teamInTournamentList = _teamInTournamentService.GetList().Where(t => t.TournamentId == tour.Id);
@@ -414,7 +414,7 @@ namespace AmateurFootballLeague.Controllers
                             champRs.TeamInTournamentId = listSort[i].Id;
                             champRs.TournamentId = listSort[i].TournamentId;
                             champRs.TeamId = listSort[i].TeamId;
-                            champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                            champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam!.FootballPlayerId;
                             champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                             await _tournamentResultService.AddAsync(champRs);
                         }
@@ -471,7 +471,7 @@ namespace AmateurFootballLeague.Controllers
                             FootballPlayerId = p.FootballPlayerId,
                             TeamId = p.TeamId
                         }
-                    }).Where(p => p.TeamInTournamentId == team1[0].TeamInTournament.Id);
+                    }).Where(p => p.TeamInTournamentId == team1[0].TeamInTournament!.Id);
                 IQueryable<PlayerInTournament> listPlayerTeam2 = _playerInTournamentService.GetList().Join(_playerInTeamService.GetList(),
                     pt => pt.PlayerInTeam, p => p, (pt, p) => new PlayerInTournament
                     {
@@ -487,7 +487,7 @@ namespace AmateurFootballLeague.Controllers
                             FootballPlayerId = p.FootballPlayerId,
                             TeamId = p.TeamId
                         }
-                    }).Where(p => p.TeamInTournamentId == team2[0].TeamInTournament.Id);
+                    }).Where(p => p.TeamInTournamentId == team2[0].TeamInTournament!.Id);
                 var playersTeam1 = listPlayerTeam1.ToList();
                 var playersTeam2 = listPlayerTeam2.ToList();
 
@@ -495,50 +495,50 @@ namespace AmateurFootballLeague.Controllers
                 {
                     TournamentResult champTeam = new TournamentResult();
                     champTeam.Prize = "Champion";
-                    champTeam.TeamInTournamentId = team1[0].TeamInTournament.Id;
+                    champTeam.TeamInTournamentId = team1[0].TeamInTournament!.Id;
                     champTeam.TournamentId = getChampion[0].TournamentId;
-                    champTeam.TeamId = team1[0].TeamInTournament.TeamId;
-                    champTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
-                    champTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
-                    champTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
-                    champTeam.TotalLoseScrore = team1[0].TeamInTournament.LoseScoreNumber;
-                    champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
-                    champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
-                    champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
+                    champTeam.TeamId = team1[0].TeamInTournament!.TeamId;
+                    champTeam.TotalYellowCard = team1[0].TeamInTournament!.TotalYellowCard;
+                    champTeam.TotalRedCard = team1[0].TeamInTournament!.TotalRedCard;
+                    champTeam.TotalWinScrore = team1[0].TeamInTournament!.WinScoreNumber;
+                    champTeam.TotalLoseScrore = team1[0].TeamInTournament!.LoseScoreNumber;
+                    champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result > 1).Count();
+                    champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result < 1).Count();
+                    champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result == 1).Count();
                     await _tournamentResultService.AddAsync(champTeam);
                     for (int i = 0; i < playersTeam1.Count(); i++)
                     {
                         TournamentResult champRs = new TournamentResult();
                         champRs.Prize = "Champion";
-                        champRs.TeamInTournamentId = team1[0].TeamInTournament.Id;
+                        champRs.TeamInTournamentId = team1[0].TeamInTournament!.Id;
                         champRs.TournamentId = getChampion[0].TournamentId;
-                        champRs.TeamId = team1[0].TeamInTournament.TeamId;
-                        champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                        champRs.TeamId = team1[0].TeamInTournament!.TeamId;
+                        champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam!.FootballPlayerId;
                         champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(champRs);
                     }
 
                     TournamentResult secondTeam = new TournamentResult();
                     secondTeam.Prize = "second";
-                    secondTeam.TeamInTournamentId = team2[0].TeamInTournament.Id;
+                    secondTeam.TeamInTournamentId = team2[0].TeamInTournament!.Id;
                     secondTeam.TournamentId = getChampion[0].TournamentId;
-                    secondTeam.TeamId = team2[0].TeamInTournament.TeamId;
-                    secondTeam.TotalYellowCard = team2[0].TeamInTournament.TotalYellowCard;
-                    secondTeam.TotalRedCard = team2[0].TeamInTournament.TotalRedCard;
-                    secondTeam.TotalWinScrore = team2[0].TeamInTournament.WinScoreNumber;
-                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament.LoseScoreNumber;
-                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result > 1).Count();
-                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result < 1).Count();
-                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result == 1).Count();
+                    secondTeam.TeamId = team2[0].TeamInTournament!.TeamId;
+                    secondTeam.TotalYellowCard = team2[0].TeamInTournament!.TotalYellowCard;
+                    secondTeam.TotalRedCard = team2[0].TeamInTournament!.TotalRedCard;
+                    secondTeam.TotalWinScrore = team2[0].TeamInTournament!.WinScoreNumber;
+                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament!.LoseScoreNumber;
+                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result > 1).Count();
+                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result < 1).Count();
+                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result == 1).Count();
                     await _tournamentResultService.AddAsync(secondTeam);
                     for (int i = 0; i < playersTeam2.Count(); i++)
                     {
                         TournamentResult second = new TournamentResult();
                         second.Prize = "second";
-                        second.TeamInTournamentId = team2[0].TeamInTournament.Id;
+                        second.TeamInTournamentId = team2[0].TeamInTournament!.Id;
                         second.TournamentId = getChampion[0].TournamentId;
-                        second.TeamId = team2[0].TeamInTournament.TeamId;
-                        second.FootballPlayerId = playersTeam2[i].PlayerInTeam.FootballPlayerId;
+                        second.TeamId = team2[0].TeamInTournament!.TeamId;
+                        second.FootballPlayerId = playersTeam2[i].PlayerInTeam!.FootballPlayerId;
                         second.ClothesNumber = playersTeam2[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(second);
                     }
@@ -548,51 +548,51 @@ namespace AmateurFootballLeague.Controllers
                 {
                     TournamentResult champTeam = new TournamentResult();
                     champTeam.Prize = "second";
-                    champTeam.TeamInTournamentId = team1[0].TeamInTournament.Id;
+                    champTeam.TeamInTournamentId = team1[0].TeamInTournament!.Id;
                     champTeam.TournamentId = getChampion[0].TournamentId;
-                    champTeam.TeamId = team1[0].TeamInTournament.TeamId;
-                    champTeam.TotalYellowCard = team1[0].TeamInTournament.TotalYellowCard;
-                    champTeam.TotalRedCard = team1[0].TeamInTournament.TotalRedCard;
-                    champTeam.TotalWinScrore = team1[0].TeamInTournament.WinScoreNumber;
-                    champTeam.TotalLoseScrore = team1[0].TeamInTournament.LoseScoreNumber;
-                    champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result > 1).Count();
-                    champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result < 1).Count();
-                    champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament.Id && s.Result == 1).Count();
+                    champTeam.TeamId = team1[0].TeamInTournament!.TeamId;
+                    champTeam.TotalYellowCard = team1[0].TeamInTournament!.TotalYellowCard;
+                    champTeam.TotalRedCard = team1[0].TeamInTournament!.TotalRedCard;
+                    champTeam.TotalWinScrore = team1[0].TeamInTournament!.WinScoreNumber;
+                    champTeam.TotalLoseScrore = team1[0].TeamInTournament!.LoseScoreNumber;
+                    champTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result > 1).Count();
+                    champTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result < 1).Count();
+                    champTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team1[0].TeamInTournament!.Id && s.Result == 1).Count();
 
                     await _tournamentResultService.AddAsync(champTeam);
                     for (int i = 0; i < playersTeam1.Count(); i++)
                     {
                         TournamentResult champRs = new TournamentResult();
                         champRs.Prize = "second";
-                        champRs.TeamInTournamentId = team1[0].TeamInTournament.Id;
+                        champRs.TeamInTournamentId = team1[0].TeamInTournament!.Id;
                         champRs.TournamentId = getChampion[0].TournamentId;
-                        champRs.TeamId = team1[0].TeamInTournament.TeamId;
-                        champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam.FootballPlayerId;
+                        champRs.TeamId = team1[0].TeamInTournament!.TeamId;
+                        champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam!.FootballPlayerId;
                         champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(champRs);
                     }
 
                     TournamentResult secondTeam = new TournamentResult();
                     secondTeam.Prize = "Champion";
-                    secondTeam.TeamInTournamentId = team2[0].TeamInTournament.Id;
+                    secondTeam.TeamInTournamentId = team2[0].TeamInTournament!.Id;
                     secondTeam.TournamentId = getChampion[0].TournamentId;
-                    secondTeam.TeamId = team2[0].TeamInTournament.TeamId;
-                    secondTeam.TotalYellowCard = team2[0].TeamInTournament.TotalYellowCard;
-                    secondTeam.TotalRedCard = team2[0].TeamInTournament.TotalRedCard;
-                    secondTeam.TotalWinScrore = team2[0].TeamInTournament.WinScoreNumber;
-                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament.LoseScoreNumber;
-                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result > 1).Count();
-                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result < 1).Count();
-                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament.Id && s.Result == 1).Count();
+                    secondTeam.TeamId = team2[0].TeamInTournament!.TeamId;
+                    secondTeam.TotalYellowCard = team2[0].TeamInTournament!.TotalYellowCard;
+                    secondTeam.TotalRedCard = team2[0].TeamInTournament!.TotalRedCard;
+                    secondTeam.TotalWinScrore = team2[0].TeamInTournament!.WinScoreNumber;
+                    secondTeam.TotalLoseScrore = team2[0].TeamInTournament!.LoseScoreNumber;
+                    secondTeam.TotalWinMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result > 1).Count();
+                    secondTeam.TotalLoseMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result < 1).Count();
+                    secondTeam.TotalDrawMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == team2[0].TeamInTournament!.Id && s.Result == 1).Count();
                     await _tournamentResultService.AddAsync(secondTeam);
                     for (int i = 0; i < playersTeam2.Count(); i++)
                     {
                         TournamentResult second = new TournamentResult();
                         second.Prize = "Champion";
-                        second.TeamInTournamentId = team2[0].TeamInTournament.Id;
+                        second.TeamInTournamentId = team2[0].TeamInTournament!.Id;
                         second.TournamentId = getChampion[0].TournamentId;
-                        second.TeamId = team2[0].TeamInTournament.TeamId;
-                        second.FootballPlayerId = playersTeam2[i].PlayerInTeam.FootballPlayerId;
+                        second.TeamId = team2[0].TeamInTournament!.TeamId;
+                        second.FootballPlayerId = playersTeam2[i].PlayerInTeam!.FootballPlayerId;
                         second.ClothesNumber = playersTeam2[i].ClothesNumber;
                         await _tournamentResultService.AddAsync(second);
                     }
@@ -633,7 +633,7 @@ namespace AmateurFootballLeague.Controllers
                             FootballPlayerId = p.FootballPlayerId,
                             TeamId = p.TeamId
                         }
-                    }).Where(p => p.PlayerInTeam.FootballPlayerId  == kingScore[i].FootballPlayerId).FirstOrDefault();
+                    }).Where(p => p.PlayerInTeam!.FootballPlayerId  == kingScore[i].FootballPlayerId).FirstOrDefault()!;
                     listKingScore.Add(player);
                 }
 
@@ -643,8 +643,8 @@ namespace AmateurFootballLeague.Controllers
                     second.Prize = "Top Goal";
                     second.TeamInTournamentId = listKingScore[i].TeamInTournamentId;
                     second.TournamentId = tour.Id;
-                    second.TeamId = listKingScore[i].PlayerInTeam.TeamId;
-                    second.FootballPlayerId = listKingScore[i].PlayerInTeam.FootballPlayerId;
+                    second.TeamId = listKingScore[i].PlayerInTeam!.TeamId;
+                    second.FootballPlayerId = listKingScore[i].PlayerInTeam!.FootballPlayerId;
                     second.TotalWinScrore = max;
                     second.ClothesNumber = listKingScore[i].ClothesNumber;
                     await _tournamentResultService.AddAsync(second);

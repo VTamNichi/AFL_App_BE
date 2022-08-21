@@ -315,7 +315,7 @@ namespace AmateurFootballLeague.Controllers
 
         /// <summary>Test api</summary>
         [HttpPost("test-api")]
-        public async Task<ActionResult<TeamInMatch>> TestAPI()
+        public ActionResult<TeamInMatch> TestAPI()
         {
             try
             {

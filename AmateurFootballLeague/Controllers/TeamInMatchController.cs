@@ -317,6 +317,7 @@ namespace AmateurFootballLeague.Controllers
                     team.ScorePenalty = teamInMatch.ScorePenalty;
                     team.TeamInTournamentId = teamInMatch.TeamInTournamentId;
                     team.Result = teamInMatch.Result;
+                    team.WinTieBreak = teamInMatch.WinTieBreak;
                     team.NextTeam = teamInMatch.NextTeam;
                     team.TeamName = teamInMatch.TeamName;
 
@@ -503,6 +504,10 @@ namespace AmateurFootballLeague.Controllers
                     }
                     TeamInTournament teamInTourWin = await _teamInTournamentService.GetByIdAsync(teamInMatchWin.TeamInTournamentId!.Value);
                     teamInTourWin.StatusInTournament = "Trong giải";
+                    if (teamInMatchNext == null)
+                    {
+                        teamInTourWin.StatusInTournament = "Bị loại";
+                    }
                     await _teamInTournamentService.UpdateAsync(teamInTourWin);
 
                     TeamInMatch teamInMatchLose = _teamInMatch.GetList().Where(s => s.MatchId == model.MatchId && s.Result < 1).FirstOrDefault()!;
@@ -586,6 +591,10 @@ namespace AmateurFootballLeague.Controllers
                         }
                         TeamInTournament teamInTourWin = await _teamInTournamentService.GetByIdAsync(teamInMatchWin.TeamInTournamentId!.Value);
                         teamInTourWin.StatusInTournament = "Trong giải";
+                        if (teamInMatchNext == null)
+                        {
+                            teamInTourWin.StatusInTournament = "Bị loại";
+                        }
                         await _teamInTournamentService.UpdateAsync(teamInTourWin);
 
                         TeamInMatch teamInMatchLose = _teamInMatch.GetList().Where(s => s.MatchId == model.MatchId && s.Result < 1).FirstOrDefault()!;
@@ -709,8 +718,7 @@ namespace AmateurFootballLeague.Controllers
                 var allMatch = teamInMatch.ToList();
                 if (allMatch.Count > 0)
                 {
-
-                    if (allMatch[0].Match.GroupFight.Contains("Bảng"))
+                    if (allMatch[0].Match!.GroupFight!.Contains("Bảng"))
                     {
                         IQueryable<TeamInMatch> checkLast = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
                 (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id != teamInTourId).
@@ -733,11 +741,11 @@ namespace AmateurFootballLeague.Controllers
                         {
                             for (int j = 0; j < isLast.Count; j++)
                             {
-                                if(isLast[j].Result == null)
+                                if (isLast[j].Result == null)
                                 {
                                     status = false;
                                 }
-                               
+
 
                             }
                         }
@@ -751,9 +759,9 @@ namespace AmateurFootballLeague.Controllers
 
                             IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Where(m => m.MatchId == allMatch[i].MatchId);
                             var changeRs = listTeam.ToList();
-                            for(int j = 0; j < changeRs.Count; j++)
+                            for (int j = 0; j < changeRs.Count; j++)
                             {
-                                if(changeRs[j].TeamInTournamentId == teamInTourId)
+                                if (changeRs[j].TeamInTournamentId == teamInTourId)
                                 {
                                     changeRs[j].Result = 0;
                                     changeRs[j].TeamScore = 0;

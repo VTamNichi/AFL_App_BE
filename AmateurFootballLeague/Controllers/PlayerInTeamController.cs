@@ -195,7 +195,7 @@ namespace AmateurFootballLeague.Controllers
             PlayerInTeam pInTeam = new();
             try
             {
-                PlayerInTeam piteam = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "true" && p.TeamId == player.TeamId).FirstOrDefault();
+                PlayerInTeam piteam = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "true" && p.TeamId == player.TeamId).FirstOrDefault()!;
                 if(piteam != null)
                 {
                     return BadRequest(new
@@ -204,7 +204,7 @@ namespace AmateurFootballLeague.Controllers
                     });
                 }
 
-                PlayerInTeam pUsedTobe = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "false").FirstOrDefault();
+                PlayerInTeam pUsedTobe = _playerInTeam.GetList().Where(p => p.FootballPlayerId == player.FootballPlayerId && p.Status == "false").FirstOrDefault()!;
                 if (pUsedTobe != null)
                 {
                     pUsedTobe.Status = "true";
@@ -286,7 +286,7 @@ namespace AmateurFootballLeague.Controllers
                         {
                             Id = p.pit.Id
                         }
-                    }).FirstOrDefault();
+                    }).FirstOrDefault()!;
                 if (checkNew == null)
                 {
                     PlayerInTeam deletePlayer = await _playerInTeam.GetByIdAsync(Id);
