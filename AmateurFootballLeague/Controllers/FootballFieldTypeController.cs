@@ -4,13 +4,14 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
 {
     [Route("api/v1/football-field-types")]
     [ApiController]
-    //[Authorize(Roles = "ADMIN")]
     public class FootballFieldTypeController : ControllerBase
     {
         private readonly IFootballFieldTypeService _footballFieldTypeService;
@@ -110,6 +111,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<FootballFieldTypeVM>> CreateFootballFieldType([FromBody] FootballFieldTypeCM model)
         {
             FootballFieldType footballFieldType = _mapper.Map<FootballFieldType>(model);
@@ -144,6 +146,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<FootballFieldTypeVM>> UpdateFootballFieldType([FromQuery(Name = "id")] int id, [FromQuery(Name = "football-field-type-name")] string? footballFieldTypeName, [FromQuery(Name = "description")] string? description)
         {
             FootballFieldType currentFootballFieldType = await _footballFieldTypeService.GetByIdAsync(id);
@@ -188,6 +191,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             FootballFieldType currentFootballFieldType = await _footballFieldTypeService.GetByIdAsync(id);

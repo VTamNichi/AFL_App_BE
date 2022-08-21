@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -187,6 +189,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<PlayerInTeamVM>> AddPlayerToTeam(PlayerInTeamCM player)
         {
             PlayerInTeam pInTeam = new();
@@ -269,6 +272,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatusPlayerInTeam(int Id, string status)
         {
             try
@@ -367,6 +371,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             PlayerInTeam player = await _playerInTeam.GetByIdAsync(id);

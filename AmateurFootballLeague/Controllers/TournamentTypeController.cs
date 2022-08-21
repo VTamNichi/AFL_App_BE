@@ -4,13 +4,14 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
 {
     [Route("api/v1/tournament-types")]
     [ApiController]
-    //[Authorize(Roles = "ADMIN")]
     public class TournamentTypeController : ControllerBase
     {
         private readonly ITournamentTypeService _tournamentTypeService;
@@ -110,6 +111,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TournamentTypeVM>> CreateTournamentType([FromBody] TournamentTypeCM model)
         {
             TournamentType tournamentType = _mapper.Map<TournamentType>(model);
@@ -144,6 +146,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TournamentTypeVM>> UpdateTournamentType([FromQuery(Name = "id")] int id, [FromQuery(Name = "tournament-type-name")] string? tournamentTypeName, [FromQuery(Name = "description")] string? description)
         {
             TournamentType currentTournamentType = await _tournamentTypeService.GetByIdAsync(id);
@@ -188,6 +191,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             TournamentType currentTournamentType = await _tournamentTypeService.GetByIdAsync(id);

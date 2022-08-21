@@ -6,6 +6,8 @@ using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace AmateurFootballLeague.Controllers
@@ -421,6 +423,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<MatchVM>> CreateMatch([FromBody] MatchCM model)
         {
             Match match = new();
@@ -453,6 +456,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut("IdScreen")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> updateScreen(int matchId, string screenId)
         {
             try
@@ -483,6 +487,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<MatchVM>> UpdateMatch([FromBody] MatchUM model)
         {
             try
@@ -532,6 +537,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             Match currentMatch = await _matchService.GetByIdAsync(id);
@@ -567,6 +573,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost("schedule")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ScheduleMatch([FromQuery(Name = "tournament-id")] int tournamentID)
         {
             try
@@ -1228,6 +1235,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Internal server error</response>
         [HttpDelete("delete-match-by-tournament-id")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteMatchByTournamrntId(int tournamentId)
         {
             try
@@ -1251,6 +1259,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost("create-tie-break-match")]
         [Produces("application/json")]
+        ////[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<MatchVM>> CreateTieBreakMatch(int tournamentId, string? groupName)
         {
             try
@@ -1273,7 +1282,6 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng điểm");
                 }
-                
                 int maxSort2 = listTeamInTournament.Max(s => s.DifferentPoint) ?? 0;
                 
                 listTeamInTournament = listTeamInTournament.Where(s => s.DifferentPoint == maxSort2);
@@ -1281,14 +1289,12 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng hiệu số");
                 }
-
                 int maxSort3 = listTeamInTournament.Max(s => s.WinScoreNumber) ?? 0;
                 listTeamInTournament = listTeamInTournament.Where(s => s.WinScoreNumber == maxSort3);
                 if (listTeamInTournament.Count() < 2)
                 {
                     return BadRequest("Phải có ít nhất 2 đội bằng số bàn thắng");
                 }
-
                 int maxSort4 = listTeamInTournament.Min(s => s.TotalRedCard) ?? 0;
                 listTeamInTournament = listTeamInTournament.Where(s => s.TotalRedCard == maxSort4);
                 if (listTeamInTournament.Count() < 2)
@@ -1309,24 +1315,27 @@ namespace AmateurFootballLeague.Controllers
                         Id = t.Id,
                         TeamName = t.TeamName
                     }
-
                 });
                 if (listTeamInTournament.Count() == 2)
                 {
-                    IQueryable<Match> listMatch = _matchService.GetList().Where(s => s.Round!.Contains("tie-break"));
                     Match match = new();
                     match.TournamentId = tournamentId;
                     match.Status = "Chưa bắt đầu";
-                    match.Round = "Vòng tie-break " + listMatch.Count();
+                    match.Round = "Vòng tie-break ";
                     match.TokenLivestream = "";
                     match.Fight = "";
-                    match.GroupFight = "Bảng tie-break " + listMatch.Count();
+                    
                     if (tieGroup != "")
                     {
-                        match.GroupFight = match.GroupFight + " " + tieGroup;
+                        match.GroupFight = "Bảng " + groupName + " tie-break";
+                    }
+                    else
+                    {
+                        match.GroupFight = "Bảng tie-break";
                     }
                     Match matchCreated = await _matchService.AddAsync(match);
 
+                    Console.WriteLine("dddddddd");
                     TeamInMatch tim1 = new();
                     tim1.MatchId = matchCreated.Id;
                     tim1.TeamInTournamentId = listTeamInTournament.ToList()[0].Id;

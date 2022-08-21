@@ -5,6 +5,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -151,6 +153,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamVM>> CreateTeam([FromForm] TeamCM model)
         {
             Team team = new();
@@ -222,6 +225,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TeamVM>> UpdateTeam([FromForm] TeamUM model)
         {
             Team currentTeam = await _teamService.GetByIdAsync(model.Id);
@@ -296,6 +300,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Bad Request</response>
         /// <response code="500">Internal server error</response>
         [HttpPatch("{id}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatusTeam(int id)
         {
             Team currentTeam = await _teamService.GetByIdAsync(id);
@@ -333,6 +338,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             Team currentTeam = await _teamService.GetByIdAsync(id);

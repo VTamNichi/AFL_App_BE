@@ -4,13 +4,14 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
 {
     [Route("api/v1/roles")]
     [ApiController]
-    //[Authorize(Roles = "ADMIN")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;
@@ -110,6 +111,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<RoleVM>> CreateRole([FromBody] RoleCM model)
         {
             Role role = _mapper.Map<Role>(model);
@@ -144,6 +146,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<RoleVM>> UpdateRole([FromQuery(Name = "id")] int id, [FromQuery(Name = "role-name")] string? roleName)
         {
             Role currentRole = await _roleService.GetByIdAsync(id);
@@ -185,6 +188,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             Role currentRole = await _roleService.GetByIdAsync(id);

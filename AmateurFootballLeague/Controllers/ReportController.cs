@@ -4,6 +4,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -342,6 +344,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPost]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ReportVM>> CreateReport([FromBody] ReportCM model)
         {
             try
@@ -353,6 +356,7 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
+                IQueryable<Report> reportList = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.DateReport == DateTime.Now);
 
                 if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
@@ -413,6 +417,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="500">Failed to save request</response>
         [HttpPut]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ReportVM>> UpdateReport([FromBody] ReportUM model)
         {
             try
@@ -481,6 +486,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             try

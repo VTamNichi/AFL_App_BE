@@ -5,6 +5,8 @@ using AmateurFootballLeague.Utils;
 using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmateurFootballLeague.Controllers
@@ -126,6 +128,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Field is not newsed or duplicated</response>
         /// <response code="500">Failed to save request</response>
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<NewsVM>> CreateNews([FromForm] NewsCM model)
         {
             News news = new();
@@ -172,6 +175,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Field is not newsed</response>
         /// <response code="500">Failed to save request</response>
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<NewsVM>> UpdateNews([FromForm] NewsUM model)
         {
             try
@@ -226,6 +230,7 @@ namespace AmateurFootballLeague.Controllers
         /// <response code="400">Bad Request</response>
         /// <response code="500">Internal server error</response>
         [HttpPatch("{id}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatusNews(int id)
         {
             News currentNews = await _newsService.GetByIdAsync(id);
@@ -263,6 +268,7 @@ namespace AmateurFootballLeague.Controllers
         [HttpDelete]
         [Route("{id}")]
         [Produces("application/json")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteById(int id)
         {
             News currentNews = await _newsService.GetByIdAsync(id);

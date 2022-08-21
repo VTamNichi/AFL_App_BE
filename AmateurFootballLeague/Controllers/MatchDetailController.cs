@@ -5,6 +5,8 @@ using AmateurFootballLeague.ViewModels.Requests;
 using AmateurFootballLeague.ViewModels.Responses;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace AmateurFootballLeague.Controllers
@@ -112,6 +114,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<MatchDetailVM>> CreateMatchDetail(MatchDetailCM match , string? room)
         {
             MatchDetail matchDetail = new();
@@ -179,6 +182,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpPut]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<MatchDetailVM>> UpdateMatchDetail(MatchDetailUM match)
         {
             try
@@ -216,6 +220,7 @@ namespace AmateurFootballLeague.Controllers
         }
 
         [HttpDelete]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteMatchDetail(int id)
         {
             try
@@ -241,6 +246,7 @@ namespace AmateurFootballLeague.Controllers
             }
         }
         [HttpDelete("delete-type")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> DeleteMatchDetailByType(int matchId, DeleteType type)
         {
             try
