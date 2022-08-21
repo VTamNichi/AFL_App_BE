@@ -56,8 +56,11 @@ namespace AmateurFootballLeague.Controllers
                 if (!String.IsNullOrEmpty(name))
                 {
                     userList = userList.Where(s => s.Username!.ToUpper().Contains(name.Trim().ToUpper()));
+                    IQueryable<User> userList2 = _userService.GetList().Where(s => s.Email!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
-                if(gender == UserGenderEnum.Male)
+
+
+                if (gender == UserGenderEnum.Male)
                 {
                     userList = userList.Where(s => s.Gender == "Male");
                 } else if (gender == UserGenderEnum.Female)

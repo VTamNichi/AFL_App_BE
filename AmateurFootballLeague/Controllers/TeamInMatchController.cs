@@ -48,6 +48,7 @@ namespace AmateurFootballLeague.Controllers
                         Id = t.tim.Id,
                         TeamScore = t.tim.TeamScore,
                         Result = t.tim.Result,
+                        WinTieBreak = t.tim.WinTieBreak
                     }).ToList();
                 int totalMatch = team.Count();
                 int totalWin = team.Where(t => t.Result == 3).ToList().Count();
@@ -99,6 +100,7 @@ namespace AmateurFootballLeague.Controllers
     {
         Id = t.timm.tim.Id,
         TeamScore = t.timm.tim.TeamScore,
+        ScoreTieBreak = t.timm.tim.ScoreTieBreak,
         TeamScoreLose = t.timm.tim.TeamScoreLose,
         YellowCardNumber = t.timm.tim.YellowCardNumber,
         RedCardNumber = t.timm.tim.RedCardNumber,
@@ -111,6 +113,7 @@ namespace AmateurFootballLeague.Controllers
         },
         MatchId = t.timm.tim.MatchId,
         Result = t.timm.tim.Result,
+        WinTieBreak = t.timm.tim.WinTieBreak,
         NextTeam = t.timm.tim.NextTeam,
         TeamName = t.timm.tim.TeamName,
         Match = t.timm.tim.Match,
@@ -123,12 +126,14 @@ namespace AmateurFootballLeague.Controllers
                    {
                        Id = timt.ttim.tim.Id,
                        TeamScore = timt.ttim.tim.TeamScore,
+                       ScoreTieBreak = timt.ttim.tim.ScoreTieBreak,
                        TeamScoreLose = timt.ttim.tim.TeamScoreLose,
                        YellowCardNumber = timt.ttim.tim.YellowCardNumber,
                        RedCardNumber = timt.ttim.tim.RedCardNumber,
                        TeamInTournamentId = timt.ttim.tim.TeamInTournamentId,
                        MatchId = timt.ttim.m.Id,
                        Result = timt.ttim.tim.Result,
+                       WinTieBreak = timt.ttim.tim.WinTieBreak,
                        NextTeam = timt.ttim.tim.NextTeam,
                        TeamName = timt.ttim.tim.TeamName,
                        Match = timt.ttim.m,
@@ -174,6 +179,7 @@ namespace AmateurFootballLeague.Controllers
                     {
                         Id = timm.titm.tim.Id,
                         TeamScore = timm.titm.tim.TeamScore,
+                        ScoreTieBreak = timm.titm.tim.ScoreTieBreak,
                         TeamScoreLose = timm.titm.tim.TeamScoreLose,
                         YellowCardNumber = timm.titm.tim.YellowCardNumber,
                         RedCardNumber = timm.titm.tim.RedCardNumber,
@@ -195,6 +201,7 @@ namespace AmateurFootballLeague.Controllers
                         },
                         MatchId = timm.titm.tim.MatchId,
                         Result = timm.titm.tim.Result,
+                        WinTieBreak = timm.titm.tim.WinTieBreak,
                         NextTeam = timm.titm.tim.NextTeam,
                         TeamName = timm.titm.tim.TeamName,
                         ScorePenalty = timm.titm.tim.ScorePenalty,
@@ -303,6 +310,7 @@ namespace AmateurFootballLeague.Controllers
                 if (team != null)
                 {
                     team.TeamScore = teamInMatch.TeamScore;
+                    team.ScoreTieBreak = teamInMatch.ScoreTieBreak;
                     team.TeamScoreLose = teamInMatch.TeamScoreLose;
                     team.YellowCardNumber = teamInMatch.YellowCardNumber;
                     team.RedCardNumber = teamInMatch.RedCardNumber;
@@ -323,6 +331,7 @@ namespace AmateurFootballLeague.Controllers
                    {
                        Id = timm.titm.tim.Id,
                        TeamScore = timm.titm.tim.TeamScore,
+                       ScoreTieBreak = timm.titm.tim.ScoreTieBreak,
                        TeamScoreLose = timm.titm.tim.TeamScoreLose,
                        YellowCardNumber = timm.titm.tim.YellowCardNumber,
                        RedCardNumber = timm.titm.tim.RedCardNumber,
@@ -339,6 +348,7 @@ namespace AmateurFootballLeague.Controllers
                        },
                        MatchId = timm.titm.tim.MatchId,
                        Result = timm.titm.tim.Result,
+                       WinTieBreak = timm.titm.tim.WinTieBreak,
                        NextTeam = timm.titm.tim.NextTeam,
                        TeamName = timm.titm.tim.TeamName,
                        Match = timm.titm.tim.Match,

@@ -302,6 +302,7 @@ namespace AmateurFootballLeague.Controllers
                 teamInTournament.DifferentPoint = teamInTournament.WinScoreNumber - teamInTournament.LoseScoreNumber;
                 teamInTournament.TotalYellowCard = String.IsNullOrEmpty(model.TotalYellowCard.ToString()) ? 0 : model.TotalYellowCard;
                 teamInTournament.TotalRedCard = String.IsNullOrEmpty(model.TotalRedCard.ToString()) ? 0 : model.TotalRedCard;
+                teamInTournament.WinTieBreak = String.IsNullOrEmpty(model.WinTieBreak.ToString()) ? 0 : model.WinTieBreak;
                 teamInTournament.Status = String.IsNullOrEmpty(model.Status) ? "" : model.Status;
                 teamInTournament.StatusInTournament = "Trong giải";
                 TeamInTournament teamInTournamentCreated = await _teamInTournamentService.AddAsync(teamInTournament);
@@ -501,7 +502,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumScoreLose = g.Sum(s => s.TeamScoreLose), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber), sumPoint = g.Sum(s => s.Result) });
+                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumScoreLose = g.Sum(s => s.TeamScoreLose), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber), sumPoint = g.Sum(s => s.Result)});
                 foreach (var tim in teamInMatchList.ToList())
                 {
                     TeamInTournament tit = await _teamInTournamentService.GetByIdAsync(tim.titID!.Value);
@@ -511,6 +512,7 @@ namespace AmateurFootballLeague.Controllers
                     tit.TotalYellowCard = tim.sumYellow;
                     tit.TotalRedCard = tim.sumRed;
                     tit.Point = tim.sumPoint;
+
                     await _teamInTournamentService.UpdateAsync(tit);
                 }
 
