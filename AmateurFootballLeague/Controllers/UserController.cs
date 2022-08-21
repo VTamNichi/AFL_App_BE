@@ -55,10 +55,8 @@ namespace AmateurFootballLeague.Controllers
                 IQueryable<User> userList = _userService.GetList();
                 if (!String.IsNullOrEmpty(name))
                 {
-                    userList = userList.Where(s => s.Username!.ToUpper().Contains(name.Trim().ToUpper()));
-                    IQueryable<User> userList2 = _userService.GetList().Where(s => s.Email!.ToUpper().Contains(name.Trim().ToUpper()));
+                    userList = userList.Where(s => s.Username!.ToUpper().Contains(name.Trim().ToUpper()) || s.Email!.ToUpper().Contains(name.Trim().ToUpper()));
                 }
-
 
                 if (gender == UserGenderEnum.Male)
                 {
@@ -552,7 +550,7 @@ namespace AmateurFootballLeague.Controllers
                     user.DateBan = DateTime.Now.AddHours(7);
                     if (countBlock == 1)
                     {
-                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(1);
+                        user.DateUnban = DateTime.Now.AddHours(7).AddDays(3);
                     }
                     else if (countBlock == 2)
                     {

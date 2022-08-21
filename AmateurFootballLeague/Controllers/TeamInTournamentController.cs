@@ -502,7 +502,7 @@ namespace AmateurFootballLeague.Controllers
         {
             try
             {
-                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumScoreLose = g.Sum(s => s.TeamScoreLose), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber), sumPoint = g.Sum(s => s.Result)});
+                var teamInMatchList = _teamInMatchService.GetList().Where(tim => tim.Match!.TournamentId == tournamentId && tim.TeamInTournamentId.HasValue).GroupBy(tim => tim.TeamInTournamentId).Select(g => new { titID = g.Key, sumScore = g.Sum(s => s.TeamScore), sumScoreLose = g.Sum(s => s.TeamScoreLose), sumYellow = g.Sum(s => s.YellowCardNumber), sumRed = g.Sum(s => s.RedCardNumber), sumPoint = g.Sum(s => s.Result), sumTiebreak = g.Sum(s => s.WinTieBreak)});
                 foreach (var tim in teamInMatchList.ToList())
                 {
                     TeamInTournament tit = await _teamInTournamentService.GetByIdAsync(tim.titID!.Value);
@@ -512,7 +512,7 @@ namespace AmateurFootballLeague.Controllers
                     tit.TotalYellowCard = tim.sumYellow;
                     tit.TotalRedCard = tim.sumRed;
                     tit.Point = tim.sumPoint;
-
+                    tit.WinTieBreak = tim.sumTiebreak;
                     await _teamInTournamentService.UpdateAsync(tit);
                 }
 

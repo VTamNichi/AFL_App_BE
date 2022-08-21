@@ -206,7 +206,7 @@ namespace AmateurFootballLeague.Controllers
                     user = new User()
                     {
                         Id = 0,
-                        Email = "admin123"
+                        Email = "admin123@gmail.com"
                     };
                 }
                 else

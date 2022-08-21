@@ -356,7 +356,13 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound("Không tìm thấy người dùng");
                 }
-                IQueryable<Report> reportList = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.DateReport == DateTime.Now);
+
+                IQueryable<Report> reportListAll = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.DateReport!.Value.Date.CompareTo(DateTime.Now.AddHours(7).Date) == 0);
+                if (reportListAll.Count() > 0)
+                {
+                    return BadRequest("Mỗi ngày chỉ được báo cáo một lần");
+                }
+                return Ok(reportListAll);
 
                 if (!String.IsNullOrEmpty(model.FootballPlayerId.ToString()) && model.FootballPlayerId != 0)
                 {
@@ -392,6 +398,11 @@ namespace AmateurFootballLeague.Controllers
                     else
                     {
                         report.TournamentId = tournament.Id;
+                    }
+                    IQueryable<Report> reportList = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.TournamentId == model.TournamentId);
+                    if(reportList.Count() > 0)
+                    {
+                        return BadRequest("Mỗi giải chỉ được báo cáo một lần");
                     }
                 }
                 report.Status = String.IsNullOrEmpty(model.Status) ? "Chưa duyệt" : model.Status;

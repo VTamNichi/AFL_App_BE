@@ -54,8 +54,33 @@ namespace AmateurFootballLeague.Controllers
                 EmailForm model = new();
                 model.ToEmail = user.Email!;
                 model.Subject = "Xác nhận nâng cấp tài khoản tài khoản A-Football-League";
-                string approved = approve ? "được chấp thuận" : "bị từ chối </p><p style='font-size: 18px'>Lý do từ chối là: " + promoteRequest.Reason + "</p>";
-                model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào <a href='mailto:" + user.Email + "'>" + user.Email + "</a>,</p><p style='font-size: 18px'>Yêu cầu nâng cấp tài khoản lên chủ giải đấu của bạn đã " + approved + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                string approved = approve ? "được chấp thuận.</p>" : "bị từ chối.</p>" +
+                    "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                    "Lý do từ chối là: " + promoteRequest.Reason + "</p>";
+                model.Message = "<html><head></head><body>" +
+                    "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                    "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                    "</header>" +
+                    "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                    "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Nâng cấp tài khoản</div>" +
+                    "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào <a href='mailto:" + user.Email + "'>" + user.Email + "</a>,</p>" +
+                    "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                    "Yêu cầu nâng cấp tài khoản lên chủ giải đấu của bạn đã " + approved +
+                    "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                    " Hãy truy cập vào trang chủ AFL để bắt đầu tạo giải.</p>" +
+
+                    "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                    "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                    "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                    "</div>" +
+                    "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                    "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                    "</p>" +
+                    "</footer></body></html>";
 
                 if (!await _sendEmailService.SendEmail(model))
                 {
@@ -104,13 +129,57 @@ namespace AmateurFootballLeague.Controllers
                         {
                             model.ToEmail = userTeam.Email!;
                             model.Subject = "Yêu Cầu Chiêu Mộ Cầu Thủ Thành Công";
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã chấp nhận tham gia đội bóng của bạn. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body>" +
+                                "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                                "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                                "</header>" +
+                                "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                                "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Chiêu mộ cầu thủ thành công</div>" +
+                                "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào quản lý đội bóng <b>" + team.TeamName + "</b>,</p>" +
+                                "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                                "Cầu thủ <b>" + footballPlayer.PlayerName + "</b> đã chấp nhận tham gia đội bóng của bạn. Hãy vào phần <b>Đội bóng của bạn</b> tại trang chủ AFL để biết thêm chi tiết về cầu thủ." +
+                                "</p>" +
+
+                                "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                                "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                                "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                                "</div>" +
+                                "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                                "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                                "</p>" +
+                                "</footer></body></html>";
                         }
                         else
                         {
                             model.ToEmail = userFP.Email!;
                             model.Subject = "Yêu Cầu Tham Gia Đội Bóng Thành Công";
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " đã chấp nhận yêu cầu tham gia của bạn. Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body>" +
+                                "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                                "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                                "</header>" +
+                                "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                                "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Tham gia đội bóng thành công</div>" +
+                                "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào cầu thủ <b>" + footballPlayer.PlayerName + "</b>,</p>" +
+                                "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                                "Đội bóng <b>" + team.TeamName + "</b> đã chấp nhận yêu cầu tham gia của bạn. Hãy vào phần <b>Thông tin cầu thủ</b> tại trang chủ AFL để biết thêm chi tiết về đội bóng." +
+                                "</p>" +
+
+                                "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                                "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                                "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                                "</div>" +
+                                "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                                "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                                "</p>" +
+                                "</footer></body></html>";
                         }
                     }
                     else
@@ -119,13 +188,57 @@ namespace AmateurFootballLeague.Controllers
                         {
                             model.ToEmail = userTeam.Email!;
                             model.Subject = "Yêu Cầu Tham Gia Từ Cầu Thủ " + footballPlayer.PlayerName;
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Cầu thủ " + footballPlayer.PlayerName + " đã gửi lời mời tham gia đội bóng mà bạn quản lý. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt cầu thủ.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body>" +
+                                "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                                "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                                "</header>" +
+                                "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                                "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Đăng ký tham gia đội bóng</div>" +
+                                "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào quản lý đội bóng <b>" + team.TeamName + "</b>,</p>" +
+                                "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                                "Cầu thủ <b>" + footballPlayer.PlayerName + "</b> đã gửi lời mời tham gia đội bóng mà bạn quản lý. Hãy vào phần <b>Đội bóng của bạn</b> tại trang chủ AFL để xét duyệt cầu thủ." +
+                                "</p>" +
+                                
+                                "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                                "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                                "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                                "</div>" +
+                                "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                                "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                                "</p>" +
+                                "</footer></body></html>";
                         }
                         else
                         {
                             model.ToEmail = userFP.Email!;
                             model.Subject = "Yêu Cầu Chiêu Mộ Từ Đội Bóng " + team.TeamName;
-                            model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Đội bóng " + team.TeamName + " gửi lời mời chiêu mộ bạn vào đội. Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để xét duyệt đội bóng.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                            model.Message = "<html><head></head><body>" +
+                                "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                                "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                                "</header>" +
+                                "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                                "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Chiêu mộ từ đội bóng</div>" +
+                                "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào cầu thủ <b>" + footballPlayer.PlayerName + "</b>,</p>" +
+                                "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                                "Đội bóng <b>" + team.TeamName + "</b> gửi lời mời chiêu mộ bạn vào đội. Hãy vào phần <b>Thông tin cầu thủ</b> tại trang chủ AFL để xét duyệt tham gia đội bóng." +
+                                "</p>" +
+                                
+                                "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                                "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                                "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                                "</div>" +
+                                "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                                "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                                "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                                "</p>" +
+                                "</footer></body></html>";
                         }
                     }
                 }
@@ -133,7 +246,29 @@ namespace AmateurFootballLeague.Controllers
                 {
                     model.ToEmail = userFP.Email!;
                     model.Subject = "Thông báo tham gia giải đấu";
-                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào cầu thủ " + footballPlayer.PlayerName + ",</p><p style='font-size: 18px'>Quản lý đội bóng " + userTeam.Username + " đã đăng ký bạn vào giải đấu " + tournament.TournamentName + ". Hãy vào phần <b>thông tin cầu thủ</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                    model.Message = "<html><head></head><body>" +
+                        "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                        "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                        "</header>" +
+                        "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                        "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Tham gia giải đấu</div>" +
+                        "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào cầu thủ <b>" + footballPlayer.PlayerName + "</b>,</p>" +
+                        "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                        "Quản lý đội bóng <b>" + userTeam.Username + "</b> đã đăng ký bạn vào giải đấu <b>" + tournament.TournamentName + "</b>. Hãy vào phần <b>Thông tin cầu thủ</b> tại trang chủ AFL để biết thêm chi tiết về giải đấu." +
+                        "</p>" +
+                        
+                        "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                        "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                        "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                        "</div>" +
+                        "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                        "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                        "</p>" +
+                        "</footer></body></html>";
 
                 }
 
@@ -179,7 +314,29 @@ namespace AmateurFootballLeague.Controllers
                 {
                     model.ToEmail = userTeam.Email!;
                     model.Subject = "Thông Báo Chấp Nhận Tham Gia Giải Đấu";
-                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã chấp nhận yêu cầu tham gia của đội bạn. Hãy vào phần <b>đội bóng của bạn</b> tại trang <a href='https://afl-app-fe.vercel.app/'>https://afl-app-fe.vercel.app/</a> để biết thêm chi tiết về giải đấu.</p><p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                    model.Message = "<html><head></head><body>" +
+                        "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                        "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                        "</header>" +
+                        "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                        "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Chấp nhận tham gia giải đấu</div>" +
+                        "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào quản lý đội bóng <b>" + team.TeamName + "</b>,</p>" +
+                        "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                        "Giải đấu <b>" + tournament.TournamentName + "</b> đã chấp nhận yêu cầu tham gia của đội bạn. Hãy vào phần <b>Đội bóng của bạn</b> tại trang chủ AFL để biết thêm chi tiết về giải đấu." +
+                        "</p>" +
+
+                        "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                        "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                        "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                        "</div>" +
+                        "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                        "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                        "</p>" +
+                        "</footer></body></html>";
 
                 }
                 else
@@ -187,12 +344,34 @@ namespace AmateurFootballLeague.Controllers
                     string reason = "";
                     if(!String.IsNullOrEmpty(modelRR.Reason))
                     {
-                        reason = "<p>Lý do: " + modelRR.Reason + "</p>";
-
+                        reason = "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                            "Lý do: " + modelRR.Reason + "</p>";
                     }
                     model.ToEmail = userTeam.Email!;
                     model.Subject = "Thông Báo Từ Chối Tham Gia Giải Đấu";
-                    model.Message = "<html><head></head><body><p style='font-size: 18px'>Xin chào quản lý đội bóng " + team.TeamName + ",</p><p style='font-size: 18px'>Giải đấu " + tournament.TournamentName + " đã từ chối yêu cầu tham gia của đội bạn.</p>" + reason + "<p style='font-size: 18px'>Xin cảm ơn,<br>A-Football-League</p>";
+                    model.Message = "<html><head></head><body>" +
+                        "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                        "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                        "</header>" +
+                        "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                        "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Từ chối tham gia giải đấu</div>" +
+                        "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào quản lý đội bóng <b>" + team.TeamName + "</b>,</p>" +
+                        "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                        "Giải đấu <b>" + tournament.TournamentName + "</b> đã từ chối yêu cầu tham gia của đội bạn." +
+                        "</p>" + reason +
+                        
+                        "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                        "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                        "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                        "</div>" +
+                        "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                        "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                        "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                        "</p>" +
+                        "</footer></body></html>";
                 }
 
                 if (!await _sendEmailService.SendEmail(model))
@@ -206,5 +385,59 @@ namespace AmateurFootballLeague.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        /// <summary>Send mail ban</summary>
+        /// <returns>Return success</returns>
+        /// <response code="200">Returns success</response>
+        /// <response code="400">Send mail fail</response>
+        /// <response code="500">Internal Server</response>
+        [HttpPost("send-mail-ban")]
+        [Produces("application/json")]
+        public async Task<ActionResult> SendMailBan(
+            [FromQuery(Name = "user-id")] int userId
+            )
+        {
+            try
+            {
+                User user = await _userService.GetByIdAsync(userId);
+
+                EmailForm model = new();
+                model.ToEmail = user.Email!;
+                model.Subject = "Thông báo khóa tài khoản tài khoản A-Football-League";
+                model.Message = "<html><head></head><body>" +
+                    "<header style='margin: 0px auto; margin-top: 20px; max-width: 590px; padding: 10px 50px; background-color: #00afab;'>" +
+                    "<img src='https://afl-app-fe.vercel.app/assets/img/homepage/logo.png' alt='' class='logo' style='display: inline-flex; color: #fff; width: 60px;' width='60'/>" +
+                    "</header>" +
+                    "<div class='form_mail' style='font-family: Arial, Helvetica, sans-serif; padding: 50px; background-color: #f4f7f6; max-width: 590px; margin: 0px auto; line-height: 24px;'>" +
+
+                    "<div class='title' style='display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Khóa tài khoản</div>" +
+                    "<p class='hello' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin chào <a href='mailto:" + user.Email + "'>" + user.Email + "</a>,</p>" +
+                    "<p class='content' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>" +
+                    "Tài khoản của bạn đã bị khóa <b>" + (user.DateUnban!.Value - user.DateBan!.Value).TotalDays.ToString() + " ngày</b> từ ngày <b>" + user.DateBan!.Value.ToString("dd/MM/yyyy") + "</b> đến hết ngày <b>" + user.DateUnban!.Value.ToString("dd/MM/yyyy") + "</b> do nhận quá nhiều báo cáo từ người dùng khác.</p>" +
+                   
+                    "<a href='https://afl-app-fe.vercel.app/' style='background-color: #00afab; border-radius: 50px; padding: 10px 20px; display: inline-flex; color: #fff; font-weight: bold; text-decoration: none; text-transform: uppercase; font-size: 14px; margin-top: 10px;'>Trang chủ AFL</a>" +
+                    "<p class='thank' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px;'>Xin cảm ơn,</p>" +
+                    "<p class='thanks' style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;'>Amateur Football League</p>" +
+                    "</div>" +
+                    "<footer style='padding: 30px 50px; max-width: 590px; margin: 0px auto; font-size: 13px; background: #ddd; color: #767676; font-family: Arial, Helvetica, sans-serif; line-height: 24px;'>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Đây là email gửi từ hệ thống AFL</p>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>Vui lòng không trả lời trực tiếp qua email này</p>" +
+                    "<p style='display: block; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; margin: 0 0 2px 0;'>" +
+                    "Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Thành phố Hồ Chí Minh" +
+                    "</p>" +
+                    "</footer></body></html>";
+
+                if (!await _sendEmailService.SendEmail(model))
+                {
+                    return BadRequest("Gửi thất bại");
+                }
+                return Ok("Gửi thành công");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }
