@@ -484,7 +484,13 @@ namespace AmateurFootballLeague.Controllers
                 }
                 if (currentTournament.TournamentTypeId == 2)
                 {
-                    return BadRequest("Giải vòng tròn không có vòng trong");
+                    IQueryable<TeamInTournament> teamInTournaments = _teamInTournamentService.GetList().Where(t => t.TournamentId == model.TournamentId);
+                    foreach(TeamInTournament tit in teamInTournaments.ToList())
+                    {
+                        tit.StatusInTournament = "Bị loại";
+                        await _teamInTournamentService.UpdateAsync(tit);
+                    }
+                    return Ok("Thành công");
                 }
                 if (currentTournament.TournamentTypeId == 1)
                 {

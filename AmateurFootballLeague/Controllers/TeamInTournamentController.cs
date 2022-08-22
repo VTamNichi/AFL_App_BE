@@ -206,10 +206,10 @@ namespace AmateurFootballLeague.Controllers
                 listTeamInTournamentVM = _mapper.Map<List<TeamInTournamentVM>>(teamInTournamentListPaging);
                 foreach (var teamInTournamentVM in listTeamInTournamentVM)
                 {
-                    teamInTournamentVM.numberOfMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result != null).Count();
-                    teamInTournamentVM.numberOfWin = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result > 1).Count();
-                    teamInTournamentVM.numberOfLose = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result < 1).Count();
-                    teamInTournamentVM.numberOfDraw = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result == 1).Count();
+                    teamInTournamentVM.numberOfMatch = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result != null && s.WinTieBreak == null).Count();
+                    teamInTournamentVM.numberOfWin = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result > 1 && s.WinTieBreak == null).Count();
+                    teamInTournamentVM.numberOfLose = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result < 1 && s.WinTieBreak == null).Count();
+                    teamInTournamentVM.numberOfDraw = _teamInMatchService.GetList().Where(s => s.TeamInTournamentId == teamInTournamentVM.Id && s.Result == 1 && s.WinTieBreak == null).Count();
                 }
 
                 var teamInTournamentListResponse = new TeamInTournamentListVM
