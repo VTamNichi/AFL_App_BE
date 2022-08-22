@@ -1269,6 +1269,26 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return BadRequest("Giải đấu không tồn tại");
                 }
+
+                string matchGroupFight = "";
+                if (!String.IsNullOrEmpty(groupName))
+                {
+                    matchGroupFight = "Bảng " + groupName! + " tie-break";
+                }
+                else
+                {
+                    matchGroupFight = "Bảng tie-break";
+                }
+
+                IQueryable<Match> listMatch = _matchService.GetList().Where(m => m.TournamentId == tournamentId);
+                foreach(Match match in listMatch.ToList())
+                {
+                    if(match.GroupFight == matchGroupFight)
+                    {
+                        return BadRequest("Giải đã có tie-break");
+                    }
+                }
+
                 IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == tournamentId);
                 string tieGroup = "";
                 if (!String.IsNullOrEmpty(groupName))
