@@ -186,6 +186,7 @@ namespace AmateurFootballLeague.Controllers
                     DifferentPoint = tit.DifferentPoint,
                     TotalYellowCard = tit.TotalYellowCard,
                     TotalRedCard = tit.TotalRedCard,
+                    WinTieBreak = tit.WinTieBreak,
                     GroupName = tit.GroupName,
                     Status = tit.Status,
                     StatusInTournament = tit.StatusInTournament,
