@@ -200,7 +200,7 @@ namespace AmateurFootballLeague.Controllers
                         TeamPhone = t.TeamPhone,
                         TeamGender = t.TeamGender
                     }
-                });
+                }).OrderByDescending(o => o.StatusInTournament).OrderByDescending(o => o.Point).ThenByDescending(o => o.DifferentPoint).ThenByDescending(o => o.WinScoreNumber).ThenBy(o => o.TotalRedCard).ThenBy(o => o.TotalYellowCard).ThenByDescending(o => o.WinTieBreak);
 
                 List<TeamInTournamentVM> listTeamInTournamentVM = new();
                 listTeamInTournamentVM = _mapper.Map<List<TeamInTournamentVM>>(teamInTournamentListPaging);

@@ -400,6 +400,10 @@ namespace AmateurFootballLeague.Controllers
             try
             {
                 User user = await _userService.GetByIdAsync(userId);
+                if(String.IsNullOrEmpty(user.DateUnban.ToString()) || String.IsNullOrEmpty(user.DateBan.ToString()))
+                {
+                    return BadRequest("Ngày khóa hoặc ngày mở khóa bị trống");
+                }    
 
                 EmailForm model = new();
                 model.ToEmail = user.Email!;
