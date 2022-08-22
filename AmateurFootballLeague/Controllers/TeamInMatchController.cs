@@ -701,47 +701,64 @@ namespace AmateurFootballLeague.Controllers
                 bool status = true;
                 IQueryable<TeamInMatch> teamInMatch = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
                     (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id == teamInTourId).
+                    Join(_matchService.GetList(), timm => timm.tim.Match , m=>m ,(timm,m)=> new {timm, m}).
                     Select(t => new TeamInMatch
                     {
-                        Id = t.tim.Id,
-                        TeamScore = t.tim.TeamScore,
-                        TeamScoreLose = t.tim.TeamScoreLose,
-                        YellowCardNumber = t.tim.YellowCardNumber,
-                        RedCardNumber = t.tim.RedCardNumber,
-                        NextTeam = t.tim.NextTeam,
-                        TeamName = t.tim.TeamName,
-                        TeamInTournamentId = t.tim.TeamInTournamentId,
-                        MatchId = t.tim.MatchId,
-                        Result = t.tim.Result,
-                        ScorePenalty = t.tim.ScorePenalty
+                        Id = t.timm.tim.Id,
+                        TeamScore = t.timm.tim.TeamScore,
+                        TeamScoreLose = t.timm.tim.TeamScoreLose,
+                        YellowCardNumber = t.timm.tim.YellowCardNumber,
+                        RedCardNumber = t.timm.tim.RedCardNumber,
+                        NextTeam = t.timm.tim.NextTeam,
+                        TeamName = t.timm.tim.TeamName,
+                        TeamInTournamentId = t.timm.tim.TeamInTournamentId,
+                        MatchId = t.timm.tim.MatchId,
+                        Result = t.timm.tim.Result,
+                        ScorePenalty = t.timm.tim.ScorePenalty,
+                        Match = t.timm.tim.Match
                     });
                 var allMatch = teamInMatch.ToList();
+                    
                 if (allMatch.Count > 0)
                 {
                     if (allMatch[0].Match!.GroupFight!.Contains("Bảng"))
                     {
+
                         IQueryable<TeamInMatch> checkLast = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
-                (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id != teamInTourId).
-                Select(t => new TeamInMatch
-                {
-                    Id = t.tim.Id,
-                    TeamScore = t.tim.TeamScore,
-                    TeamScoreLose = t.tim.TeamScoreLose,
-                    YellowCardNumber = t.tim.YellowCardNumber,
-                    RedCardNumber = t.tim.RedCardNumber,
-                    NextTeam = t.tim.NextTeam,
-                    TeamName = t.tim.TeamName,
-                    TeamInTournamentId = t.tim.TeamInTournamentId,
-                    MatchId = t.tim.MatchId,
-                    Result = t.tim.Result,
-                    ScorePenalty = t.tim.ScorePenalty
-                });
+                    (tim, tit) => new { tim, tit }).Where(t => t.tit.Status == "Tham gia" && t.tit.StatusInTournament != "Bị loại" && t.tit.Id != teamInTourId).
+                    Join(_matchService.GetList(), timm => timm.tim.Match, m => m, (timm, m) => new { timm, m }).Where(m => m.m.GroupFight.Contains(allMatch[0].Match.GroupFight) && m.m.TournamentId == allMatch[0].Match.TournamentId).
+                    Select(t => new TeamInMatch
+                    {
+                        Id = t.timm.tim.Id,
+                        TeamScore = t.timm.tim.TeamScore,
+                        TeamScoreLose = t.timm.tim.TeamScoreLose,
+                        YellowCardNumber = t.timm.tim.YellowCardNumber,
+                        RedCardNumber = t.timm.tim.RedCardNumber,
+                        NextTeam = t.timm.tim.NextTeam,
+                        TeamName = t.timm.tim.TeamName,
+                        TeamInTournamentId = t.timm.tim.TeamInTournamentId,
+                        MatchId = t.timm.tim.MatchId,
+                        Result = t.timm.tim.Result,
+                        ScorePenalty = t.timm.tim.ScorePenalty,
+                        Match = t.timm.tim.Match
+                    });
                         var isLast = checkLast.ToList();
+                        List<TeamInMatch> matchCheck = new List<TeamInMatch>();
                         if (isLast.Count > 0)
                         {
-                            for (int j = 0; j < isLast.Count; j++)
+                            for(int i = 0; i < isLast.Count(); i++)
                             {
-                                if (isLast[j].Result == null)
+                                for(int j=0;j< isLast.Count(); j++)
+                                {
+                                    if(isLast[i].MatchId == isLast[j].MatchId && isLast[i].Id != isLast[j].Id)
+                                    {
+                                        matchCheck.Add(isLast[i]);
+                                    }
+                                }
+                            }
+                            for (int j = 0; j < matchCheck.Count(); j++)
+                            {
+                                if (matchCheck[j].Result == null)
                                 {
                                     status = false;
                                 }
@@ -752,14 +769,14 @@ namespace AmateurFootballLeague.Controllers
 
                     }
 
-                    for (int i = 0; i < allMatch.Count; i++)
+                    for (int i = 0; i < allMatch.Count(); i++)
                     {
                         if (allMatch[i].Result == null)
                         {
 
                             IQueryable<TeamInMatch> listTeam = _teamInMatch.GetList().Where(m => m.MatchId == allMatch[i].MatchId);
                             var changeRs = listTeam.ToList();
-                            for (int j = 0; j < changeRs.Count; j++)
+                            for (int j = 0; j < changeRs.Count(); j++)
                             {
                                 if (changeRs[j].TeamInTournamentId == teamInTourId)
                                 {
