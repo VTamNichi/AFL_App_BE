@@ -368,11 +368,6 @@ namespace AmateurFootballLeague.Controllers
                     {
                         report.FootballPlayerId = footballPlayer.Id;
                     }
-                    IQueryable<Report> reportListAll = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.FootballPlayerId == model.FootballPlayerId && rp.DateReport!.Value.Date.CompareTo(DateTime.Now.AddHours(7).Date) == 0);
-                    if (reportListAll.Count() > 0)
-                    {
-                        return BadRequest("Mỗi ngày chỉ được báo cáo cầu thủ một lần");
-                    }
                 }
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
@@ -385,11 +380,6 @@ namespace AmateurFootballLeague.Controllers
                     {
                         report.TeamId = team.Id;
                     }
-                    IQueryable<Report> reportListAll = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.TeamId == model.TeamId && rp.DateReport!.Value.Date.CompareTo(DateTime.Now.AddHours(7).Date) == 0);
-                    if (reportListAll.Count() > 0)
-                    {
-                        return BadRequest("Mỗi ngày chỉ được báo cáo đội bóng một lần");
-                    }
                 }
                 if (!String.IsNullOrEmpty(model.TournamentId.ToString()) && model.TournamentId != 0)
                 {
@@ -401,11 +391,6 @@ namespace AmateurFootballLeague.Controllers
                     else
                     {
                         report.TournamentId = tournament.Id;
-                    }
-                    IQueryable<Report> reportList = _reportService.GetList().Where(rp => rp.UserId == model.UserId && rp.TournamentId == model.TournamentId);
-                    if(reportList.Count() > 0)
-                    {
-                        return BadRequest("Mỗi giải chỉ được báo cáo một lần");
                     }
                 }
                 report.Status = String.IsNullOrEmpty(model.Status) ? "Chưa duyệt" : model.Status;
