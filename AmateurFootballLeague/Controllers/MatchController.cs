@@ -1289,7 +1289,7 @@ namespace AmateurFootballLeague.Controllers
                     }
                 }
 
-                IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == tournamentId);
+                IQueryable<TeamInTournament> listTeamInTournament = _teamInTournamentService.GetList().Where(s => s.TournamentId == tournamentId && s.StatusInTournament == "Trong giải");
                 string tieGroup = "";
                 if (!String.IsNullOrEmpty(groupName))
                 {
