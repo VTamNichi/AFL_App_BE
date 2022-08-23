@@ -721,7 +721,8 @@ namespace AmateurFootballLeague.Controllers
                         MatchId = t.timm.tim.MatchId,
                         Result = t.timm.tim.Result,
                         ScorePenalty = t.timm.tim.ScorePenalty,
-                        Match = t.timm.tim.Match
+                        Match = t.timm.tim.Match,
+                        TeamInTournament = t.timm.tim.TeamInTournament,
                     });
                 var allMatch = teamInMatch.ToList();
                     
@@ -799,11 +800,17 @@ namespace AmateurFootballLeague.Controllers
                                     await _teamInMatch.UpdateAsync(changeRs[j]);
                                 }
                             }
+                            Match matchCancel = allMatch[i].Match;
+                            matchCancel.Status = "Bị Hủy";
                             matchId = (int)changeRs[0].MatchId;
                             round = allMatch[i].Match.Round;
                             groupFight = allMatch[i].Match.GroupFight;
                         }
                     }
+                    TeamInTournament outTeam = allMatch[0].TeamInTournament;
+                    outTeam.StatusInTournament = "Bị loại";
+                    await _teamInTournamentService.UpdateAsync(outTeam);
+
                     var data = new
                     {
                         status,
