@@ -801,7 +801,7 @@ namespace AmateurFootballLeague.Controllers
                             }
                             matchId = (int)changeRs[0].MatchId;
                             round = allMatch[i].Match.Round;
-                            groupFight = allMatch[i].Match.Round;
+                            groupFight = allMatch[i].Match.GroupFight;
                         }
                     }
                     var data = new
