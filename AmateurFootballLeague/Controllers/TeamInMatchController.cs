@@ -774,7 +774,9 @@ namespace AmateurFootballLeague.Controllers
                         }
 
                     }
-
+                    var matchId = 0;
+                    var round = "";
+                    var groupFight = "";
                     for (int i = 0; i < allMatch.Count(); i++)
                     {
                         if (allMatch[i].Result == null)
@@ -797,10 +799,19 @@ namespace AmateurFootballLeague.Controllers
                                     await _teamInMatch.UpdateAsync(changeRs[j]);
                                 }
                             }
-
+                            matchId = (int)changeRs[0].MatchId;
+                            round = allMatch[i].Match.Round;
+                            groupFight = allMatch[i].Match.Round;
                         }
                     }
-                    return Ok(status);
+                    var data = new
+                    {
+                        status,
+                        matchId,
+                        round,
+                        groupFight
+                    };
+                    return Ok(data);
                 }
                 return NotFound();
             }
