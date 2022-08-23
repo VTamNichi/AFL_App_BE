@@ -654,41 +654,85 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound();
                 }
-                if (listTeam[0].TeamScore > listTeam[1].TeamScore)
+                var match = await _matchService.GetByIdAsync(matchId);
+                if (match.Round.Contains("tie-break") || match.GroupFight.Contains("tie-break"))
                 {
-                    listTeam[0].Result = 3;
-                    listTeam[1].Result = 0;
-                    await _teamInMatch.UpdateAsync(listTeam[0]);
-                    await _teamInMatch.UpdateAsync(listTeam[1]);
-                }
-                else if (listTeam[0].TeamScore < listTeam[1].TeamScore)
-                {
-                    listTeam[0].Result = 0;
-                    listTeam[1].Result = 3;
-                    await _teamInMatch.UpdateAsync(listTeam[0]);
-                    await _teamInMatch.UpdateAsync(listTeam[1]);
-                }
-                else
-                {
-                    listTeam[0].Result = 1;
-                    listTeam[1].Result = 1;
-                    if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                    if (listTeam[0].ScoreTieBreak > listTeam[1].ScoreTieBreak)
                     {
                         listTeam[0].Result = 3;
                         listTeam[1].Result = 0;
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
                     }
-                    else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                    else if (listTeam[0].ScoreTieBreak < listTeam[1].ScoreTieBreak)
                     {
                         listTeam[0].Result = 0;
                         listTeam[1].Result = 3;
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
                     }
                     else
                     {
                         listTeam[0].Result = 1;
                         listTeam[1].Result = 1;
+                        if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                        {
+                            listTeam[0].Result = 3;
+                            listTeam[1].Result = 0;
+                        }
+                        else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                        {
+                            listTeam[0].Result = 0;
+                            listTeam[1].Result = 3;
+                        }
+                        else
+                        {
+                            listTeam[0].Result = 1;
+                            listTeam[1].Result = 1;
+                        }
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
+
                     }
-                    await _teamInMatch.UpdateAsync(listTeam[0]);
-                    await _teamInMatch.UpdateAsync(listTeam[1]);
+                }
+                else
+                {
+                    if (listTeam[0].TeamScore > listTeam[1].TeamScore)
+                    {
+                        listTeam[0].Result = 3;
+                        listTeam[1].Result = 0;
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
+                    }
+                    else if (listTeam[0].TeamScore < listTeam[1].TeamScore)
+                    {
+                        listTeam[0].Result = 0;
+                        listTeam[1].Result = 3;
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
+                    }
+                    else
+                    {
+                        listTeam[0].Result = 1;
+                        listTeam[1].Result = 1;
+                        if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                        {
+                            listTeam[0].Result = 3;
+                            listTeam[1].Result = 0;
+                        }
+                        else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                        {
+                            listTeam[0].Result = 0;
+                            listTeam[1].Result = 3;
+                        }
+                        else
+                        {
+                            listTeam[0].Result = 1;
+                            listTeam[1].Result = 1;
+                        }
+                        await _teamInMatch.UpdateAsync(listTeam[0]);
+                        await _teamInMatch.UpdateAsync(listTeam[1]);
+                    }
                 }
                 return NoContent();
             }
