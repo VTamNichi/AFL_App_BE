@@ -846,6 +846,7 @@ namespace AmateurFootballLeague.Controllers
                             }
                             Match matchCancel = allMatch[i].Match;
                             matchCancel.Status = "Bị Hủy";
+                            await _matchService.UpdateAsync(matchCancel);
                             matchId = (int)changeRs[0].MatchId;
                             round = allMatch[i].Match.Round;
                             groupFight = allMatch[i].Match.GroupFight;
