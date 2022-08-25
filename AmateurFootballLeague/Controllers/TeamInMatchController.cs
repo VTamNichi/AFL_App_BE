@@ -654,17 +654,25 @@ namespace AmateurFootballLeague.Controllers
                 {
                     return NotFound();
                 }
+                int score1 = (int)(listTeam[0].TeamScore > 0 ? listTeam[0].TeamScore : 0);
+                int score2 = (int)(listTeam[1].TeamScore>0? listTeam[1].TeamScore:0);
+                int tie1 = (int)(listTeam[0].ScoreTieBreak > 0 ? listTeam[0].ScoreTieBreak : 0);
+                int tie2 = (int)(listTeam[1].ScoreTieBreak > 0 ? listTeam[1].ScoreTieBreak : 0);
+                int pen1 = (int)(listTeam[0].ScorePenalty > 0 ? listTeam[0].ScorePenalty : 0);
+                int pen2 = (int)(listTeam[1].ScorePenalty > 0 ? listTeam[1].ScorePenalty : 0);
                 var match = await _matchService.GetByIdAsync(matchId);
                 if (match.Round.Contains("tie-break") || match.GroupFight.Contains("tie-break"))
                 {
-                    if (listTeam[0].ScoreTieBreak > listTeam[1].ScoreTieBreak)
+                    listTeam[0].Result = null;
+                    listTeam[1].Result = null;
+                    if (tie1 > tie2)
                     {
                         listTeam[0].WinTieBreak = 1;
                         listTeam[1].WinTieBreak = 0;
                         await _teamInMatch.UpdateAsync(listTeam[0]);
                         await _teamInMatch.UpdateAsync(listTeam[1]);
                     }
-                    else if (listTeam[0].ScoreTieBreak < listTeam[1].ScoreTieBreak)
+                    else if (tie1 < tie2)
                     {
                         listTeam[0].WinTieBreak = 0;
                         listTeam[1].WinTieBreak = 1;
@@ -673,12 +681,12 @@ namespace AmateurFootballLeague.Controllers
                     }
                     else
                     {
-                        if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                        if (pen1 > pen2)
                         {
                             listTeam[0].WinTieBreak = 1;
                             listTeam[1].WinTieBreak = 0;
                         }
-                        else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                        else if (pen1 < pen2)
                         {
                             listTeam[0].WinTieBreak = 0;
                             listTeam[1].WinTieBreak = 1;
@@ -694,30 +702,33 @@ namespace AmateurFootballLeague.Controllers
                 }
                 else
                 {
-                    if (listTeam[0].TeamScore > listTeam[1].TeamScore)
+                    
+                    if (score1 > score2)
                     {
                         listTeam[0].Result = 3;
                         listTeam[1].Result = 0;
                         await _teamInMatch.UpdateAsync(listTeam[0]);
                         await _teamInMatch.UpdateAsync(listTeam[1]);
+     
                     }
-                    else if (listTeam[0].TeamScore < listTeam[1].TeamScore)
+                    else if (score1 < score2)
                     {
                         listTeam[0].Result = 0;
                         listTeam[1].Result = 3;
                         await _teamInMatch.UpdateAsync(listTeam[0]);
                         await _teamInMatch.UpdateAsync(listTeam[1]);
+             
                     }
-                    else
+                    else 
                     {
                         listTeam[0].Result = 1;
                         listTeam[1].Result = 1;
-                        if (listTeam[0].ScorePenalty > listTeam[1].ScorePenalty)
+                        if (pen1 > pen2)
                         {
                             listTeam[0].Result = 3;
                             listTeam[1].Result = 0;
                         }
-                        else if (listTeam[0].ScorePenalty < listTeam[1].ScorePenalty)
+                        else if (pen1 < pen2)
                         {
                             listTeam[0].Result = 0;
                             listTeam[1].Result = 3;
@@ -729,11 +740,12 @@ namespace AmateurFootballLeague.Controllers
                         }
                         await _teamInMatch.UpdateAsync(listTeam[0]);
                         await _teamInMatch.UpdateAsync(listTeam[1]);
+           
                     }
                 }
                 return NoContent();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
