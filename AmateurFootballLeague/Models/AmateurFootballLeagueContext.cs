@@ -626,7 +626,7 @@ namespace AmateurFootballLeague.Models
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Email, "UQ__Users__A9D10534B04FC74F")
+                entity.HasIndex(e => e.Email, "UQ__Users__A9D105347E1D8207")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");
