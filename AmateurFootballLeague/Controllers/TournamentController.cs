@@ -434,42 +434,42 @@ namespace AmateurFootballLeague.Controllers
                 {
                     currentTournament.RegisterEndDate = String.IsNullOrEmpty(model.RegisterEndDate.ToString()) ? currentTournament.RegisterEndDate : model.RegisterEndDate;
                 }
+                if (model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage && currentTournament.TournamentTypeId != 1)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 16");
+                    }
+                }
+                else if (model.TournamentTypeEnum == TournamentTypeEnum.CircleStage && currentTournament.TournamentTypeId != 2)
+                {
+                    if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 8)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 8");
+                    }
+                }
+                else if (model.TournamentTypeEnum == TournamentTypeEnum.GroupStage && currentTournament.TournamentTypeId != 3)
+                {
+                    if (model.FootballTeamNumber < 6 || model.FootballTeamNumber > 16)
+                    {
+                        return BadRequest("Số đội tham gia giải it nhất là 6 và nhiều nhất là 16");
+                    }
+                    if (model.FootballTeamNumber < 12 && model.GroupNumber > 2)
+                    {
+                        return BadRequest("Số đội tham gia giải ít nhất hơn 12 chỉ có thể chia 2 bảng đấu");
+                    }
+                }
+                currentTournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : model.TournamentTypeEnum == TournamentTypeEnum.GroupStage ? 3 : currentTournament.TournamentTypeId;
+
 
                 int countTeamInTournament = _teamInTournamentService.CountTeamInATournament(model.Id);
                 if(countTeamInTournament == 0)
                 {
-                    if (model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage && currentTournament.TournamentTypeId != 1)
-                    {
-                        if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 16)
-                        {
-                            return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 16");
-                        }
-                    }
-                    else if (model.TournamentTypeEnum == TournamentTypeEnum.CircleStage && currentTournament.TournamentTypeId != 2)
-                    {
-                        if (model.FootballTeamNumber < 3 || model.FootballTeamNumber > 8)
-                        {
-                            return BadRequest("Số đội tham gia giải it nhất là 3 và nhiều nhất là 8");
-                        }
-                    }
-                    else if (model.TournamentTypeEnum == TournamentTypeEnum.GroupStage && currentTournament.TournamentTypeId != 3)
-                    {
-                        if (model.FootballTeamNumber < 6 || model.FootballTeamNumber > 16)
-                        {
-                            return BadRequest("Số đội tham gia giải it nhất là 6 và nhiều nhất là 16");
-                        }
-                        if (model.FootballTeamNumber < 12 && model.GroupNumber > 2)
-                        {
-                            return BadRequest("Số đội tham gia giải ít nhất hơn 12 chỉ có thể chia 2 bảng đấu");
-                        }
-                    }
-
                     currentTournament.TournamentGender = model.TournamentGender == TournamentGenderEnum.Male ? "Male" : model.TournamentGender == TournamentGenderEnum.Female ? "Female" : currentTournament.TournamentGender;
                     currentTournament.FootballFieldAddress = String.IsNullOrEmpty(model.FootballFieldAddress) ? currentTournament.FootballFieldAddress : model.FootballFieldAddress.Trim();
                     currentTournament.GroupNumber = String.IsNullOrEmpty(model.GroupNumber.ToString()) ? currentTournament.GroupNumber : model.GroupNumber;
                     currentTournament.MatchMinutes = String.IsNullOrEmpty(model.MatchMinutes.ToString()) ? currentTournament.MatchMinutes : model.MatchMinutes;
                     currentTournament.FootballPlayerMaxNumber = String.IsNullOrEmpty(model.FootballPlayerMaxNumber.ToString()) ? currentTournament.FootballPlayerMaxNumber : model.FootballPlayerMaxNumber;
-                    currentTournament.TournamentTypeId = model.TournamentTypeEnum == TournamentTypeEnum.KnockoutStage ? 1 : model.TournamentTypeEnum == TournamentTypeEnum.CircleStage ? 2 : model.TournamentTypeEnum == TournamentTypeEnum.GroupStage ? 3 : currentTournament.TournamentTypeId;
                     currentTournament.FootballFieldTypeId = model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field5 ? 1 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field7 ? 2 : model.TournamentFootballFieldTypeEnum == TournamentFootballFieldTypeEnum.Field11 ? 3 : currentTournament.FootballFieldTypeId;
                 }
                 else if(countTeamInTournament > 0 && countTeamInTournament < currentTournament.FootballTeamNumber)
