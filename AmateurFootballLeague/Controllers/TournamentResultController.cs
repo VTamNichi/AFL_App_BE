@@ -414,8 +414,8 @@ namespace AmateurFootballLeague.Controllers
                             champRs.TeamInTournamentId = listSort[i].Id;
                             champRs.TournamentId = listSort[i].TournamentId;
                             champRs.TeamId = listSort[i].TeamId;
-                            champRs.FootballPlayerId = playersTeam1[i].PlayerInTeam!.FootballPlayerId;
-                            champRs.ClothesNumber = playersTeam1[i].ClothesNumber;
+                            champRs.FootballPlayerId = playersTeam1[j].PlayerInTeam!.FootballPlayerId;
+                            champRs.ClothesNumber = playersTeam1[j].ClothesNumber;
                             await _tournamentResultService.AddAsync(champRs);
                         }
                     }
