@@ -778,10 +778,12 @@ namespace AmateurFootballLeague.Controllers
                         TeamInTournament = t.timm.tim.TeamInTournament,
                     });
                 var allMatch = teamInMatch.ToList();
-                    
+
                 if (allMatch.Count > 0)
                 {
-                    if (allMatch[0].Match!.GroupFight!.Contains("Bảng"))
+                    Tournament tourOut = await _tournamentService.GetByIdAsync((int)allMatch[0].Match.TournamentId);
+
+                    if (allMatch[0].Match!.GroupFight!.Contains("Bảng") || tourOut.TournamentTypeId == 2 )
                     {
 
                         IQueryable<TeamInMatch> checkLast = _teamInMatch.GetList().Join(_teamInTournamentService.GetList(), tim => tim.TeamInTournament, tit => tit,
