@@ -12,7 +12,7 @@ namespace AmateurFootballLeague.Utils
         {
             try
             {
-                var tokenBuilder = new AccessToken("ab5ddade1a8c4bfaa6f7018e03f73463", "13722f2747f949bd91cd096c64ca9364", channel, uId);
+                var tokenBuilder = new AccessToken("70217642f3314dc0803bb253e501cf2d", "2059d409372446b2afaba92a503bef26", channel, uId);
 
                 tokenBuilder.AddPrivilege(Privileges.kJoinChannel, expiredTime);
 
