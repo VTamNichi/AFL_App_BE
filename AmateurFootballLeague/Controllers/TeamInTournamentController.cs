@@ -375,7 +375,14 @@ namespace AmateurFootballLeague.Controllers
                     {
                         teamInTournament.TournamentId = model.TournamentId;
                     }
+                    int teamNum = _teamInTournamentService.CountTeamInATournament(model.TournamentId!.Value);
+                    if(teamNum == tournament.FootballTeamNumber && model.Status == "Tham gia")
+                    {
+                        return BadRequest("Giải đấu đã đủ đội");
+                    }    
                 }
+
+
                 if (!String.IsNullOrEmpty(model.TeamId.ToString()) && model.TeamId != 0)
                 {
                     Team team = await _teamService.GetByIdAsync(model.TeamId!.Value);
