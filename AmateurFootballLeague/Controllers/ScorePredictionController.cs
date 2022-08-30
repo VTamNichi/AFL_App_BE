@@ -309,10 +309,10 @@ namespace AmateurFootballLeague.Controllers
                 ScorePrediction closetScore = new ScorePrediction();
                 if (scorePrediction != null)
                 {
-                    closetScore = scorePrediction.Where(s => s.TeamInMatchAid == listResult[0].Id && s.TeamInMatchBid == listResult[1].Id && s.TeamAscore == 2 && s.TeamBscore == 2).FirstOrDefault()!;
+                    closetScore = scorePrediction.Where(s => s.TeamInMatchAid == listResult[0].Id && s.TeamInMatchBid == listResult[1].Id && s.TeamAscore == listResult[0].TeamScore && s.TeamBscore == listResult[1].TeamScore).FirstOrDefault()!;
                     if(closetScore == null)
                     {
-                        closetScore =  scorePrediction.Where(s=> s.TeamInMatchAid == listResult[1].Id && s.TeamInMatchBid == listResult[0].Id && s.TeamAscore == 2 && s.TeamBscore == 2).FirstOrDefault()!;
+                        closetScore =  scorePrediction.Where(s=> s.TeamInMatchAid == listResult[1].Id && s.TeamInMatchBid == listResult[0].Id && s.TeamAscore == listResult[1].TeamScore && s.TeamBscore == listResult[0].TeamScore).FirstOrDefault()!;
                     }
 
                     if(closetScore == null)
