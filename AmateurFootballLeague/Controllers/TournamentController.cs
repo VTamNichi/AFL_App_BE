@@ -542,16 +542,22 @@ namespace AmateurFootballLeague.Controllers
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> ChangeStatusTournament(int id)
         {
-            Tournament currentTournament = await _tournamentService.GetByIdAsync(id);
-            if (currentTournament == null)
-            {
-                return NotFound(new
-                {
-                    message = "Không tìm thấy giải đấu với id là " + id
-                });
-            }
             try
             {
+                Tournament currentTournament = await _tournamentService.GetByIdAsync(id);
+                if (currentTournament == null)
+                {
+                    return NotFound(new
+                    {
+                        message = "Không tìm thấy giải đấu với id là " + id
+                    });
+                }
+                IQueryable<TeamInTournament> teamInTournaments = _teamInTournamentService.GetList().Where(t => t.TournamentId == id);
+                foreach (TeamInTournament tit in teamInTournaments.ToList())
+                {
+                    tit.StatusInTournament = "Bị loại";
+                    await _teamInTournamentService.UpdateAsync(tit);
+                }
                 currentTournament.Status = !currentTournament.Status;
                 bool isDeleted = await _tournamentService.UpdateAsync(currentTournament);
                 if (isDeleted)
