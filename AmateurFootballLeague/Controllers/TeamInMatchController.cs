@@ -853,6 +853,19 @@ namespace AmateurFootballLeague.Controllers
                                     changeRs[j].Result = 3;
                                     changeRs[j].TeamScore = 3;
                                     await _teamInMatch.UpdateAsync(changeRs[j]);
+                                    TeamInTournament calc = await _teamInTournamentService.GetByIdAsync((int)changeRs[j].TeamInTournamentId);
+                                    int point = 0;
+                                    if(calc.Point == null)
+                                    {
+                                        point = 0;
+                                    }
+                                    else
+                                    {
+                                        point =(int) calc.Point + 3;
+                                    }
+                                    calc.Point = point;
+                                    await _teamInTournamentService.UpdateAsync(calc);
+                                    
                                 }
                             }
                             Match matchCancel = allMatch[i].Match;
